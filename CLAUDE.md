@@ -177,3 +177,4 @@ npm run eval:report  # regenerate the README results table
 Keep this current. Append one line per working session: date, what shipped, what the numbers were, what is next. This is the raw material for the case study, and reconstructing it in week 4 from memory will produce a worse case study than writing it down as we go.
 
 - **2026-10-25** — Project context written. Nothing built yet. Next: Zod invoice schema and the extraction CLI.
+- **2026-10-29** — AGENTS.md adapted to PaperTrail. Design system shipped: tokens (ink-blue primary, amber reserved for low confidence), Inter + Playfair Display + Geist Mono, UI primitives, FieldRow/DocumentStatus/DocumentCard, `/design-system` showcase, Vitest installed (10 tests). Week 1 CLI (due 31 Oct) not started with two days left — at risk; the buffer is already spent. Next: Zod invoice schema and the extraction CLI.
