@@ -178,3 +178,4 @@ Keep this current. Append one line per working session: date, what shipped, what
 
 - **2026-10-25** — Project context written. Nothing built yet. Next: Zod invoice schema and the extraction CLI.
 - **2026-10-29** — AGENTS.md adapted to PaperTrail. Design system shipped: tokens (ink-blue primary, amber reserved for low confidence), Inter + Playfair Display + Geist Mono, UI primitives, FieldRow/DocumentStatus/DocumentCard, `/design-system` showcase, Vitest installed (10 tests). Week 1 CLI (due 31 Oct) not started with two days left — at risk; the buffer is already spent. Next: Zod invoice schema and the extraction CLI.
+- **2026-10-29** — Landing page given colour (prompt 002): ink-blue ruled hero, a review preview with a real low-confidence row, the failure ladder in status colours, and a primary closing band. UI only, about an hour. Week 1 CLI is still not started, due 31 Oct. Next: Zod invoice schema and the extraction CLI.
