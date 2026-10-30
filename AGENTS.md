@@ -116,6 +116,7 @@ Create folders only when a task needs them. Keep these responsibilities apart:
 - **Extraction** (`lib/extract`). Pure server code that takes a file and returns a validated result or a typed failure. It runs the same from the CLI, the route and the eval script. It never imports Next.js or Supabase.
 - **Logging**. Every model call — success, validation failure, API error — writes one record: model, input tokens, output tokens, cost, latency_ms, outcome. The CLI writes JSONL; the app writes the `model_calls` table. Same record shape for both.
 - **Data access** (`lib/db`). A server-only Supabase client using the secret key, scoped to the `papertrail` schema. Mark the module server-only so a client import fails the build.
+- **Auth** (`lib/auth.ts`, `lib/supabase/`). A per-request server client using the publishable key and the visitor's session cookie. There is no browser Supabase client: sign-in, the callback and sign-out are server routes under `app/auth/`.
 - **Routes** (`app/api`). Thin: parse input with Zod, call `lib/`, persist, respond. No extraction logic inline.
 - **UI**. Server components read and display stored data. Client components handle the upload, the edit fields and the export button, and call server routes for every write.
 - **Evals** (`evals/`). Offline, run deliberately with `npm run eval`. Never imported by the app and never run by `npm test`.
@@ -128,7 +129,7 @@ Create folders only when a task needs them. Keep these responsibilities apart:
 
 Next.js App Router, TypeScript strict, Tailwind; Vercel AI SDK (`ai` + `@ai-sdk/anthropic`); Zod; Supabase Postgres (schema `papertrail` in the shared "lab" project) and Storage via `@supabase/supabase-js`; SheetJS for XLSX; Vitest; `tsx` for scripts; Vercel Hobby for hosting.
 
-Do not use: LangChain, LlamaIndex, OCR libraries, a vector database, a queue service, an auth provider, a new Supabase project, a new language, or any paid service. Do not add a dependency that is not in this list without saying why the skill requires it and what it costs.
+Do not use: LangChain, LlamaIndex, OCR libraries, a vector database, a queue service, an auth provider other than Supabase Auth with Google, a new Supabase project, a new language, or any paid service. Do not add a dependency that is not in this list without saying why the skill requires it and what it costs.
 
 ---
 
@@ -144,7 +145,7 @@ Build to these unless the user changes them.
 - **Confidence threshold** starts at 0.85, in config, tuned on the golden set in week 3 with the reason written in the README.
 - **Money.** Compare and sum amounts as integer cents, never floats. Keep the document's printed currency; do not convert.
 - **Corrections** are stored alongside the original value (`corrected_value`, `corrected_at`), never overwrite it. The original is eval data.
-- **Demo mode, no auth.** Preloaded sample documents, no login. Anything a visitor can trigger must be cheap and capped with what Postgres can do (for example, a per-day extraction count in a table).
+- **Demo mode, public browsing.** Preloaded sample documents, and no login needed to look around. Google sign-in (Supabase Auth, server-side PKCE) gates only paid actions: every upload or extract route calls `requireUser()` from `lib/auth.ts`, which verifies the session with `getClaims()`. The proxy only refreshes the session; it never redirects. Anything a signed-in visitor can trigger must still be cheap and capped with what Postgres can do (for example, a per-day extraction count in a table).
 - **Open questions** (structured outputs vs tool call; does asking for confidence hurt accuracy; multi-page line items) get answered by a measured run, recorded in the prompt file and the README. Not by opinion.
 
 ---
