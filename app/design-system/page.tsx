@@ -20,6 +20,7 @@ import {
   Upload,
   UserPen,
 } from "lucide-react";
+import { AuthControls } from "@/components/ui/auth-controls";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Button, buttonClasses } from "@/components/ui/button";
@@ -496,6 +497,17 @@ export default function DesignSystemPage() {
             ]}
           />
           <p className="mt-4 text-small text-neutral-500">The top bar of this page is the main nav.</p>
+          <div className="mt-6">
+            <Label>Sign-in control</Label>
+          </div>
+          <div className="flex flex-wrap items-center gap-6">
+            <AuthControls email={null} />
+            <AuthControls email="ada.lovelace@example.com" />
+          </div>
+          <p className="mt-2 text-small text-neutral-500">
+            Signed out, then signed in. Browsing is public; Google sign-in is only required to upload
+            or extract.
+          </p>
         </Section>
 
         <Section number="15" title="Principles" className="lg:col-span-12">
