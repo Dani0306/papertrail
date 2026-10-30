@@ -63,8 +63,13 @@ When you need a decision, ask through the interactive question panel (AskUserQue
 
 The UI is small: an upload page, a document list, a review screen, and an export action. Keep it plain, functional and fast to click through in a 30-second demo.
 
+- **Build from the design system.** Tokens live in `app/globals.css` (`@theme`), primitives in `components/ui/`, review pieces (`FieldRow`, `DocumentStatus`, `DocumentCard`, `StatCard`) in `components/review/`. `/design-system` shows all of it; check there before making something new, and add new pieces there too.
+- **Tokens only.** No raw hex, no arbitrary colours. Tailwind's default palette is switched off, so `bg-red-500` silently produces nothing. Use `primary`, `neutral`, `review`, `success`, `danger`, `escalated`, `paper`, `white`.
+- **Amber (`review`) means one thing:** a field below the confidence threshold. Don't use it for decoration or generic warnings. Use `confidenceLevel()` from `lib/design/confidence.ts` to decide when to apply it; never re-derive the rule inline.
+- **Type:** `font-display text-display-1/2` for page titles only; everything else is Inter (`text-h1`…`text-small`). Money gets `tabular-nums`; `sourceQuote` and file names get `font-mono`.
+- Light theme only. Every interactive element needs a `focus-visible` ring and a disabled state; never use colour as the only signal.
 - If the user provides a reference image, reproduce it exactly (layout, spacing, typography, color, states) and make it responsive down to mobile without restyling beyond the reference.
-- Without a reference, use Tailwind utilities and the patterns already in the project. No component library unless the user asks.
+- No component library unless the user asks.
 - The review screen is the one that matters: low-confidence fields must be impossible to miss, the `sourceQuote` must sit next to each value, and a correction must be one edit plus save.
 
 ---
