@@ -47,6 +47,7 @@ Daniel Colorado — full stack developer in Medellín, Colombia (UTC−5). Softw
 5. Review queue UI: fields below the confidence threshold are highlighted; a human corrects them; the correction is stored alongside the original.
 6. CSV and XLSX export.
 7. Every model call logs model, input tokens, output tokens, cost, latency and outcome.
+8. Google sign-in (Supabase Auth) is required only for actions that spend money: upload and extraction. Browsing and the preloaded samples stay public. _Added 29 Oct by owner decision._
 
 ### Stretch (only after the minimum is deployed)
 
@@ -54,7 +55,7 @@ Multiple schemas (receipt, bank statement, purchase order) · a schema builder s
 
 ### Explicitly out of scope
 
-Auth and multi-tenancy (demo mode only, no login) · payments · OCR libraries (the model reads the PDF directly) · LangChain or LlamaIndex · a vector database · fine-tuning · any queue infrastructure beyond what Postgres can do.
+Multi-tenancy, per-user data, roles, and any sign-in provider other than Google (sign-in gates paid actions only, nothing else) · payments · OCR libraries (the model reads the PDF directly) · LangChain or LlamaIndex · a vector database · fine-tuning · any queue infrastructure beyond what Postgres can do.
 
 ---
 
@@ -96,7 +97,7 @@ Normalisation rules live in one place and are tested. A date comparison that fai
 
 Not done until all six exist:
 
-1. Deployed URL with **demo mode** — sample documents preloaded, no login, a recruiter can click through in 30 seconds
+1. Deployed URL with **demo mode** — sample documents preloaded, no login needed to browse, a recruiter can click through in 30 seconds
 2. Public GitHub repo
 3. README with architecture diagram, eval results table, and cost per document
 4. Case study published on danielcolorado.dev
@@ -179,3 +180,6 @@ Keep this current. Append one line per working session: date, what shipped, what
 - **2026-10-25** — Project context written. Nothing built yet. Next: Zod invoice schema and the extraction CLI.
 - **2026-10-29** — AGENTS.md adapted to PaperTrail. Design system shipped: tokens (ink-blue primary, amber reserved for low confidence), Inter + Playfair Display + Geist Mono, UI primitives, FieldRow/DocumentStatus/DocumentCard, `/design-system` showcase, Vitest installed (10 tests). Week 1 CLI (due 31 Oct) not started with two days left — at risk; the buffer is already spent. Next: Zod invoice schema and the extraction CLI.
 - **2026-10-29** — Landing page given colour (prompt 002): ink-blue ruled hero, a review preview with a real low-confidence row, the failure ladder in status colours, and a primary closing band. UI only, about an hour. Week 1 CLI is still not started, due 31 Oct. Next: Zod invoice schema and the extraction CLI.
+- **2026-10-29** — Google sign-in added (prompt 003) after the owner moved it into scope, for paid actions only. Server-side PKCE via Supabase Auth: no browser Supabase client, a proxy that refreshes the session and never redirects, `requireUser()` ready for the week-2 upload and extract routes, and an open-redirect guard. 18 Vitest tests. Waiting on the dashboard steps (enable Google, redirect URLs, publishable key, env rename). Week 1 CLI is still not started, due 31 Oct, and is now at serious risk. Next: Zod invoice schema and the extraction CLI.
+- **2026-10-31** — Google sign-in verified live: 1 Google user in `auth.users`, PKCE round-trip confirmed in the Supabase logs. Fixed a Cache Components `Date.now()` prerender error with `await io()` in `createClient()` before the Supabase client is created. The first attempt, before `getClaims()`, was too late and was caught by the owner. The owner should rotate the Supabase secret key and the Google client secret (both were pasted into chat). The week 1 CLI (due today, 31 Oct) is not started, so the week has slipped. Next: Zod invoice schema and the extraction CLI.
+- **2026-11-01** — `/documents` shipped (prompt 004): papertrail schema + `documents` table + private bucket (additive migration), signed-URL upload straight to Storage for signed-in users (PDF/PNG/JPEG/WebP, 10 MB, 20/day counted from Storage), server re-checks size and type from Storage, list from Postgres. Publishable key verified locked out (42501). 30 Vitest tests. Two synthetic sample invoices added. Bugs found: swallowed prerender signal (`unstable_rethrow`), orphaned files on failed insert. Week 1 CLI is now a day overdue, and every week shifts unless week 2 absorbs it. Next: Zod invoice schema and the extraction CLI.

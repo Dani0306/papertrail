@@ -20,6 +20,7 @@ import {
   Upload,
   UserPen,
 } from "lucide-react";
+import { AuthControls } from "@/components/ui/auth-controls";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Button, buttonClasses } from "@/components/ui/button";
@@ -29,6 +30,7 @@ import { Logo } from "@/components/ui/logo";
 import { Nav } from "@/components/ui/nav";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Select } from "@/components/ui/select";
+import { UploadBox } from "@/components/documents/upload-box";
 import { DocumentCard } from "@/components/review/document-card";
 import { DocumentStatus } from "@/components/review/document-status";
 import { FieldList, FieldRow } from "@/components/review/field-row";
@@ -478,6 +480,15 @@ export default function DesignSystemPage() {
               status="escalated"
               flaggedCount={1}
             />
+            <DocumentCard
+              fileName="harbor-pine-inv-2041.pdf"
+              kind="pdf"
+              vendor={null}
+              total={null}
+              meta="184 KB · 31 Oct"
+              status="uploaded"
+              flaggedCount={0}
+            />
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <StatCard icon={Target} label="Field accuracy" value="—" hint="Golden set lands in week 3" />
@@ -486,7 +497,36 @@ export default function DesignSystemPage() {
           </div>
         </Section>
 
-        <Section number="14" title="Navigation" className="lg:col-span-12">
+        <Section number="14" title="Upload" className="lg:col-span-12">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div>
+              <Label>Idle</Label>
+              <UploadBox remaining={17} cap={20} preview={{ kind: "idle" }} />
+            </div>
+            <div>
+              <Label>Uploading</Label>
+              <UploadBox
+                remaining={17}
+                cap={20}
+                preview={{ kind: "uploading", fileName: "harbor-pine-inv-2041.pdf", progress: 0.62 }}
+              />
+            </div>
+            <div>
+              <Label>Error</Label>
+              <UploadBox
+                remaining={17}
+                cap={20}
+                preview={{ kind: "error", message: "notes.txt: Only PDF, PNG, JPEG or WebP files can be uploaded." }}
+              />
+            </div>
+          </div>
+          <p className="mt-2 text-small text-neutral-500">
+            Previews are inert. The live box sits on /documents for signed-in visitors; signed-out
+            visitors see a sign-in prompt instead.
+          </p>
+        </Section>
+
+        <Section number="15" title="Navigation" className="lg:col-span-12">
           <Label>Breadcrumbs</Label>
           <Breadcrumbs
             items={[
@@ -496,9 +536,20 @@ export default function DesignSystemPage() {
             ]}
           />
           <p className="mt-4 text-small text-neutral-500">The top bar of this page is the main nav.</p>
+          <div className="mt-6">
+            <Label>Sign-in control</Label>
+          </div>
+          <div className="flex flex-wrap items-center gap-6">
+            <AuthControls email={null} />
+            <AuthControls email="ada.lovelace@example.com" />
+          </div>
+          <p className="mt-2 text-small text-neutral-500">
+            Signed out, then signed in. Browsing is public; Google sign-in is only required to upload
+            or extract.
+          </p>
         </Section>
 
-        <Section number="15" title="Principles" className="lg:col-span-12">
+        <Section number="16" title="Principles" className="lg:col-span-12">
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {PRINCIPLES.map(({ icon: Icon, title, body }) => (
               <li key={title} className="flex gap-3">

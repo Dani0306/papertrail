@@ -1,5 +1,6 @@
-// Mirrors papertrail.documents.status (AGENTS.md §8). Move into lib/schema as a
-// Zod enum when the schema module exists, and import it from there.
+// Mirrors the status check constraint on papertrail.documents
+// (supabase/migrations/20261031120000_documents.sql); change both together.
+// Move into lib/schema as a Zod enum when the schema module exists.
 export const DOCUMENT_STATUSES = [
   "uploaded",
   "extracting",

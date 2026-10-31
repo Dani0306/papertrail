@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { cn } from "@/lib/cn";
+import { AuthStatus } from "./auth-status";
 import { Badge } from "./badge";
 import { Logo } from "./logo";
 
@@ -15,7 +17,7 @@ export type NavHref = (typeof NAV_ITEMS)[number]["href"];
 export function Nav({ current }: { current?: NavHref }) {
   return (
     <header className="border-b bg-white">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-10 gap-y-3 px-4 py-3 sm:h-16 sm:flex-nowrap sm:px-6 sm:py-0">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-3 sm:gap-x-10 px-4 py-3 sm:h-16 sm:flex-nowrap sm:px-6 sm:py-0">
         <Link
           href="/"
           className="rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-500"
@@ -40,9 +42,13 @@ export function Nav({ current }: { current?: NavHref }) {
             </Link>
           ))}
         </nav>
-        <Badge tone="primary" className="ml-auto">
-          Demo mode
-        </Badge>
+        <div className="ml-auto flex min-w-0 items-center gap-3">
+          <Badge tone="primary">Demo mode</Badge>
+          {/* Reads cookies; the rest of the nav doesn't wait for it. */}
+          <Suspense fallback={null}>
+            <AuthStatus />
+          </Suspense>
+        </div>
       </div>
     </header>
   );
