@@ -1,6 +1,6 @@
 # 003 — Google sign-in for paid actions
 
-**Status:** done (code). Waiting on the owner's dashboard steps for a live Google round-trip.
+**Status:** done. Live Google round-trip verified 31 Oct.
 **Branch:** `feat/google-auth` (stacked on `feat/landing-color` until PRs #1–#3 merge)
 **Week:** 1, but this is week-2 plumbing. The week 1 CLI (due 31 Oct) still hasn't started, and this task pushes it back by roughly one evening.
 
@@ -173,3 +173,11 @@ None. There are no model calls, and Supabase Auth is within the free tier (50k m
   - `GET /auth/sign-out` returns 405. `POST` returns 303 to `/`.
   - Supabase's authorize endpoint currently answers `400 Unsupported provider: provider is not enabled`, which is expected until owner step 2.
 - **Checks:** tsc, lint, Vitest (18 tests: 4 new for `safeNextPath`, 4 for `requestOrigin`) and build all pass.
+- **Live round-trip on 31 Oct:** the owner signed in with Google on `localhost:3000`.
+  - `auth.users` has 1 Google user.
+  - The Supabase edge logs show `authorize` → Google → `callback` → `token?grant_type=pkce` 200.
+  - The owner landed on `/` because the click started on `/` (`next=%2F` in the logs), which is correct.
+- **Bug found live, now fixed:** signed in, dev showed "Next.js encountered the unstable value `Date.now()` while prerendering" at `<AuthStatus />`.
+  - Cause: `getClaims()` reads the clock to check token expiry, and dev prerenders with cookies available, so `cookies()` doesn't suspend first.
+  - Fix: `await io()` (from `next/cache`, Next 16.3+) in `getUser()` before `getClaims()`. It suspends during prerender and resolves immediately on real requests and in route handlers.
+  - tsc, lint, 18 tests and build pass after the fix.
