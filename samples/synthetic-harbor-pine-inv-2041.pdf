@@ -1,0 +1,48 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1185 >>
+stream
+BT
+/F1 20 Tf 1 0 0 1 72 740 Tm (HARBOR & PINE STATIONERS) Tj
+/F1 10 Tf 1 0 0 1 72 720 Tm (118 Quay Street, Portside, OR 97000  -  billing@harborpine.example) Tj
+/F1 16 Tf 1 0 0 1 72 680 Tm (INVOICE) Tj
+/F1 10 Tf 1 0 0 1 72 660 Tm (Invoice # INV-2041) Tj
+/F1 10 Tf 1 0 0 1 72 646 Tm (Issue date: 14/10/2026) Tj
+/F1 10 Tf 1 0 0 1 72 632 Tm (Due date: 13/11/2026) Tj
+/F1 10 Tf 1 0 0 1 72 618 Tm (Bill to: Lumen Design Studio \(synthetic sample\)) Tj
+/F1 10 Tf 1 0 0 1 72 580 Tm (Description                         Qty     Unit price     Line total) Tj
+/F1 10 Tf 1 0 0 1 72 562 Tm (A4 recycled paper, 5-ream box        12        38.50          462.00) Tj
+/F1 10 Tf 1 0 0 1 72 546 Tm (Gel pens, black, pack of 20           8        14.25          114.00) Tj
+/F1 10 Tf 1 0 0 1 72 530 Tm (Archive boxes, kraft                 25        22.90          572.50) Tj
+/F1 10 Tf 1 0 0 1 300 494 Tm (Subtotal \(USD\)                1,148.50) Tj
+/F1 10 Tf 1 0 0 1 300 478 Tm (Tax 11.84%                      136.00) Tj
+/F1 12 Tf 1 0 0 1 300 458 Tm (TOTAL DUE                     1,284.50) Tj
+/F1 8 Tf 1 0 0 1 72 400 Tm (Synthetic document generated for PaperTrail testing. Not a real invoice.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001477 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1547
+%%EOF

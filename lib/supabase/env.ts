@@ -6,6 +6,11 @@ export function supabaseEnv() {
   };
 }
 
+/** Bypasses RLS. Only lib/db may read it. */
+export function supabaseSecretKey(): string {
+  return required("SUPABASE_SECRET_KEY");
+}
+
 function required(name: string): string {
   const value = process.env[name];
   if (!value) {
