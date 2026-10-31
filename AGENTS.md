@@ -55,7 +55,7 @@ Skip the prompt file only for trivial changes (typos, docs, a one-line config fi
 
 When you need a decision, ask through the interactive question panel (AskUserQuestion or your agent's equivalent). Use plain text only if no panel exists.
 
-**Teaching rule.** When the task touches the owner's gap list (Anthropic Messages API, structured outputs vs tool calls, Zod-validated output, `generateObject`, PDF/image input, model choice by measurement, cost/latency logging, retry and fallback, the eval set), explain the decision and the alternative you rejected in two or three sentences, in the prompt file and briefly in chat. Do not explain TypeScript, React, Next.js, Tailwind, Supabase basics or Vitest — the owner already knows them.
+**Teaching rule.** When the task touches the owner's gap list (OpenAI Responses API, structured outputs vs function calls, Zod-validated output, `generateObject`, PDF/image input, model choice by measurement, cost/latency logging, retry and fallback, the eval set), explain the decision and the alternative you rejected in two or three sentences, in the prompt file and briefly in chat. Do not explain TypeScript, React, Next.js, Tailwind, Supabase basics or Vitest — the owner already knows them.
 
 ---
 
@@ -78,9 +78,8 @@ The UI is small: an upload page, a document list, a review screen, and an export
 
 Verify against these before writing code. API shapes, model IDs, pricing and SDK signatures move; never write from memory.
 
-- `claude-api` skill — model IDs, pricing, Messages API params, token counting. Load it before any Anthropic-related code.
-- Anthropic docs (links in `CLAUDE.md` → Reference docs) — Messages API, structured outputs, tool use, PDF support, models, pricing, count tokens.
-- AI SDK docs — `generateObject`, the Anthropic provider, its provider options and the `usage` it returns.
+- OpenAI docs (links in `CLAUDE.md` → Reference docs) — Responses API, structured outputs, function calling, PDF files, images, models, pricing. Fetch them before any model-related code; don't rely on memory for model IDs or prices.
+- AI SDK docs — `generateObject`, the OpenAI provider, its provider options (`strictJsonSchema`, `reasoningEffort`) and the `usage` it returns.
 - `node_modules/next/dist/docs/` — routing, route handlers, server/client boundaries, runtime and body-size limits.
 - Supabase docs — Storage signed upload URLs, custom schemas, migrations.
 - Zod docs — check the installed major version's API before writing schemas.
@@ -121,13 +120,13 @@ Create folders only when a task needs them. Keep these responsibilities apart:
 - **UI**. Server components read and display stored data. Client components handle the upload, the edit fields and the export button, and call server routes for every write.
 - **Evals** (`evals/`). Offline, run deliberately with `npm run eval`. Never imported by the app and never run by `npm test`.
 
-**Boundaries that never bend.** The browser never holds the Anthropic key or the Supabase secret key, never calls the model, and never writes to Postgres directly. Every write — upload registration, extraction, correction — goes through a server route.
+**Boundaries that never bend.** The browser never holds the OpenAI key or the Supabase secret key, never calls the model, and never writes to Postgres directly. Every write — upload registration, extraction, correction — goes through a server route.
 
 ---
 
 # 6. Tech stack
 
-Next.js App Router, TypeScript strict, Tailwind; Vercel AI SDK (`ai` + `@ai-sdk/anthropic`); Zod; Supabase Postgres (schema `papertrail` in the shared "lab" project) and Storage via `@supabase/supabase-js`; SheetJS for XLSX; Vitest; `tsx` for scripts; Vercel Hobby for hosting.
+Next.js App Router, TypeScript strict, Tailwind; Vercel AI SDK (`ai` + `@ai-sdk/openai`); Zod; Supabase Postgres (schema `papertrail` in the shared "lab" project) and Storage via `@supabase/supabase-js`; SheetJS for XLSX; Vitest; `tsx` for scripts; Vercel Hobby for hosting.
 
 Do not use: LangChain, LlamaIndex, OCR libraries, a vector database, a queue service, an auth provider other than Supabase Auth with Google, a new Supabase project, a new language, or any paid service. Do not add a dependency that is not in this list without saying why the skill requires it and what it costs.
 
@@ -138,8 +137,8 @@ Do not use: LangChain, LlamaIndex, OCR libraries, a vector database, a queue ser
 Build to these unless the user changes them.
 
 - **CLI before UI.** Week 1 is `npm run extract <file>` → validated JSON plus a JSONL log line. No Next.js route until the CLI works.
-- **Models.** Primary `claude-haiku-5-5`, escalation `claude-sonnet-5-5`. Confirm the IDs in the models doc before use. Model IDs live in one config module, not scattered string literals.
-- **Model reads the file.** Send the PDF or image as a document/image content part. No OCR, no text pre-extraction.
+- **Models.** OpenAI: primary `gpt-6-luna`, escalation `gpt-6.1-sol` (switched from Anthropic on 1 Nov 2026). Confirm the IDs in the models doc before use. Model IDs live in one config module, not scattered string literals.
+- **Model reads the file.** Send the PDF as a file part (`input_file`) and an image as an image part (`input_image`). No OCR, no text pre-extraction.
 - **Every field carries evidence.** Each extracted field is `{ value, confidence, sourceQuote }`. A value that is not in the document is `null` with low confidence — never guessed. Prefer `.nullable()` over `.optional()` so the model must say "absent" explicitly.
 - **Failure ladder, in this order:** validate → on failure, one repair retry with the Zod error fed back → still failing, rerun on the escalation model → still failing, mark the document `needs_human`. Each step is a logged call. The final state is always one of `extracted`, `escalated`, or `needs_human`; never partial.
 - **Confidence threshold** starts at 0.85, in config, tuned on the golden set in week 3 with the reason written in the README.
@@ -186,14 +185,14 @@ Schema changes go in a new file under `supabase/migrations/`. Ask before anythin
 You cannot infer these from the code.
 
 - **Structured output schemas are a JSON Schema subset.** Some Zod constraints (numeric ranges, string formats, refinements) may be dropped or unsupported when converted for the model. Check the structured-outputs doc. Zod validation after the call is what enforces them — that is the point of validating.
-- **`generateObject` vs tool calls.** The AI SDK decides how it asks the provider for JSON. Check the Anthropic provider docs for which mode it uses and how to switch, so the structured-outputs vs tool-call comparison really compares two different things.
+- **`generateObject` vs tool calls.** The AI SDK decides how it asks the provider for JSON. The OpenAI provider uses the Responses API with a strict json_schema by default (`strictJsonSchema: true`). The function-call variant has to be built deliberately (a strict function tool the model must call), so the comparison really compares two different things. Strict schemas require every property in `required` and `additionalProperties: false`, and express optional values as a union with `null`, which matches the `.nullable()` rule. Check for a `refusal` part and an incomplete status before reading the output.
 - **Token usage comes back on the result.** Read it from the SDK response, not an estimate. Cost = tokens × the per-token price from the pricing page, kept in one table in `lib/cost` with the date it was read. Never invent a price.
-- **PDF input has size and page limits,** and each page costs tokens as both text and image. Check the PDF support doc for current limits and reject oversize files before calling the model.
+- **PDF input has size limits** (50 MB per file and per request), and each page costs tokens as both extracted text and a page image. The `detail` setting (`low`/`high`/`auto`) trades image tokens for fidelity. Check the PDF files doc for current limits and reject oversize files before calling the model.
 - **Vercel request bodies are capped** (a few MB on Hobby). Upload from the browser straight to Storage with a signed upload URL issued by a server route, then pass the storage path to the extract route. Check the current limit in the Vercel docs.
-- **Vercel function duration is capped.** A Sonnet escalation on a multi-page PDF can be slow. Check the Hobby `maxDuration` and set it on the extract route.
+- **Vercel function duration is capped.** An escalation to the stronger model on a multi-page PDF can be slow. Check the Hobby `maxDuration` and set it on the extract route.
 - **Custom Postgres schema.** `supabase-js` only reaches `papertrail` if the schema is exposed in the project's API settings and granted to the right roles. A missing grant shows up as an empty result or a permission error, not a clear message.
 - **Shared lab project.** Other projects live in the same Supabase instance. Touch only the `papertrail` schema and its own Storage bucket.
-- **Evals and CI cost money.** `npm test` must never call the model. The CI eval job needs `ANTHROPIC_API_KEY` as a repo secret; ask before adding it.
+- **Evals and CI cost money.** `npm test` must never call the model. The CI eval job needs `OPENAI_API_KEY` as a repo secret; ask before adding it.
 - **Retries multiply cost.** The ladder is at most one repair and one escalation. No automatic retry on top, except the SDK's own transient-error retry, which still gets logged.
 - **The Next.js block above is managed.** `next dev` rewrites it; leave the markers alone.
 

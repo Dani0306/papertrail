@@ -18,7 +18,7 @@ const STATUS_DISPLAY: Record<
   uploaded: { label: "Uploaded", icon: CircleDashed, tone: "neutral" },
   extracting: { label: "Extracting", icon: LoaderCircle, tone: "primary" },
   extracted: { label: "Extracted", icon: CircleCheck, tone: "success" },
-  escalated: { label: "Escalated to Sonnet", icon: CircleArrowUp, tone: "escalated" },
+  escalated: { label: "Escalated", icon: CircleArrowUp, tone: "escalated" },
   needs_human: { label: "Needs human entry", icon: UserPen, tone: "danger" },
   reviewed: { label: "Reviewed", icon: BadgeCheck, tone: "success" },
 };

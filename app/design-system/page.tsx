@@ -391,7 +391,7 @@ export default function DesignSystemPage() {
             <Badge>Image</Badge>
             <Badge tone="review">Review 62%</Badge>
             <Badge tone="success">94%</Badge>
-            <Badge tone="escalated">Sonnet</Badge>
+            <Badge tone="escalated">Escalated</Badge>
             <Badge tone="danger">Failed</Badge>
             <Badge tone="primary">Corrected</Badge>
           </div>
