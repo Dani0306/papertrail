@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Invoice CR-2026-0587</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    width: 210mm; min-height: 297mm; padding: 18mm 18mm 16mm;
+    font: 10pt/1.45 "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1f2430; background: #fff;
+  }
+  .top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .brand { display: flex; gap: 10px; align-items: center; }
+  .mark { width: 34px; height: 34px; border-radius: 6px; background: #1d4f91; position: relative; }
+  .mark::after { content: ""; position: absolute; left: 7px; right: 7px; bottom: 8px; height: 12px;
+    background: #fff; clip-path: polygon(0 100%, 35% 20%, 55% 60%, 75% 0, 100% 100%); }
+  .brand h1 { margin: 0; font-size: 15pt; letter-spacing: .02em; }
+  .brand p { margin: 0; color: #5b6475; font-size: 8.5pt; }
+  .title { text-align: right; }
+  .title h2 { margin: 0; font-size: 22pt; font-weight: 300; letter-spacing: .12em; color: #1d4f91; }
+  .title p { margin: 2px 0 0; color: #5b6475; }
+  .meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 14mm;
+    padding: 10px 0; border-top: 1px solid #d9dee8; border-bottom: 1px solid #d9dee8; }
+  .meta dt { font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; color: #7a8394; }
+  .meta dd { margin: 2px 0 8px; font-weight: 600; }
+  .parties { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 9mm; }
+  .parties h3 { margin: 0 0 4px; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; color: #7a8394; }
+  .parties p { margin: 0; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10mm; }
+  th { text-align: left; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; color: #7a8394;
+    padding: 8px 6px; border-bottom: 1.5px solid #1d4f91; }
+  td { padding: 9px 6px; border-bottom: 1px solid #e7eaf0; vertical-align: top; }
+  td small { display: block; color: #7a8394; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .totals { margin-left: auto; width: 46%; margin-top: 6mm; }
+  .totals div { display: flex; justify-content: space-between; padding: 4px 6px; font-variant-numeric: tabular-nums; }
+  .totals .due { margin-top: 4px; padding: 9px 6px; background: #1d4f91; color: #fff; font-weight: 700; font-size: 12pt; border-radius: 4px; }
+  .notes { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; margin-top: 14mm; font-size: 8.5pt; color: #3c4352; }
+  .notes h3 { margin: 0 0 4px; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; color: #7a8394; }
+  .notes p { margin: 0 0 3px; }
+  .stamp { margin-top: 12mm; display: inline-block; transform: rotate(-4deg); border: 2px solid #b8323f; color: #b8323f;
+    padding: 4px 12px; font-weight: 700; letter-spacing: .14em; font-size: 9pt; border-radius: 4px; opacity: .85; }
+  footer { position: absolute; left: 18mm; right: 18mm; bottom: 12mm; font-size: 7pt; color: #9aa2b1;
+    border-top: 1px solid #e7eaf0; padding-top: 6px; display: flex; justify-content: space-between; }
+  body { position: relative; }
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand">
+      <div class="mark"></div>
+      <div>
+        <h1>Cobalt Ridge Print Co.</h1>
+        <p>Commercial printing &amp; finishing</p>
+      </div>
+    </div>
+    <div class="title">
+      <h2>INVOICE</h2>
+      <p>No. CR-2026-0587</p>
+    </div>
+  </div>
+
+  <dl class="meta">
+    <div><dt>Invoice date</dt><dd>28 Oct 2026</dd><dt>Due date</dt><dd>27 Nov 2026</dd></div>
+    <div><dt>Purchase order</dt><dd>PO-77341</dd><dt>Payment terms</dt><dd>Net 30</dd></div>
+    <div><dt>Currency</dt><dd>EUR (€)</dd><dt>Customer ID</dt><dd>C-0412</dd></div>
+  </dl>
+
+  <div class="parties">
+    <div>
+      <h3>From</h3>
+      <p><strong>Cobalt Ridge Print Co. S.L.</strong></p>
+      <p>Calle de la Imprenta 14, Nave 3</p>
+      <p>28045 Madrid, Spain</p>
+      <p>VAT ID ESX0000000X</p>
+      <p>accounts@cobaltridge.example</p>
+    </div>
+    <div>
+      <h3>Bill to</h3>
+      <p><strong>Lumen Design Studio</strong></p>
+      <p>Attn: Accounts Payable</p>
+      <p>Avenida del Sol 221, 3º B</p>
+      <p>46004 Valencia, Spain</p>
+      <p>ap@lumendesign.example</p>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th style="width:52%">Description</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Business cards, 400 gsm, soft-touch<small>Box of 500, double-sided</small></td><td class="num">4</td><td class="num">€48.00</td><td class="num">€192.00</td></tr>
+      <tr><td>A2 posters, matte 170 gsm<small>Pack of 50</small></td><td class="num">2</td><td class="num">€135.00</td><td class="num">€270.00</td></tr>
+      <tr><td>Tri-fold brochures, A4<small>Run of 1,000</small></td><td class="num">1</td><td class="num">€389.50</td><td class="num">€389.50</td></tr>
+      <tr><td>Proof revisions<small>Billed per hour</small></td><td class="num">3</td><td class="num">€55.00</td><td class="num">€165.00</td></tr>
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <div><span>Subtotal</span><span>€1,016.50</span></div>
+    <div><span>VAT 21%</span><span>€213.47</span></div>
+    <div class="due"><span>Total due</span><span>€1,229.97</span></div>
+  </div>
+
+  <div class="notes">
+    <div>
+      <h3>Payment</h3>
+      <p>Bank transfer to Banco Ejemplo</p>
+      <p>IBAN ES00 0000 0000 0000 0000 0000</p>
+      <p>Please quote CR-2026-0587 as the reference.</p>
+    </div>
+    <div>
+      <h3>Notes</h3>
+      <p>Thank you for your business. Late payments accrue 1% per month.</p>
+    </div>
+  </div>
+
+  <div class="stamp">RECEIVED 30 OCT 2026</div>
+
+  <footer>
+    <span>Cobalt Ridge Print Co. S.L. · Registro Mercantil de Madrid (fictional)</span>
+    <span>SYNTHETIC SAMPLE FOR PAPERTRAIL TESTING · NOT A REAL INVOICE</span>
+  </footer>
+</body>
+</html>
