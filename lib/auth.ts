@@ -1,5 +1,4 @@
 import "server-only";
-import { io } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 export type SessionUser = { id: string; email: string | null };
@@ -18,10 +17,6 @@ export class UnauthorizedError extends Error {
  */
 export async function getUser(): Promise<SessionUser | null> {
   const supabase = await createClient();
-  // getClaims() reads Date.now() to check expiry. Dev prerenders with cookies available,
-  // so cookies() alone doesn't stop it; io() keeps the clock read out of the prerender.
-  // During a real request (and in route handlers) io() resolves immediately.
-  await io();
   const { data, error } = await supabase.auth.getClaims();
   const claims = data?.claims;
   if (error || !claims?.sub) return null;

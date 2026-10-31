@@ -178,6 +178,8 @@ None. There are no model calls, and Supabase Auth is within the free tier (50k m
   - The Supabase edge logs show `authorize` → Google → `callback` → `token?grant_type=pkce` 200.
   - The owner landed on `/` because the click started on `/` (`next=%2F` in the logs), which is correct.
 - **Bug found live, now fixed:** signed in, dev showed "Next.js encountered the unstable value `Date.now()` while prerendering" at `<AuthStatus />`.
-  - Cause: `getClaims()` reads the clock to check token expiry, and dev prerenders with cookies available, so `cookies()` doesn't suspend first.
-  - Fix: `await io()` (from `next/cache`, Next 16.3+) in `getUser()` before `getClaims()`. It suspends during prerender and resolves immediately on real requests and in route handlers.
+  - Cause: creating the client (`createServerClient`) starts auth-js `initialize()` in the background (`GoTrueClient.js` line 294), which reads `Date.now()` to check session expiry. Dev prerenders with cookies available, so `cookies()` doesn't suspend first.
+  - First fix attempt, wrong: `await io()` in `getUser()` before `getClaims()`. Too late, because the background `initialize()` had already read the clock.
+  - Actual fix: `await io()` (from `next/cache`, Next 16.3+) in `createClient()`, after `cookies()` and before `createServerClient`. It suspends during prerender and resolves immediately on real requests and in route handlers.
+  - Verified on the dev server with an unsigned fake session cookie. Without the fix, `/` and `/design-system` each logged the error. With the fix, 0 errors. Sign-in still returns 307 to Supabase, and a bad callback code still goes to `/auth/error`.
   - tsc, lint, 18 tests and build pass after the fix.
