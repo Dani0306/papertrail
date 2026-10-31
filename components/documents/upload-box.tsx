@@ -139,7 +139,14 @@ export function UploadBox({
         </span>
       </label>
 
-      <div aria-live="polite" className="min-h-6">
+      {!capReached && (
+        <p className="text-small text-neutral-500 tabular-nums">
+          {remaining} of {cap} uploads left today
+        </p>
+      )}
+
+      {/* Last child, so while it's empty it adds no gap under the drop zone. */}
+      <div aria-live="polite">
         {state.kind === "uploading" && (
           <div className="flex flex-col gap-1.5">
             <p className="truncate text-small text-neutral-600">
@@ -163,12 +170,6 @@ export function UploadBox({
           </p>
         )}
       </div>
-
-      {!capReached && (
-        <p className="text-small text-neutral-500 tabular-nums">
-          {remaining} of {cap} uploads left today
-        </p>
-      )}
     </div>
   );
 }
