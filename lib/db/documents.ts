@@ -111,9 +111,13 @@ export async function registerDocument(userId: string, request: RegisterRequest)
     })
     .select("id")
     .single();
-  // 23505: unique_violation on storage_path, i.e. registered twice.
+  // 23505: unique_violation on storage_path, i.e. registered twice. The file belongs to the existing row.
   if (error?.code === "23505") return { ok: false, reason: "duplicate" };
-  if (error) throw dbError("Could not save the document", error);
+  if (error) {
+    // No row means nothing points at the file: remove it so it doesn't linger or count toward the cap.
+    await bucket.remove([request.path]);
+    throw dbError("Could not save the document", error);
+  }
   return { ok: true, id: data.id };
 }
 
