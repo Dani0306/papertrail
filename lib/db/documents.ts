@@ -34,7 +34,7 @@ export async function listDocuments(limit = 60): Promise<DocumentSummary[]> {
     .select("id, original_filename, mime_type, size_bytes, page_count, status, created_at")
     .order("created_at", { ascending: false })
     .limit(limit);
-  if (error) throw new Error(`Could not load documents: ${error.message}`);
+  if (error) throw dbError("Could not load documents", error);
   return data.map(toSummary);
 }
 
@@ -113,8 +113,19 @@ export async function registerDocument(userId: string, request: RegisterRequest)
     .single();
   // 23505: unique_violation on storage_path, i.e. registered twice.
   if (error?.code === "23505") return { ok: false, reason: "duplicate" };
-  if (error) throw new Error(`Could not save the document: ${error.message}`);
+  if (error) throw dbError("Could not save the document", error);
   return { ok: true, id: data.id };
+}
+
+/** PGRST106 is a setup step, not a bug, so name the fix instead of passing on "Invalid schema". */
+function dbError(context: string, error: { code?: string; message: string }): Error {
+  if (error.code === "PGRST106") {
+    return new Error(
+      `${context}: the papertrail schema isn't exposed to the Data API. ` +
+        "Add it in Supabase → Settings → API → Exposed schemas.",
+    );
+  }
+  return new Error(`${context}: ${error.message}`);
 }
 
 function toSummary(row: Pick<Row, "id" | "original_filename" | "mime_type" | "size_bytes" | "page_count" | "status" | "created_at">): DocumentSummary {
