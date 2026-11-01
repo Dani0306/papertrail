@@ -5,7 +5,7 @@ import { AuthStatus } from "./auth-status";
 import { Badge } from "./badge";
 import { Logo } from "./logo";
 
-// Routes land in week 2; until then these links 404.
+// /exports lands with the CSV and XLSX export; until then that link 404s.
 const NAV_ITEMS = [
   { href: "/documents", label: "Documents" },
   { href: "/review", label: "Review queue" },
