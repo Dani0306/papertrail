@@ -1,0 +1,4085 @@
+{
+  "date": "2026-11-01",
+  "models": [
+    "gpt-6-luna"
+  ],
+  "reps": 1,
+  "threshold": 0.85,
+  "stoppedAtLimit": false,
+  "totalCostUsd": 0.006589,
+  "byModel": {
+    "gpt-6-luna": {
+      "documents": 11,
+      "fields": 324,
+      "accuracy": 0.9969,
+      "accuracyByRep": [
+        0.9969
+      ],
+      "silentErrorsPerDoc": 0,
+      "caughtErrorsPerDoc": 0.09,
+      "hallucinatedRate": 0,
+      "firstTryValidRate": 1,
+      "repaired": 0,
+      "needsHuman": 0,
+      "failed": 0,
+      "meanCostUsd": 0.000599,
+      "totalCostUsd": 0.006589,
+      "p50LatencyMs": 5122,
+      "p95LatencyMs": 20879,
+      "meanInputTokens": 4266,
+      "meanCachedInputTokens": 2186,
+      "meanOutputTokens": 738,
+      "meanReasoningTokens": 0,
+      "byKey": [
+        {
+          "key": "invoiceNumber",
+          "accuracy": 0.9091,
+          "correct": 10,
+          "total": 11,
+          "silent": 0
+        },
+        {
+          "key": "currency",
+          "accuracy": 1,
+          "correct": 11,
+          "total": 11,
+          "silent": 0
+        },
+        {
+          "key": "dueDate",
+          "accuracy": 1,
+          "correct": 11,
+          "total": 11,
+          "silent": 0
+        },
+        {
+          "key": "issueDate",
+          "accuracy": 1,
+          "correct": 11,
+          "total": 11,
+          "silent": 0
+        },
+        {
+          "key": "lineItems.description",
+          "accuracy": 1,
+          "correct": 59,
+          "total": 59,
+          "silent": 0
+        },
+        {
+          "key": "lineItems.lineTotal",
+          "accuracy": 1,
+          "correct": 59,
+          "total": 59,
+          "silent": 0
+        },
+        {
+          "key": "lineItems.qty",
+          "accuracy": 1,
+          "correct": 59,
+          "total": 59,
+          "silent": 0
+        },
+        {
+          "key": "lineItems.unitPrice",
+          "accuracy": 1,
+          "correct": 59,
+          "total": 59,
+          "silent": 0
+        },
+        {
+          "key": "subtotal",
+          "accuracy": 1,
+          "correct": 11,
+          "total": 11,
+          "silent": 0
+        },
+        {
+          "key": "tax",
+          "accuracy": 1,
+          "correct": 11,
+          "total": 11,
+          "silent": 0
+        },
+        {
+          "key": "total",
+          "accuracy": 1,
+          "correct": 11,
+          "total": 11,
+          "silent": 0
+        },
+        {
+          "key": "vendor",
+          "accuracy": 1,
+          "correct": 11,
+          "total": 11,
+          "silent": 0
+        }
+      ],
+      "byDocument": [
+        {
+          "file": "synthetic-quarry-ash-ambiguous.pdf",
+          "accuracy": 0.9583,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": [
+            "invoiceNumber wrong (flagged) ×1"
+          ]
+        },
+        {
+          "file": "synthetic-brightwater-two-page.pdf",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-cobalt-ridge-inv-0587.pdf",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-cobalt-ridge-inv-0587.png",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-ferreteria-andina-factura.pdf",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-harbor-pine-inv-2041.pdf",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-kestrel-receipt-scan.png",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-meridian-fax.png",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-north-meadow-no-due-date.pdf",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-orchard-labs-discount.pdf",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        },
+        {
+          "file": "synthetic-tallow-lane-photo.jpg",
+          "accuracy": 1,
+          "statuses": [
+            "extracted"
+          ],
+          "errors": []
+        }
+      ]
+    }
+  },
+  "runs": [
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-brightwater-two-page.pdf",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00210304,
+      "latencyMs": 20879,
+      "inputTokens": 9178,
+      "cachedInputTokens": 2164,
+      "outputTokens": 2760,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-brightwater-two-page.pdf",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "Brightwater Lab Supplies"
+            ],
+            "got": "Brightwater Lab Supplies",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "BW-90314"
+            ],
+            "got": "BW-90314",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-27"
+            ],
+            "got": "October 27, 2026",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-26"
+            ],
+            "got": "November 26, 2026",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "USD"
+            ],
+            "got": "USD",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              1269.25
+            ],
+            "got": 1269.25,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              79.33
+            ],
+            "got": 79.33,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              1348.58
+            ],
+            "got": 1348.58,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Nitrile gloves, M, box of 100"
+            ],
+            "got": "Nitrile gloves, M, box of 100",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              11.2
+            ],
+            "got": 11.2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              11.2
+            ],
+            "got": 11.2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Pipette tips, 200 µL, rack"
+            ],
+            "got": "Pipette tips, 200 µL, rack",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              2
+            ],
+            "got": 2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              7.45
+            ],
+            "got": 7.45,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              14.9
+            ],
+            "got": 14.9,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Microcentrifuge tubes, 1.5 mL, 500"
+            ],
+            "got": "Microcentrifuge tubes, 1.5 mL, 500",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              3
+            ],
+            "got": 3,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              18.9
+            ],
+            "got": 18.9,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              56.7
+            ],
+            "got": 56.7,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Petri dishes, 90 mm, sleeve of 20"
+            ],
+            "got": "Petri dishes, 90 mm, sleeve of 20",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              9.6
+            ],
+            "got": 9.6,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              38.4
+            ],
+            "got": 38.4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[4].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Lab marker, fine, black"
+            ],
+            "got": "Lab marker, fine, black",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[4].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              5
+            ],
+            "got": 5,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[4].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              2.15
+            ],
+            "got": 2.15,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[4].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              10.75
+            ],
+            "got": 10.75,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[5].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Parafilm M, 4 in roll"
+            ],
+            "got": "Parafilm M, 4 in roll",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[5].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[5].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              36.4
+            ],
+            "got": 36.4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[5].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              36.4
+            ],
+            "got": 36.4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[6].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Serological pipettes, 10 mL, 50"
+            ],
+            "got": "Serological pipettes, 10 mL, 50",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[6].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              2
+            ],
+            "got": 2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[6].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              21.75
+            ],
+            "got": 21.75,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[6].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              43.5
+            ],
+            "got": 43.5,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[7].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Conical tubes, 50 mL, 25"
+            ],
+            "got": "Conical tubes, 50 mL, 25",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[7].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              3
+            ],
+            "got": 3,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[7].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              14.3
+            ],
+            "got": 14.3,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[7].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              42.9
+            ],
+            "got": 42.9,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[8].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Weighing boats, medium, 500"
+            ],
+            "got": "Weighing boats, medium, 500",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[8].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[8].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              16.8
+            ],
+            "got": 16.8,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[8].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              67.2
+            ],
+            "got": 67.2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[9].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Kimwipes, box of 280"
+            ],
+            "got": "Kimwipes, box of 280",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[9].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              5
+            ],
+            "got": 5,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[9].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              5.95
+            ],
+            "got": 5.95,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[9].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              29.75
+            ],
+            "got": 29.75,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[10].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Cryo labels, roll of 1000"
+            ],
+            "got": "Cryo labels, roll of 1000",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[10].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[10].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              27.1
+            ],
+            "got": 27.1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[10].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              27.1
+            ],
+            "got": 27.1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[11].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Bench liner, 20 in × 50 ft"
+            ],
+            "got": "Bench liner, 20 in × 50 ft",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[11].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              2
+            ],
+            "got": 2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[11].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              44.25
+            ],
+            "got": 44.25,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[11].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              88.5
+            ],
+            "got": 88.5,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[12].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Glass beaker, 250 mL"
+            ],
+            "got": "Glass beaker, 250 mL",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[12].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              3
+            ],
+            "got": 3,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[12].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              6.4
+            ],
+            "got": 6.4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[12].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              19.2
+            ],
+            "got": 19.2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[13].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Nitrile gloves, M, box of 100 (lot B)"
+            ],
+            "got": "Nitrile gloves, M, box of 100 (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[13].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[13].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              11.2
+            ],
+            "got": 11.2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[13].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              44.8
+            ],
+            "got": 44.8,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[14].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Pipette tips, 200 µL, rack (lot B)"
+            ],
+            "got": "Pipette tips, 200 µL, rack (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[14].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              5
+            ],
+            "got": 5,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[14].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              7.45
+            ],
+            "got": 7.45,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[14].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              37.25
+            ],
+            "got": 37.25,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[15].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Microcentrifuge tubes, 1.5 mL, 500 (lot B)"
+            ],
+            "got": "Microcentrifuge tubes, 1.5 mL, 500 (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[15].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[15].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              18.9
+            ],
+            "got": 18.9,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[15].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              18.9
+            ],
+            "got": 18.9,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[16].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Petri dishes, 90 mm, sleeve of 20 (lot B)"
+            ],
+            "got": "Petri dishes, 90 mm, sleeve of 20 (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[16].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              2
+            ],
+            "got": 2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[16].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              9.6
+            ],
+            "got": 9.6,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[16].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              19.2
+            ],
+            "got": 19.2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[17].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Lab marker, fine, black (lot B)"
+            ],
+            "got": "Lab marker, fine, black (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[17].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              3
+            ],
+            "got": 3,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[17].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              2.15
+            ],
+            "got": 2.15,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[17].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              6.45
+            ],
+            "got": 6.45,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[18].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Parafilm M, 4 in roll (lot B)"
+            ],
+            "got": "Parafilm M, 4 in roll (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[18].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[18].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              36.4
+            ],
+            "got": 36.4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[18].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              145.6
+            ],
+            "got": 145.6,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[19].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Serological pipettes, 10 mL, 50 (lot B)"
+            ],
+            "got": "Serological pipettes, 10 mL, 50 (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[19].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              5
+            ],
+            "got": 5,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[19].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              21.75
+            ],
+            "got": 21.75,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[19].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              108.75
+            ],
+            "got": 108.75,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[20].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Conical tubes, 50 mL, 25 (lot B)"
+            ],
+            "got": "Conical tubes, 50 mL, 25 (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[20].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[20].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              14.3
+            ],
+            "got": 14.3,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[20].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              14.3
+            ],
+            "got": 14.3,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[21].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Weighing boats, medium, 500 (lot B)"
+            ],
+            "got": "Weighing boats, medium, 500 (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[21].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              2
+            ],
+            "got": 2,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[21].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              16.8
+            ],
+            "got": 16.8,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[21].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              33.6
+            ],
+            "got": 33.6,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[22].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Kimwipes, box of 280 (lot B)"
+            ],
+            "got": "Kimwipes, box of 280 (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[22].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              3
+            ],
+            "got": 3,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[22].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              5.95
+            ],
+            "got": 5.95,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[22].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              17.85
+            ],
+            "got": 17.85,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[23].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Cryo labels, roll of 1000 (lot B)"
+            ],
+            "got": "Cryo labels, roll of 1000 (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[23].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[23].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              27.1
+            ],
+            "got": 27.1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[23].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              108.4
+            ],
+            "got": 108.4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[24].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Bench liner, 20 in × 50 ft (lot B)"
+            ],
+            "got": "Bench liner, 20 in × 50 ft (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[24].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              5
+            ],
+            "got": 5,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[24].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              44.25
+            ],
+            "got": 44.25,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[24].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              221.25
+            ],
+            "got": 221.25,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[25].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Glass beaker, 250 mL (lot B)"
+            ],
+            "got": "Glass beaker, 250 mL (lot B)",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[25].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[25].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              6.4
+            ],
+            "got": 6.4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[25].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              6.4
+            ],
+            "got": 6.4,
+            "confidence": 1,
+            "flagged": false
+          }
+        ],
+        "correct": 112,
+        "total": 112,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-cobalt-ridge-inv-0587.pdf",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00041064,
+      "latencyMs": 6081,
+      "inputTokens": 2759,
+      "cachedInputTokens": 2164,
+      "outputTokens": 659,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-cobalt-ridge-inv-0587.pdf",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "Cobalt Ridge Print Co.",
+              "Cobalt Ridge Print Co. S.L."
+            ],
+            "got": "Cobalt Ridge Print Co. S.L.",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "CR-2026-0587"
+            ],
+            "got": "CR-2026-0587",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-28"
+            ],
+            "got": "28 Oct 2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-27"
+            ],
+            "got": "27 Nov 2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "EUR"
+            ],
+            "got": "EUR",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              1016.5
+            ],
+            "got": 1016.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              213.47
+            ],
+            "got": 213.47,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              1229.97
+            ],
+            "got": 1229.97,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Business cards, 400 gsm, soft-touch",
+              "Business cards, 400 gsm, soft-touch Box of 500, double-sided",
+              "Business cards, 400 gsm, soft-touch / Box of 500, double-sided",
+              "Business cards, 400 gsm, soft-touch - Box of 500, double-sided",
+              "Business cards, 400 gsm, soft-touch, Box of 500, double-sided"
+            ],
+            "got": "Business cards, 400 gsm, soft-touch\nBox of 500, double-sided",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              48
+            ],
+            "got": 48,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              192
+            ],
+            "got": 192,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "A2 posters, matte 170 gsm",
+              "A2 posters, matte 170 gsm Pack of 50",
+              "A2 posters, matte 170 gsm / Pack of 50",
+              "A2 posters, matte 170 gsm - Pack of 50",
+              "A2 posters, matte 170 gsm, Pack of 50"
+            ],
+            "got": "A2 posters, matte 170 gsm\nPack of 50",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              2
+            ],
+            "got": 2,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              135
+            ],
+            "got": 135,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              270
+            ],
+            "got": 270,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Tri-fold brochures, A4",
+              "Tri-fold brochures, A4 Run of 1,000",
+              "Tri-fold brochures, A4 / Run of 1,000",
+              "Tri-fold brochures, A4 - Run of 1,000",
+              "Tri-fold brochures, A4, Run of 1,000"
+            ],
+            "got": "Tri-fold brochures, A4\nRun of 1,000",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              389.5
+            ],
+            "got": 389.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              389.5
+            ],
+            "got": 389.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Proof revisions",
+              "Proof revisions Billed per hour",
+              "Proof revisions / Billed per hour",
+              "Proof revisions - Billed per hour",
+              "Proof revisions, Billed per hour"
+            ],
+            "got": "Proof revisions\nBilled per hour",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              3
+            ],
+            "got": 3,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              55
+            ],
+            "got": 55,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              165
+            ],
+            "got": 165,
+            "confidence": 0.99,
+            "flagged": false
+          }
+        ],
+        "correct": 24,
+        "total": 24,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-cobalt-ridge-inv-0587.png",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00057624,
+      "latencyMs": 5352,
+      "inputTokens": 4725,
+      "cachedInputTokens": 2164,
+      "outputTokens": 597,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-cobalt-ridge-inv-0587.png",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "Cobalt Ridge Print Co.",
+              "Cobalt Ridge Print Co. S.L."
+            ],
+            "got": "Cobalt Ridge Print Co. S.L.",
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "CR-2026-0587"
+            ],
+            "got": "CR-2026-0587",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-28"
+            ],
+            "got": "28 Oct 2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-27"
+            ],
+            "got": "27 Nov 2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "EUR"
+            ],
+            "got": "EUR",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              1016.5
+            ],
+            "got": 1016.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              213.47
+            ],
+            "got": 213.47,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              1229.97
+            ],
+            "got": 1229.97,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Business cards, 400 gsm, soft-touch",
+              "Business cards, 400 gsm, soft-touch Box of 500, double-sided",
+              "Business cards, 400 gsm, soft-touch / Box of 500, double-sided",
+              "Business cards, 400 gsm, soft-touch - Box of 500, double-sided",
+              "Business cards, 400 gsm, soft-touch, Box of 500, double-sided"
+            ],
+            "got": "Business cards, 400 gsm, soft-touch",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              48
+            ],
+            "got": 48,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              192
+            ],
+            "got": 192,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "A2 posters, matte 170 gsm",
+              "A2 posters, matte 170 gsm Pack of 50",
+              "A2 posters, matte 170 gsm / Pack of 50",
+              "A2 posters, matte 170 gsm - Pack of 50",
+              "A2 posters, matte 170 gsm, Pack of 50"
+            ],
+            "got": "A2 posters, matte 170 gsm",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              2
+            ],
+            "got": 2,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              135
+            ],
+            "got": 135,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              270
+            ],
+            "got": 270,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Tri-fold brochures, A4",
+              "Tri-fold brochures, A4 Run of 1,000",
+              "Tri-fold brochures, A4 / Run of 1,000",
+              "Tri-fold brochures, A4 - Run of 1,000",
+              "Tri-fold brochures, A4, Run of 1,000"
+            ],
+            "got": "Tri-fold brochures, A4",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              389.5
+            ],
+            "got": 389.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              389.5
+            ],
+            "got": 389.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Proof revisions",
+              "Proof revisions Billed per hour",
+              "Proof revisions / Billed per hour",
+              "Proof revisions - Billed per hour",
+              "Proof revisions, Billed per hour"
+            ],
+            "got": "Proof revisions",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              3
+            ],
+            "got": 3,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              55
+            ],
+            "got": 55,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              165
+            ],
+            "got": 165,
+            "confidence": 0.99,
+            "flagged": false
+          }
+        ],
+        "correct": 24,
+        "total": 24,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-ferreteria-andina-factura.pdf",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00063974,
+      "latencyMs": 5122,
+      "inputTokens": 5665,
+      "cachedInputTokens": 2164,
+      "outputTokens": 536,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-ferreteria-andina-factura.pdf",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "FERRETERÍA ANDINA S.A.S.",
+              "Ferretería Andina"
+            ],
+            "got": "FERRETERÍA ANDINA S.A.S.",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "FE-10457"
+            ],
+            "got": "FE-10457",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-15"
+            ],
+            "got": "15/10/2026",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-14"
+            ],
+            "got": "14/11/2026",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "COP"
+            ],
+            "got": "COP",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              2629000
+            ],
+            "got": 2629000,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              499510
+            ],
+            "got": 499510,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              3128510
+            ],
+            "got": 3128510,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Cemento gris, bulto 50 kg"
+            ],
+            "got": "Cemento gris, bulto 50 kg",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              40
+            ],
+            "got": 40,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              32500
+            ],
+            "got": 32500,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              1300000
+            ],
+            "got": 1300000,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Varilla corrugada 1/2\", 6 m"
+            ],
+            "got": "Varilla corrugada 1/2\", 6 m",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              60
+            ],
+            "got": 60,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              18900
+            ],
+            "got": 18900,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              1134000
+            ],
+            "got": 1134000,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Alambre negro calibre 18, kg"
+            ],
+            "got": "Alambre negro calibre 18, kg",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              25
+            ],
+            "got": 25,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              7800
+            ],
+            "got": 7800,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              195000
+            ],
+            "got": 195000,
+            "confidence": 1,
+            "flagged": false
+          }
+        ],
+        "correct": 20,
+        "total": 20,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-harbor-pine-inv-2041.pdf",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00032634,
+      "latencyMs": 4649,
+      "inputTokens": 2531,
+      "cachedInputTokens": 2164,
+      "outputTokens": 536,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-harbor-pine-inv-2041.pdf",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "HARBOR & PINE STATIONERS"
+            ],
+            "got": "HARBOR & PINE STATIONERS",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "INV-2041"
+            ],
+            "got": "INV-2041",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-14"
+            ],
+            "got": "14/10/2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-13"
+            ],
+            "got": "13/11/2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "USD"
+            ],
+            "got": "USD",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              1148.5
+            ],
+            "got": 1148.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              136
+            ],
+            "got": 136,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              1284.5
+            ],
+            "got": 1284.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "A4 recycled paper, 5-ream box"
+            ],
+            "got": "A4 recycled paper, 5-ream box",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              12
+            ],
+            "got": 12,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              38.5
+            ],
+            "got": 38.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              462
+            ],
+            "got": 462,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Gel pens, black, pack of 20"
+            ],
+            "got": "Gel pens, black, pack of 20",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              8
+            ],
+            "got": 8,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              14.25
+            ],
+            "got": 14.25,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              114
+            ],
+            "got": 114,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Archive boxes, kraft"
+            ],
+            "got": "Archive boxes, kraft",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              25
+            ],
+            "got": 25,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              22.9
+            ],
+            "got": 22.9,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              572.5
+            ],
+            "got": 572.5,
+            "confidence": 0.99,
+            "flagged": false
+          }
+        ],
+        "correct": 20,
+        "total": 20,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-kestrel-receipt-scan.png",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00033954,
+      "latencyMs": 5476,
+      "inputTokens": 3053,
+      "cachedInputTokens": 2164,
+      "outputTokens": 458,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-kestrel-receipt-scan.png",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "KESTREL COFFEE ROASTERS"
+            ],
+            "got": "KESTREL COFFEE ROASTERS",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "000482",
+              "#000482"
+            ],
+            "got": "#000482",
+            "confidence": 0.95,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-30"
+            ],
+            "got": "10/30/2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              null
+            ],
+            "got": null,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "USD"
+            ],
+            "got": "USD",
+            "confidence": 0.94,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              29.1
+            ],
+            "got": 29.1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              1.75
+            ],
+            "got": 1.75,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              30.85
+            ],
+            "got": 30.85,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Latte 12oz",
+              "2 Latte 12oz"
+            ],
+            "got": "Latte 12oz",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              2
+            ],
+            "got": 2,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              null
+            ],
+            "got": null,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              9.5
+            ],
+            "got": 9.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Butter croissant",
+              "1 Butter croissant"
+            ],
+            "got": "Butter croissant",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              null
+            ],
+            "got": null,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              3.6
+            ],
+            "got": 3.6,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Ethiopia beans 340g",
+              "1 Ethiopia beans 340g"
+            ],
+            "got": "Ethiopia beans 340g",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              null
+            ],
+            "got": null,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              16
+            ],
+            "got": 16,
+            "confidence": 0.99,
+            "flagged": false
+          }
+        ],
+        "correct": 20,
+        "total": 20,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-meridian-fax.png",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00035774,
+      "latencyMs": 4904,
+      "inputTokens": 3005,
+      "cachedInputTokens": 2164,
+      "outputTokens": 504,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-meridian-fax.png",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "Meridian Office Partners Ltd",
+              "Meridian Office Partners"
+            ],
+            "got": "Meridian Office Partners Ltd",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "MOP-55120"
+            ],
+            "got": "MOP-55120",
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-21"
+            ],
+            "got": "21/10/2026",
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-20"
+            ],
+            "got": "20/11/2026",
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "GBP"
+            ],
+            "got": "GBP",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              1134
+            ],
+            "got": 1134,
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              226.8
+            ],
+            "got": 226.8,
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              1360.8
+            ],
+            "got": 1360.8,
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Ergonomic desk chair, mesh"
+            ],
+            "got": "Ergonomic desk chair, mesh",
+            "confidence": 0.96,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              189
+            ],
+            "got": 189,
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              756
+            ],
+            "got": 756,
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Dual monitor arm"
+            ],
+            "got": "Dual monitor arm",
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              64.5
+            ],
+            "got": 64.5,
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              258
+            ],
+            "got": 258,
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "On-site installation"
+            ],
+            "got": "On-site installation",
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              120
+            ],
+            "got": 120,
+            "confidence": 0.98,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              120
+            ],
+            "got": 120,
+            "confidence": 0.98,
+            "flagged": false
+          }
+        ],
+        "correct": 20,
+        "total": 20,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-north-meadow-no-due-date.pdf",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00060204,
+      "latencyMs": 4729,
+      "inputTokens": 5513,
+      "cachedInputTokens": 2164,
+      "outputTokens": 491,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-north-meadow-no-due-date.pdf",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "North Meadow Florals"
+            ],
+            "got": "North Meadow Florals",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "NMF-3307"
+            ],
+            "got": "NMF-3307",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-19"
+            ],
+            "got": "2026-10-19",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              null
+            ],
+            "got": null,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "CAD"
+            ],
+            "got": "CAD",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              295
+            ],
+            "got": 295,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              14.75
+            ],
+            "got": 14.75,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              309.75
+            ],
+            "got": 309.75,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Peonies, coral, bunch of 5"
+            ],
+            "got": "Peonies, coral, bunch of 5",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              15
+            ],
+            "got": 15,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              12
+            ],
+            "got": 12,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              180
+            ],
+            "got": 180,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Ranunculus, mixed, stem"
+            ],
+            "got": "Ranunculus, mixed, stem",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              20
+            ],
+            "got": 20,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              4.5
+            ],
+            "got": 4.5,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              90
+            ],
+            "got": 90,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Same-day delivery"
+            ],
+            "got": "Same-day delivery",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              25
+            ],
+            "got": 25,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              25
+            ],
+            "got": 25,
+            "confidence": 0.99,
+            "flagged": false
+          }
+        ],
+        "correct": 20,
+        "total": 20,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-orchard-labs-discount.pdf",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00031944,
+      "latencyMs": 4880,
+      "inputTokens": 2527,
+      "cachedInputTokens": 2164,
+      "outputTokens": 523,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-orchard-labs-discount.pdf",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "Orchard Labs Consulting LLC",
+              "Orchard Labs Consulting"
+            ],
+            "got": "Orchard Labs Consulting LLC",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "OL-2026-117"
+            ],
+            "got": "OL-2026-117",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-09"
+            ],
+            "got": "10/09/2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-08"
+            ],
+            "got": "11/08/2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "USD"
+            ],
+            "got": "USD",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              3186
+            ],
+            "got": 3186,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              0
+            ],
+            "got": 0,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              3186
+            ],
+            "got": 3186,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Strategy workshop (1 day)"
+            ],
+            "got": "Strategy workshop (1 day)",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              2400
+            ],
+            "got": 2400,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              2400
+            ],
+            "got": 2400,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Analytics setup, hours"
+            ],
+            "got": "Analytics setup, hours",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              12
+            ],
+            "got": 12,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              95
+            ],
+            "got": 95,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              1140
+            ],
+            "got": 1140,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Early-client discount (10%)"
+            ],
+            "got": "Early-client discount (10%)",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              1
+            ],
+            "got": 1,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              -354
+            ],
+            "got": -354,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              -354
+            ],
+            "got": -354,
+            "confidence": 0.99,
+            "flagged": false
+          }
+        ],
+        "correct": 20,
+        "total": 20,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-quarry-ash-ambiguous.pdf",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00031681,
+      "latencyMs": 5731,
+      "inputTokens": 2543,
+      "cachedInputTokens": 2411,
+      "outputTokens": 559,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-quarry-ash-ambiguous.pdf",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "QUARRY & ASH HARDWARE"
+            ],
+            "got": "QUARRY & ASH HARDWARE",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "wrong",
+            "expected": [
+              "QA-2061"
+            ],
+            "got": "QA-2O61",
+            "confidence": 0.8,
+            "flagged": true
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-24"
+            ],
+            "got": "2026-10-24",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-23"
+            ],
+            "got": "2026-11-23",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "USD"
+            ],
+            "got": "USD",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              566.8
+            ],
+            "got": 566.8,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              45.34
+            ],
+            "got": 45.34,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              612.14
+            ],
+            "got": 612.14,
+            "confidence": 0.78,
+            "flagged": true
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Butt hinges, satin, 3 in"
+            ],
+            "got": "Butt hinges, satin, 3 in",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              40
+            ],
+            "got": 40,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              3.25
+            ],
+            "got": 3.25,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              130
+            ],
+            "got": 130,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Wood screws, box of 200"
+            ],
+            "got": "Wood screws, box of 200",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              12
+            ],
+            "got": 12,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              8.9
+            ],
+            "got": 8.9,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              106.8
+            ],
+            "got": 106.8,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Deck stain, 5 L"
+            ],
+            "got": "Deck stain, 5 L",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              6
+            ],
+            "got": 6,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              42.5
+            ],
+            "got": 42.5,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              255
+            ],
+            "got": 255,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Pry bar, 24 in"
+            ],
+            "got": "Pry bar, 24 in",
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              4
+            ],
+            "got": 4,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              18.75
+            ],
+            "got": 18.75,
+            "confidence": 1,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[3].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              75
+            ],
+            "got": 75,
+            "confidence": 1,
+            "flagged": false
+          }
+        ],
+        "correct": 23,
+        "total": 24,
+        "silentErrors": 0,
+        "caughtErrors": 1,
+        "hallucinated": 0
+      }
+    },
+    {
+      "model": "gpt-6-luna",
+      "rep": 1,
+      "file": "synthetic-tallow-lane-photo.jpg",
+      "attempts": 1,
+      "firstTryValid": true,
+      "costUsd": 0.00059714,
+      "latencyMs": 4744,
+      "inputTokens": 5424,
+      "cachedInputTokens": 2164,
+      "outputTokens": 499,
+      "reasoningTokens": 0,
+      "score": {
+        "file": "synthetic-tallow-lane-photo.jpg",
+        "status": "extracted",
+        "fields": [
+          {
+            "name": "vendor",
+            "key": "vendor",
+            "verdict": "correct",
+            "expected": [
+              "Tallow Lane",
+              "Tallow Lane Bakery Supply Co."
+            ],
+            "got": "TALLOW LANE",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "invoiceNumber",
+            "key": "invoiceNumber",
+            "verdict": "correct",
+            "expected": [
+              "TLS-48812"
+            ],
+            "got": "TLS-48812",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "issueDate",
+            "key": "issueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-10-22"
+            ],
+            "got": "Oct 22, 2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "dueDate",
+            "key": "dueDate",
+            "verdict": "correct",
+            "expected": [
+              "2026-11-21"
+            ],
+            "got": "Nov 21, 2026",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "currency",
+            "key": "currency",
+            "verdict": "correct",
+            "expected": [
+              "USD"
+            ],
+            "got": "USD",
+            "confidence": 0.96,
+            "flagged": false
+          },
+          {
+            "name": "subtotal",
+            "key": "subtotal",
+            "verdict": "correct",
+            "expected": [
+              472.85
+            ],
+            "got": 472.85,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "tax",
+            "key": "tax",
+            "verdict": "correct",
+            "expected": [
+              34.28
+            ],
+            "got": 34.28,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "total",
+            "key": "total",
+            "verdict": "correct",
+            "expected": [
+              507.13
+            ],
+            "got": 507.13,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Bread flour, 25 kg sack"
+            ],
+            "got": "Bread flour, 25 kg sack",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              6
+            ],
+            "got": 6,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              31.4
+            ],
+            "got": 31.4,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[0].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              188.4
+            ],
+            "got": 188.4,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Unsalted butter, case of 36"
+            ],
+            "got": "Unsalted butter, case of 36",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              3
+            ],
+            "got": 3,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              72.15
+            ],
+            "got": 72.15,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[1].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              216.45
+            ],
+            "got": 216.45,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].description",
+            "key": "lineItems.description",
+            "verdict": "correct",
+            "expected": [
+              "Parchment paper rolls"
+            ],
+            "got": "Parchment paper rolls",
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].qty",
+            "key": "lineItems.qty",
+            "verdict": "correct",
+            "expected": [
+              10
+            ],
+            "got": 10,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].unitPrice",
+            "key": "lineItems.unitPrice",
+            "verdict": "correct",
+            "expected": [
+              6.8
+            ],
+            "got": 6.8,
+            "confidence": 0.99,
+            "flagged": false
+          },
+          {
+            "name": "lineItems[2].lineTotal",
+            "key": "lineItems.lineTotal",
+            "verdict": "correct",
+            "expected": [
+              68
+            ],
+            "got": 68,
+            "confidence": 0.99,
+            "flagged": false
+          }
+        ],
+        "correct": 20,
+        "total": 20,
+        "silentErrors": 0,
+        "caughtErrors": 0,
+        "hallucinated": 0
+      }
+    }
+  ]
+}
