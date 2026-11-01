@@ -103,12 +103,12 @@ The measurement decides which one is the default.
 
 ## Acceptance criteria
 
-- [ ] 10 samples render from source, and `samples/README.md` lists the traps and the key expected values.
-- [ ] `npm run extract <file> --mode function_call` works end to end on a sample.
-- [ ] `npm run compare:modes` finishes under $0.25 and writes `evals/runs/2026-11-01-modes.json`.
-- [ ] The Results section has a per-mode table (first-try valid, repaired, needs_human, cost per doc, p50/p95 latency), the agreement and the confidence picked up on the trap fields, and the chosen default with its reason.
-- [ ] CLAUDE.md open question #2 is answered with numbers.
-- [ ] tsc, lint, test and build pass.
+- [x] 10 samples render from source, and `samples/README.md` lists the traps and the key expected values.
+- [x] `npm run extract <file> --mode function_call` works end to end on a sample.
+- [x] `npm run compare:modes` finishes under $0.25 and writes `evals/runs/2026-11-01-modes.json`.
+- [x] The Results section has a per-mode table (first-try valid, repaired, needs_human, cost per doc, p50/p95 latency), the agreement and the confidence picked up on the trap fields, and the chosen default with its reason.
+- [x] CLAUDE.md open question #2 is answered with numbers.
+- [x] tsc, lint, test and build pass.
 
 ## Checks
 
@@ -128,4 +128,59 @@ The measurement decides which one is the default.
 
 ## Results
 
-To be filled in after the work.
+Run on 1 Nov 2026 (UTC): `npm run compare:modes`, 11 files (10 invoices, Cobalt Ridge as both PDF and PNG) × 2 modes × 3 reps = 66 extractions on `gpt-6-luna`. Raw data: `evals/runs/2026-11-01-modes.json`.
+
+**Cost:** $0.03795 for the comparison, plus $0.00074 for the planned function-call smoke run and **$0.00072 for one unplanned call**. `npm run extract <file> --mode bogus` without `--` let npm swallow the flag, so the script ran a json_schema call on the fax. The `swallowedFlagProblem` guard now stops that before any call. **Prompt total: $0.03941.**
+
+| Mode | Runs | First-try valid | Repaired | needs_human | Failed | $/doc | p50 | p95 | Mean out tokens (reasoning) |
+|---|---|---|---|---|---|---|---|---|---|
+| `json_schema` | 33 | 100% | 0 | 0 | 0 | $0.00067 | 7.3 s | 26.5 s | 1,152 (67) |
+| `function_call` | 33 | 100% | 0 | 0 | 0 | **$0.00048** | **4.8 s** | 18.7 s | **759 (0)** |
+
+Mean input tokens were close: 3,769 vs 3,707. About 83% of input tokens were cached in both modes.
+
+**Default: `function_call`.** Applying the rule fixed before the run:
+- Rules 1 and 2 tie: no `needs_human` in either mode, and 100% first-try validity in both.
+- Rule 3 decides. `function_call` costs 28% less per document, and is also 34% faster at p50.
+
+`lib/extract/extract.ts` now defaults to it. `json_schema` stays available with `--mode json_schema`, and a test pins the default.
+
+**Why it's cheaper (partly explained).**
+- Output tokens: 759 vs 1,152. Reasoning tokens explain only 67 of the 393-token gap: 23 of 33 json_schema runs reasoned, and no function-call run did.
+- Source quotes are the same length in both modes (11.5 vs 11.7 characters), so longer evidence isn't the cause.
+- The raw reply text isn't logged, so the rest of the gap is not measured. Formatting of the JSON text is a guess, not a finding.
+
+**What the test could not show.** The open question asked which mode *validates more reliably*. On these 10 invoices, neither mode ever failed validation, so the run can't separate them on reliability. The decision rests on cost and latency. Three reps of 10 documents can't rule out a rare-failure difference. The golden set (30 docs) is the next chance to see one.
+
+**Agreement between modes** (first extracted run of each, whitespace-collapsed): 9 of 11 files agree on every field.
+- **Kestrel receipt, `invoiceNumber`.** json_schema rep 1 returned `null` with confidence 0.99. The other reps returned `000482`. function_call returned `000482` once and `#000482` twice.
+- **Quarry & Ash, `currency`.** json_schema rep 1 returned `null` with confidence 0.7, because only `$` is printed. All other runs returned `USD`, but one quote was `"$3.25"`, a line price, which is weak evidence.
+
+**Stability across the 3 reps of the same mode** (of 324 fields per mode):
+- json_schema: 7 unstable fields. 4 are the Cobalt Ridge sub-line descriptions, sometimes included and sometimes not. The other 3 are Kestrel `invoiceNumber`/`currency` and Quarry `currency`.
+- function_call: 5 unstable fields. 4 are Cobalt descriptions, which always include the sub-line but sometimes with ` / `. The other is Kestrel `#000482` vs `000482`.
+- Every instability is a golden-set rule question (open rules 1 and 4 in `samples/README.md`) or `null` vs a weakly evidenced value. None is a misread number.
+
+**Confidence on the trap fields.** This is the first time confidence moved off 0.99.
+
+| Sample | Field | json_schema | function_call |
+|---|---|---|---|
+| Quarry & Ash | `invoiceNumber` `QA-2O61` | 0.75–0.80 | 0.75–0.80 |
+| Quarry & Ash | `total` `$6l2.14` → 612.14 | 0.65–0.80 | 0.75–0.78 |
+| North Meadow | `dueDate` (none printed) | `null` @ 1.0 | `null` @ 1.0 |
+| Kestrel | `dueDate`, unit prices (none printed) | `null` @ 1.0 | `null` @ 1.0, but **@ 0 in rep 1** |
+| Orchard Labs | discount line −354, tax 0 | correct @ 0.99–1.0 | correct @ 0.99 |
+| Ferretería Andina | total `$ 3.128.510,00` → 3128510, `COP` | correct @ 1.0 | correct @ 0.99 |
+| Brightwater | 26 lines across 2 pages, total 1,348.58 | 26/26 lines every run | 26/26 lines every run |
+
+- **Quarry & Ash** is the behaviour we want. Both modes kept the printed `QA-2O61` (letter O), read the total as the intended 612.14, and dropped both below the 0.85 threshold. So a human will see them.
+- **Every other trap was read correctly** in all 66 runs, by eye against `samples/README.md`. That includes the photo and the fax.
+
+**New problem: what confidence means on a `null` value.**
+- Both modes mostly return absent fields as `null @ 1.0`, meaning sure it's absent. In one function-call run, Kestrel's four absent fields came back as `null @ 0`.
+- `confidenceLevel()` flags those, so the review queue would light up amber on fields that are correctly empty.
+- The prompt never says which reading is meant. It's a one-line prompt fix (confidence on `null` = how sure you are the field is absent). It wasn't changed here, because that would have changed the comparison mid-run. Next prompt.
+
+**Multi-page (open question #3, first evidence):** Brightwater's 26 lines across the page break came back complete and in order in all 6 runs. That's 1 document, so it isn't an answer yet.
+
+**Acceptance:** all criteria met. The Results table, agreement, trap confidences and the default with its reason are above. tsc, lint, 54 tests and the build pass.
