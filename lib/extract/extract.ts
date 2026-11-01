@@ -22,7 +22,7 @@ import type { CallOutcome, ExtractionMode, ExtractionResult, InvoiceFile, ModelC
 export type ExtractOptions = {
   /** Model ID, or a model object (tests pass a mock). Defaults to the primary model. */
   model?: string | Exclude<LanguageModel, string>;
-  /** How the schema is sent. Defaults to json_schema. */
+  /** How the schema is sent. Defaults to function_call (measured on 1 Nov 2026, prompt 006). */
   mode?: ExtractionMode;
   /** Receives one record per model call as soon as the call ends. */
   onCall?: (record: ModelCallRecord) => void | Promise<void>;
@@ -50,7 +50,7 @@ type AttemptFn = (model: Exclude<LanguageModel, string>, messages: ModelMessage[
  */
 export async function extractInvoice(file: InvoiceFile, options: ExtractOptions = {}): Promise<ExtractionResult> {
   const model = typeof options.model === "object" ? options.model : openai(options.model ?? primaryModel());
-  const mode = options.mode ?? "json_schema";
+  const mode = options.mode ?? "function_call";
   const attemptOnce = mode === "function_call" ? viaFunctionCall : viaJsonSchema;
   const calls: ModelCallRecord[] = [];
 
