@@ -11,3 +11,6 @@ export const DOCUMENT_STATUSES = [
 ] as const;
 
 export type DocumentStatusValue = (typeof DOCUMENT_STATUSES)[number];
+
+// Extraction starts only from `uploaded` (or a stale `extracting`): see the claim in
+// lib/db/extractions.ts. `needs_human` waits for a person, not a rerun.

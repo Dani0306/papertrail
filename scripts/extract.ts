@@ -6,7 +6,7 @@
 // logs/model-calls.jsonl. Exit code: 0 extracted, 2 needs_human, 1 error.
 
 import { resolve } from "node:path";
-import { confidenceLevel, DEFAULT_CONFIDENCE_THRESHOLD } from "@/lib/design/confidence";
+import { confidenceLevel, confidenceThreshold } from "@/lib/design/confidence";
 import { extractInvoice } from "@/lib/extract/extract";
 import { appendJsonl } from "@/lib/extract/jsonl";
 import type { ExtractionMode, ModelCallRecord } from "@/lib/extract/types";
@@ -36,7 +36,7 @@ async function main(): Promise<number> {
 
   process.stdout.write(`${JSON.stringify(result.status === "extracted" ? result.invoice : result, null, 2)}\n`);
 
-  const threshold = Number(process.env.PAPERTRAIL_CONFIDENCE_THRESHOLD) || DEFAULT_CONFIDENCE_THRESHOLD;
+  const threshold = confidenceThreshold();
   const flagged =
     result.status === "extracted"
       ? flattenFields(result.invoice).filter((field) => confidenceLevel(field.value, field.confidence, threshold) === "review").length

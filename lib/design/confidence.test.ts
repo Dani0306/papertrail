@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_CONFIDENCE_THRESHOLD,
   confidenceLevel,
+  confidenceThreshold,
   formatConfidence,
 } from "./confidence";
 
@@ -51,5 +52,21 @@ describe("formatConfidence", () => {
     expect(formatConfidence(1.2)).toBe("100%");
     expect(formatConfidence(-0.1)).toBe("0%");
     expect(formatConfidence(Number.NaN)).toBe("—");
+  });
+});
+
+describe("confidenceThreshold", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("reads PAPERTRAIL_CONFIDENCE_THRESHOLD", () => {
+    vi.stubEnv("PAPERTRAIL_CONFIDENCE_THRESHOLD", "0.9");
+    expect(confidenceThreshold()).toBe(0.9);
+  });
+
+  it("falls back to the default when unset or out of range", () => {
+    for (const value of ["", "abc", "0", "1.5", "-0.2"]) {
+      vi.stubEnv("PAPERTRAIL_CONFIDENCE_THRESHOLD", value);
+      expect(confidenceThreshold()).toBe(DEFAULT_CONFIDENCE_THRESHOLD);
+    }
   });
 });
