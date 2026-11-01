@@ -1,0 +1,35 @@
+{
+  "file": "synthetic-harbor-pine-inv-2041.pdf",
+  "source": "samples/synthetic-harbor-pine-inv-2041.pdf (content stream)",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": "HARBOR & PINE STATIONERS",
+    "invoiceNumber": "INV-2041",
+    "issueDate": "2026-10-14",
+    "dueDate": "2026-11-13",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "A4 recycled paper, 5-ream box",
+        "qty": 12,
+        "unitPrice": 38.5,
+        "lineTotal": 462.0
+      },
+      {
+        "description": "Gel pens, black, pack of 20",
+        "qty": 8,
+        "unitPrice": 14.25,
+        "lineTotal": 114.0
+      },
+      {
+        "description": "Archive boxes, kraft",
+        "qty": 25,
+        "unitPrice": 22.9,
+        "lineTotal": 572.5
+      }
+    ],
+    "subtotal": 1148.5,
+    "tax": 136.0,
+    "total": 1284.5
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-meridian-fax.png",
+  "source": "samples/src/synthetic-meridian-fax.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Meridian Office Partners Ltd",
+        "Meridian Office Partners"
+      ]
+    },
+    "invoiceNumber": "MOP-55120",
+    "issueDate": "2026-10-21",
+    "dueDate": "2026-11-20",
+    "currency": "GBP",
+    "lineItems": [
+      {
+        "description": "Ergonomic desk chair, mesh",
+        "qty": 4,
+        "unitPrice": 189.0,
+        "lineTotal": 756.0
+      },
+      {
+        "description": "Dual monitor arm",
+        "qty": 4,
+        "unitPrice": 64.5,
+        "lineTotal": 258.0
+      },
+      {
+        "description": "On-site installation",
+        "qty": 1,
+        "unitPrice": 120.0,
+        "lineTotal": 120.0
+      }
+    ],
+    "subtotal": 1134.0,
+    "tax": 226.8,
+    "total": 1360.8
+  }
+}

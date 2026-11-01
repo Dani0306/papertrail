@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-orchard-labs-discount.pdf",
+  "source": "samples/src/synthetic-orchard-labs-discount.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Orchard Labs Consulting LLC",
+        "Orchard Labs Consulting"
+      ]
+    },
+    "invoiceNumber": "OL-2026-117",
+    "issueDate": "2026-10-09",
+    "dueDate": "2026-11-08",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Strategy workshop (1 day)",
+        "qty": 1,
+        "unitPrice": 2400.0,
+        "lineTotal": 2400.0
+      },
+      {
+        "description": "Analytics setup, hours",
+        "qty": 12,
+        "unitPrice": 95.0,
+        "lineTotal": 1140.0
+      },
+      {
+        "description": "Early-client discount (10%)",
+        "qty": 1,
+        "unitPrice": -354.0,
+        "lineTotal": -354.0
+      }
+    ],
+    "subtotal": 3186.0,
+    "tax": 0.0,
+    "total": 3186.0
+  }
+}

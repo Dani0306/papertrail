@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-ferreteria-andina-factura.pdf",
+  "source": "samples/src/synthetic-ferreteria-andina-factura.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "FERRETERÍA ANDINA S.A.S.",
+        "Ferretería Andina"
+      ]
+    },
+    "invoiceNumber": "FE-10457",
+    "issueDate": "2026-10-15",
+    "dueDate": "2026-11-14",
+    "currency": "COP",
+    "lineItems": [
+      {
+        "description": "Cemento gris, bulto 50 kg",
+        "qty": 40,
+        "unitPrice": 32500,
+        "lineTotal": 1300000
+      },
+      {
+        "description": "Varilla corrugada 1/2\", 6 m",
+        "qty": 60,
+        "unitPrice": 18900,
+        "lineTotal": 1134000
+      },
+      {
+        "description": "Alambre negro calibre 18, kg",
+        "qty": 25,
+        "unitPrice": 7800,
+        "lineTotal": 195000
+      }
+    ],
+    "subtotal": 2629000,
+    "tax": 499510,
+    "total": 3128510
+  }
+}

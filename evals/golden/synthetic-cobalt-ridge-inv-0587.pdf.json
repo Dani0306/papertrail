@@ -1,0 +1,78 @@
+{
+  "file": "synthetic-cobalt-ridge-inv-0587.pdf",
+  "source": "samples/src/synthetic-cobalt-ridge-inv-0587.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Cobalt Ridge Print Co.",
+        "Cobalt Ridge Print Co. S.L."
+      ]
+    },
+    "invoiceNumber": "CR-2026-0587",
+    "issueDate": "2026-10-28",
+    "dueDate": "2026-11-27",
+    "currency": "EUR",
+    "lineItems": [
+      {
+        "description": {
+          "accept": [
+            "Business cards, 400 gsm, soft-touch",
+            "Business cards, 400 gsm, soft-touch Box of 500, double-sided",
+            "Business cards, 400 gsm, soft-touch / Box of 500, double-sided",
+            "Business cards, 400 gsm, soft-touch - Box of 500, double-sided",
+            "Business cards, 400 gsm, soft-touch, Box of 500, double-sided"
+          ]
+        },
+        "qty": 4,
+        "unitPrice": 48.0,
+        "lineTotal": 192.0
+      },
+      {
+        "description": {
+          "accept": [
+            "A2 posters, matte 170 gsm",
+            "A2 posters, matte 170 gsm Pack of 50",
+            "A2 posters, matte 170 gsm / Pack of 50",
+            "A2 posters, matte 170 gsm - Pack of 50",
+            "A2 posters, matte 170 gsm, Pack of 50"
+          ]
+        },
+        "qty": 2,
+        "unitPrice": 135.0,
+        "lineTotal": 270.0
+      },
+      {
+        "description": {
+          "accept": [
+            "Tri-fold brochures, A4",
+            "Tri-fold brochures, A4 Run of 1,000",
+            "Tri-fold brochures, A4 / Run of 1,000",
+            "Tri-fold brochures, A4 - Run of 1,000",
+            "Tri-fold brochures, A4, Run of 1,000"
+          ]
+        },
+        "qty": 1,
+        "unitPrice": 389.5,
+        "lineTotal": 389.5
+      },
+      {
+        "description": {
+          "accept": [
+            "Proof revisions",
+            "Proof revisions Billed per hour",
+            "Proof revisions / Billed per hour",
+            "Proof revisions - Billed per hour",
+            "Proof revisions, Billed per hour"
+          ]
+        },
+        "qty": 3,
+        "unitPrice": 55.0,
+        "lineTotal": 165.0
+      }
+    ],
+    "subtotal": 1016.5,
+    "tax": 213.47,
+    "total": 1229.97
+  }
+}

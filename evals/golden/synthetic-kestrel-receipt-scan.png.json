@@ -1,0 +1,55 @@
+{
+  "file": "synthetic-kestrel-receipt-scan.png",
+  "source": "samples/src/synthetic-kestrel-receipt-scan.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": "KESTREL COFFEE ROASTERS",
+    "invoiceNumber": {
+      "accept": [
+        "000482",
+        "#000482"
+      ]
+    },
+    "issueDate": "2026-10-30",
+    "dueDate": null,
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": {
+          "accept": [
+            "Latte 12oz",
+            "2 Latte 12oz"
+          ]
+        },
+        "qty": 2,
+        "unitPrice": null,
+        "lineTotal": 9.5
+      },
+      {
+        "description": {
+          "accept": [
+            "Butter croissant",
+            "1 Butter croissant"
+          ]
+        },
+        "qty": 1,
+        "unitPrice": null,
+        "lineTotal": 3.6
+      },
+      {
+        "description": {
+          "accept": [
+            "Ethiopia beans 340g",
+            "1 Ethiopia beans 340g"
+          ]
+        },
+        "qty": 1,
+        "unitPrice": null,
+        "lineTotal": 16.0
+      }
+    ],
+    "subtotal": 29.1,
+    "tax": 1.75,
+    "total": 30.85
+  }
+}
