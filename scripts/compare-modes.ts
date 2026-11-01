@@ -6,7 +6,7 @@
 // (<date>-<mode>.json for one mode), never overwriting an earlier run.
 // Costs money: stops as soon as the running total passes --limit (USD).
 
-import { access, mkdir, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, writeFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
 import { confidenceLevel, confidenceThreshold } from "@/lib/design/confidence";
 import { extractInvoice } from "@/lib/extract/extract";
@@ -15,6 +15,7 @@ import type { ExtractionMode, ExtractionResult } from "@/lib/extract/types";
 import { primaryModel } from "@/lib/models";
 import { type FlatField, flattenFields } from "@/lib/schema/invoice";
 import { normalized, round, type Run, summarize, unstableFields } from "./lib/run-stats";
+import { freshPath } from "./lib/fresh-path";
 import { SAMPLE_EXTENSIONS, readInvoiceFile, swallowedFlagProblem } from "./lib/sample-file";
 
 const ALL_MODES: ExtractionMode[] = ["json_schema", "function_call"];
@@ -139,15 +140,6 @@ function compareSample(sample: string, runs: Run[], modes: ExtractionMode[], thr
     flagged: each((mode) => flagged(first(mode))),
     values: each(first),
   };
-}
-
-/** `<base>.json`, or `<base>-2.json`, `-3`… if an earlier run already took the name. */
-async function freshPath(base: string): Promise<string> {
-  for (let n = 1; ; n++) {
-    const path = resolve(`${base}${n === 1 ? "" : `-${n}`}.json`);
-    const taken = await access(path).then(() => true, () => false);
-    if (!taken) return path;
-  }
 }
 
 function printTable(byMode: Record<string, ReturnType<typeof summarize>>) {

@@ -22,11 +22,11 @@ The values below are what's printed. They are the starting point for the week 3 
 
 Every invoice's arithmetic reconciles: the line totals sum to the subtotal, and subtotal plus tax equals the total. The values were computed when the sources were generated, not typed by hand.
 
-## Open rules for the golden set
+## Golden-set rules (decided 1 Nov 2026)
 
-Decide these before writing ground truth, or the scorer will count formatting choices as model errors:
+Ground truth is in `evals/golden/<file>.json`, copied from the sources, never from model output. `evals/golden.test.ts` checks that every amount and description is printed in the source and that the arithmetic reconciles. A field can list several `accept` values where a rule allows it.
 
-1. **Line descriptions with a sub-line** (Cobalt Ridge "…soft-touch / Box of 500, double-sided"). The proposal is to count the main line only. The PDF run returned both lines; the PNG run returned only the main line.
-2. **Vendor legal name vs trading name** ("Cobalt Ridge Print Co." in the header, "Cobalt Ridge Print Co. S.L." in the From block). The proposal is to accept either.
-3. **Ambiguous characters** (Quarry & Ash). The value as intended (`QA-2061`, 612.14) or as printed (`QA-2O61`)? The proposal is the intended value, with confidence below the threshold being the behaviour that counts.
-4. **Receipt number as the invoice number** (Kestrel). The proposal is to accept `000482`, with confidence expected to be lower.
+1. **Line descriptions with a sub-line** (Cobalt Ridge): accept the main line, or the main line plus its sub-line, joined by a space, ` / `, ` - ` or `, `. Both are defensible readings. The default mode always includes the sub-line, so scoring only the main line would count a formatting choice as an error.
+2. **Vendor, legal or trading name:** accept either. Examples: Cobalt Ridge Print Co. or Co. S.L.; Orchard Labs Consulting with or without LLC; Tallow Lane with or without "Bakery Supply Co."; Meridian Office Partners with or without Ltd; Ferretería Andina with or without S.A.S.
+3. **Ambiguous characters** (Quarry & Ash): the **intended** values `QA-2061` and 612.14. The printed `QA-2O61` scores as wrong. When it is below the confidence threshold the scorer counts it as *caught* (a person would see it), not as a silent error.
+4. **Receipt number as the invoice number** (Kestrel): accept `000482` and `#000482`. The receipt prints no unit prices and no due date, so those expect `null`. Descriptions are accepted with or without the leading quantity (`2 Latte 12oz`).
