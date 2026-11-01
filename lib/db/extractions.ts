@@ -1,6 +1,7 @@
 import "server-only";
 import type { ExtractionStore } from "@/lib/pipeline/extract-document";
 import type { Json } from "./types";
+import { accessFailure, documentAccess } from "@/lib/review/access";
 import { ALLOWED_UPLOAD_TYPES, type UploadType } from "@/lib/uploads";
 import { db, documentsBucket } from "./client";
 import { dbError } from "./documents";
@@ -28,7 +29,8 @@ export async function extractionStore(): Promise<ExtractionStore> {
         .maybeSingle();
       if (error) throw dbError("Could not load the document", error);
       if (!row) return { ok: false, reason: "missing" };
-      if (row.uploaded_by !== userId) return { ok: false, reason: "forbidden" };
+      const denied = accessFailure(documentAccess(row.uploaded_by, userId));
+      if (denied) return { ok: false, reason: denied };
 
       // One conditional UPDATE: of two simultaneous requests, only one matches the row.
       const { data: claimed, error: claimError } = await client

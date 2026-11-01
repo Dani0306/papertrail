@@ -1,5 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { z } from "zod";
 import { DOCUMENT_STATUSES, type DocumentStatusValue } from "@/lib/document-status";
 import {
   ALLOWED_UPLOAD_TYPES,
@@ -11,6 +12,8 @@ import {
   storagePathFor,
   userUploadPrefix,
 } from "@/lib/uploads";
+import { documentAccess } from "@/lib/review/access";
+import { effectiveValue, reviewCounts, reviewFieldFromRow } from "@/lib/review/fields";
 import { db, documentsBucket } from "./client";
 import type { Database } from "./types";
 
@@ -24,18 +27,41 @@ export type DocumentSummary = {
   pageCount: number | null;
   status: DocumentStatusValue;
   createdAt: string;
+  /** The viewer uploaded it, so they may extract and correct it. */
+  isOwner: boolean;
+  /** From the latest extraction, corrections applied; null before extraction. */
+  vendor: string | null;
+  total: number | null;
+  currency: string | null;
+  toReview: number;
 };
 
-/** Newest first. Every document is listed: demo mode has no per-user data. */
-export async function listDocuments(limit = 60): Promise<DocumentSummary[]> {
+const ViewerId = z.uuid();
+
+/**
+ * Newest first: public samples plus the viewer's own uploads (owner decision,
+ * 1 Nov). The filter is in the query, so other people's uploads never leave the database.
+ */
+export async function listDocuments(viewerId: string | null, threshold: number, limit = 60): Promise<DocumentSummary[]> {
   const client = await db();
-  const { data, error } = await client
+  let query = client
     .from("documents")
-    .select("id, original_filename, mime_type, size_bytes, page_count, status, created_at")
+    .select(
+      "id, original_filename, mime_type, size_bytes, page_count, status, created_at, uploaded_by, " +
+        "extractions(created_at, extraction_fields(field_name, value, confidence, source_quote, corrected_value, corrected_at))",
+    )
     .order("created_at", { ascending: false })
+    .order("created_at", { referencedTable: "extractions", ascending: false })
+    .limit(1, { referencedTable: "extractions" })
     .limit(limit);
+  // The id is interpolated into a PostgREST filter, so only a real uuid gets that far.
+  query = viewerId && ViewerId.safeParse(viewerId).success
+    ? query.or(`uploaded_by.is.null,uploaded_by.eq.${viewerId}`)
+    : query.is("uploaded_by", null);
+
+  const { data, error } = await query.overrideTypes<ListRow[], { merge: false }>();
   if (error) throw dbError("Could not load documents", error);
-  return data.map(toSummary);
+  return data.map((row) => toSummary(row, viewerId, threshold));
 }
 
 export function dailyUploadCap(): number {
@@ -132,7 +158,19 @@ export function dbError(context: string, error: { code?: string; message: string
   return new Error(`${context}: ${error.message}`);
 }
 
-function toSummary(row: Pick<Row, "id" | "original_filename" | "mime_type" | "size_bytes" | "page_count" | "status" | "created_at">): DocumentSummary {
+type ListRow = Pick<Row, "id" | "original_filename" | "mime_type" | "size_bytes" | "page_count" | "status" | "created_at" | "uploaded_by"> & {
+  extractions: Array<{ created_at: string; extraction_fields: Parameters<typeof reviewFieldFromRow>[0][] }>;
+};
+
+function toSummary(row: ListRow, viewerId: string | null, threshold: number): DocumentSummary {
+  const fields = (row.extractions[0]?.extraction_fields ?? []).map(reviewFieldFromRow);
+  const value = (name: string) => {
+    const field = fields.find((candidate) => candidate.name === name);
+    return field ? effectiveValue(field) : null;
+  };
+  const vendor = value("vendor");
+  const total = value("total");
+  const currency = value("currency");
   return {
     id: row.id,
     fileName: row.original_filename,
@@ -141,10 +179,15 @@ function toSummary(row: Pick<Row, "id" | "original_filename" | "mime_type" | "si
     pageCount: row.page_count,
     status: toStatus(row.status),
     createdAt: row.created_at,
+    isOwner: documentAccess(row.uploaded_by, viewerId) === "owner",
+    vendor: typeof vendor === "string" ? vendor : null,
+    total: typeof total === "number" ? total : null,
+    currency: typeof currency === "string" ? currency : null,
+    toReview: reviewCounts(fields, threshold).toReview,
   };
 }
 
 // The column has a check constraint with the same six values; this narrows the type.
-function toStatus(value: string): DocumentStatusValue {
+export function toStatus(value: string): DocumentStatusValue {
   return (DOCUMENT_STATUSES as readonly string[]).includes(value) ? (value as DocumentStatusValue) : "uploaded";
 }
