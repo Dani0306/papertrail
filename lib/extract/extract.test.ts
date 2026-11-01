@@ -40,7 +40,7 @@ function reply(json: unknown, usage = { input: 3000, cached: 0, output: 1500, re
   };
 }
 
-function mockModel(replies: ReturnType<typeof reply>[]) {
+function mockModel(replies: Array<ReturnType<typeof reply> | ReturnType<typeof toolReply>>) {
   return new MockLanguageModelV4({ modelId: "gpt-6-luna", doGenerate: replies });
 }
 
@@ -59,6 +59,7 @@ describe("extractInvoice", () => {
     expect(logged).toHaveLength(1);
     expect(logged[0]).toMatchObject({
       model: "gpt-6-luna",
+      mode: "json_schema",
       attempt: 1,
       outcome: "ok",
       inputTokens: 3000,
@@ -120,6 +121,62 @@ describe("extractInvoice", () => {
     expect(result.status).toBe("failed");
     expect(logged).toHaveLength(1);
     expect(logged[0]).toMatchObject({ outcome: "api_error", costUsd: 0, error: "upstream unavailable" });
+  });
+});
+
+function toolReply(input: unknown, toolName = "record_invoice") {
+  return {
+    ...reply(validInvoice),
+    content: [{ type: "tool-call" as const, toolCallId: "call_1", toolName, input: JSON.stringify(input) }],
+    finishReason: { unified: "tool-calls" as const, raw: undefined },
+  };
+}
+
+async function runFunctionCall(model: MockLanguageModelV4) {
+  const logged: ModelCallRecord[] = [];
+  const result = await extractInvoice(file, { model, mode: "function_call", onCall: (call) => void logged.push(call) });
+  return { result, logged };
+}
+
+describe("extractInvoice, function_call mode", () => {
+  it("sends one strict, forced record_invoice tool and returns its arguments", async () => {
+    const model = mockModel([toolReply(validInvoice)]);
+    const { result, logged } = await runFunctionCall(model);
+
+    expect(result.status).toBe("extracted");
+    if (result.status === "extracted") expect(result.invoice.invoiceNumber.value).toBe("CR-2026-0587");
+    expect(logged[0]).toMatchObject({ mode: "function_call", outcome: "ok", attempt: 1 });
+
+    const request = model.doGenerateCalls[0];
+    expect(request.tools).toHaveLength(1);
+    expect(request.tools?.[0]).toMatchObject({ type: "function", name: "record_invoice", strict: true });
+    expect(request.toolChoice).toEqual({ type: "tool", toolName: "record_invoice" });
+    expect(request.responseFormat?.type ?? "text").toBe("text"); // no json_schema in this mode
+  });
+
+  it("repairs an invalid call by answering it with a tool result that lists the issues", async () => {
+    const model = mockModel([toolReply(invoiceWithoutEvidence), toolReply(validInvoice)]);
+    const { result, logged } = await runFunctionCall(model);
+
+    expect(result.status).toBe("extracted");
+    expect(logged.map((call) => call.outcome)).toEqual(["validation_error", "repaired"]);
+    expect(logged[0].error).toContain("total.sourceQuote");
+
+    const repairPrompt = model.doGenerateCalls[1].prompt;
+    expect(repairPrompt.map((message) => message.role)).toEqual(["system", "user", "assistant", "tool"]);
+    const toolMessage = JSON.stringify(repairPrompt.at(-1));
+    expect(toolMessage).toContain("call_1");
+    expect(toolMessage).toContain("error-text");
+    expect(toolMessage).toContain("total.sourceQuote");
+  });
+
+  it("treats a missing tool call as a validation failure and ends with needs_human", async () => {
+    const textOnly = reply(validInvoice); // plain text, no tool call
+    const { result, logged } = await runFunctionCall(mockModel([textOnly, textOnly]));
+
+    expect(result.status).toBe("needs_human");
+    expect(logged.map((call) => call.outcome)).toEqual(["validation_error", "validation_error"]);
+    expect(logged[0].error).toContain("No record_invoice call");
   });
 });
 

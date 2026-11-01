@@ -7,6 +7,12 @@ export type InvoiceFile = {
   fileName: string;
 };
 
+/**
+ * How the schema reaches the model: as the reply's format (`text.format`
+ * json_schema) or as the arguments of a forced strict function call.
+ */
+export type ExtractionMode = "json_schema" | "function_call";
+
 /** AGENTS.md §8 model_calls.outcome. `escalated` arrives with the week 3 fallback. */
 export type CallOutcome = "ok" | "validation_error" | "api_error" | "repaired" | "escalated";
 
@@ -18,6 +24,7 @@ export type ModelCallRecord = {
   at: string;
   fileName: string;
   model: string;
+  mode: ExtractionMode;
   attempt: number;
   outcome: CallOutcome;
   inputTokens: number;
