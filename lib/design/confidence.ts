@@ -1,6 +1,12 @@
 /** Starting threshold from CLAUDE.md; tuned against the golden set in week 3. */
 export const DEFAULT_CONFIDENCE_THRESHOLD = 0.85;
 
+/** PAPERTRAIL_CONFIDENCE_THRESHOLD if it is a number in (0, 1], else the default. */
+export function confidenceThreshold(): number {
+  const value = Number(process.env.PAPERTRAIL_CONFIDENCE_THRESHOLD);
+  return value > 0 && value <= 1 ? value : DEFAULT_CONFIDENCE_THRESHOLD;
+}
+
 /**
  * How an extracted field is shown in the review UI.
  * - `ok`: a value the model is confident about.

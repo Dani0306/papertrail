@@ -8,7 +8,7 @@
 
 import { access, mkdir, readdir, writeFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
-import { confidenceLevel, DEFAULT_CONFIDENCE_THRESHOLD } from "@/lib/design/confidence";
+import { confidenceLevel, confidenceThreshold } from "@/lib/design/confidence";
 import { extractInvoice } from "@/lib/extract/extract";
 import { appendJsonl } from "@/lib/extract/jsonl";
 import type { ExtractionMode, ExtractionResult } from "@/lib/extract/types";
@@ -34,7 +34,7 @@ async function main(): Promise<number> {
     .filter((name) => SAMPLE_EXTENSIONS.includes(extname(name).toLowerCase()))
     .sort();
   const model = primaryModel();
-  const threshold = Number(process.env.PAPERTRAIL_CONFIDENCE_THRESHOLD) || DEFAULT_CONFIDENCE_THRESHOLD;
+  const threshold = confidenceThreshold();
   log(`${samples.length} samples × ${modes.length} modes × ${reps} reps on ${model}, stop above $${limitUsd}`);
 
   const runs: Run[] = [];
