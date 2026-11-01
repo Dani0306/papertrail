@@ -122,7 +122,7 @@ export async function registerDocument(userId: string, request: RegisterRequest)
 }
 
 /** PGRST106 is a setup step, not a bug, so name the fix instead of passing on "Invalid schema". */
-function dbError(context: string, error: { code?: string; message: string }): Error {
+export function dbError(context: string, error: { code?: string; message: string }): Error {
   if (error.code === "PGRST106") {
     return new Error(
       `${context}: the papertrail schema isn't exposed to the Data API. ` +
