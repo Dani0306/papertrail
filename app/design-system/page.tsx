@@ -33,7 +33,9 @@ import { Select } from "@/components/ui/select";
 import { UploadBox } from "@/components/documents/upload-box";
 import { DocumentCard } from "@/components/review/document-card";
 import { DocumentStatus } from "@/components/review/document-status";
+import { FieldEditor } from "@/components/review/field-editor";
 import { FieldList, FieldRow } from "@/components/review/field-row";
+import { RouteButton } from "@/components/ui/route-button";
 import { StatCard } from "@/components/review/stat-card";
 import { DEFAULT_CONFIDENCE_THRESHOLD } from "@/lib/design/confidence";
 import { DOCUMENT_STATUSES } from "@/lib/document-status";
@@ -419,6 +421,7 @@ export default function DesignSystemPage() {
           <div id="field-rows" className="mb-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-small text-neutral-500">
             <span>Threshold {DEFAULT_CONFIDENCE_THRESHOLD}. Below it a row turns amber, with or without a value.</span>
             <span>A confident null reads as “Not found” and stays quiet.</span>
+            <span>A corrected row drops the amber; the model&apos;s confidence stays as a note.</span>
           </div>
           <FieldList>
             <FieldRow label="Vendor" value="Northwind Office Supply" confidence={0.97} sourceQuote="NORTHWIND OFFICE SUPPLY LTD." />
@@ -445,6 +448,26 @@ export default function DesignSystemPage() {
               confidence={0.62}
               sourceQuote="TOTAL DUE 1.240,00 EUR"
               numeric
+            />
+          </FieldList>
+          <p className="mt-6 mb-3 text-small text-neutral-500">
+            Field editor (review screen, uploader only): one edit, Save or Enter, Esc cancels. The printed text stays in view.
+          </p>
+          <FieldList>
+            <FieldEditor
+              documentId="preview"
+              field={{ name: "total", value: 612.14, confidence: 0.72, sourceQuote: "$6l2.14", correctedValue: null, correctedAt: null }}
+              currency="USD"
+              threshold={DEFAULT_CONFIDENCE_THRESHOLD}
+              editable
+              preview={{ input: "6l2.14", error: "Use digits with a dot for decimals: 1284.50" }}
+            />
+            <FieldEditor
+              documentId="preview"
+              field={{ name: "invoiceNumber", value: "QA-2O61", confidence: 0.75, sourceQuote: "INVOICE NO: QA-2O61", correctedValue: "QA-2061", correctedAt: "2026-11-01T18:00:00.000Z" }}
+              currency="USD"
+              threshold={DEFAULT_CONFIDENCE_THRESHOLD}
+              editable
             />
           </FieldList>
         </Section>
@@ -488,6 +511,26 @@ export default function DesignSystemPage() {
               meta="184 KB · 31 Oct"
               status="uploaded"
               flaggedCount={0}
+              action={
+                <RouteButton endpoint="#" size="sm" variant="secondary" busyLabel="Extracting…" preview="idle">
+                  <ScanText aria-hidden />
+                  Extract
+                </RouteButton>
+              }
+            />
+            <DocumentCard
+              fileName="quarry-ash-ambiguous.pdf"
+              kind="pdf"
+              vendor={null}
+              total={null}
+              meta="96 KB · 1 Nov"
+              status="extracting"
+              flaggedCount={0}
+              action={
+                <RouteButton endpoint="#" size="sm" variant="secondary" busyLabel="Extracting…" busyHint="Reading the invoice. This takes 5–20 seconds." preview="busy">
+                  Extract
+                </RouteButton>
+              }
             />
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-3">

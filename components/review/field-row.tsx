@@ -3,6 +3,7 @@ import { cn } from "@/lib/cn";
 import {
   DEFAULT_CONFIDENCE_THRESHOLD,
   confidenceLevel,
+  formatConfidence,
 } from "@/lib/design/confidence";
 import { Badge } from "@/components/ui/badge";
 import { ConfidenceBadge } from "./confidence-badge";
@@ -24,7 +25,9 @@ export function FieldList({
 
 /**
  * One extracted field: the value, the model's confidence, and the literal text it
- * read the value from. Rows below the threshold are tinted amber with a left rule.
+ * read the value from. Rows below the threshold are tinted amber with a left rule,
+ * until a person corrects them: then the correction leads and the model's
+ * confidence stays visible as a neutral note.
  */
 export function FieldRow({
   label,
@@ -32,6 +35,7 @@ export function FieldRow({
   confidence,
   sourceQuote,
   correctedValue,
+  corrected,
   numeric = false,
   threshold = DEFAULT_CONFIDENCE_THRESHOLD,
   action,
@@ -41,28 +45,34 @@ export function FieldRow({
   confidence: number;
   sourceQuote: string | null;
   correctedValue?: string | null;
+  /** A person corrected this field. Defaults to `correctedValue != null`; pass it for a correction to null. */
+  corrected?: boolean;
   numeric?: boolean;
   threshold?: number;
   /** Slot for an edit control, rendered on the right. */
   action?: ReactNode;
 }) {
   const level = confidenceLevel(value, confidence, threshold);
-  const isCorrected = correctedValue != null;
+  const isCorrected = corrected ?? correctedValue != null;
 
   return (
     <div
       className={cn(
         "grid grid-cols-1 gap-x-6 gap-y-1.5 border-l-4 px-4 py-3 sm:grid-cols-[10rem_1fr_auto] sm:items-start",
-        level === "review" ? "border-l-review-500 bg-review-50" : "border-l-transparent",
+        level === "review" && !isCorrected ? "border-l-review-500 bg-review-50" : "border-l-transparent",
       )}
     >
       <dt className="pt-0.5 text-body font-medium text-neutral-600">{label}</dt>
       <dd className="min-w-0">
         {isCorrected ? (
           <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <span className={cn("text-body-lg text-neutral-900", numeric && "tabular-nums")}>
-              {correctedValue}
-            </span>
+            {correctedValue == null ? (
+              <span className="text-body-lg text-neutral-900 italic">Not on the document</span>
+            ) : (
+              <span className={cn("text-body-lg text-neutral-900", numeric && "tabular-nums")}>
+                {correctedValue}
+              </span>
+            )}
             {value !== null && (
               <del className={cn("text-body text-neutral-400", numeric && "tabular-nums")}>
                 {value}
@@ -84,7 +94,15 @@ export function FieldRow({
         )}
       </dd>
       <dd className="flex items-center gap-2 sm:justify-end">
-        <ConfidenceBadge level={level} confidence={confidence} />
+        {isCorrected ? (
+          <Badge tone="neutral" className="tabular-nums">
+            <span className="sr-only">model confidence</span>
+            <span aria-hidden>Model</span>
+            {formatConfidence(confidence)}
+          </Badge>
+        ) : (
+          <ConfidenceBadge level={level} confidence={confidence} />
+        )}
         {action}
       </dd>
     </div>

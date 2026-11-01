@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
 import { unstable_rethrow } from "next/navigation";
 import { Suspense } from "react";
-import { CircleAlert, Inbox, LockKeyhole } from "lucide-react";
+import { CircleAlert, Inbox, LockKeyhole, ScanText } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Nav } from "@/components/ui/nav";
+import { RouteButton } from "@/components/ui/route-button";
 import { SignInLink } from "@/components/ui/sign-in-link";
 import { DocumentCard } from "@/components/review/document-card";
 import { UploadBox } from "@/components/documents/upload-box";
 import { getUser } from "@/lib/auth";
 import { countUploadsToday, dailyUploadCap, listDocuments } from "@/lib/db/documents";
+import { confidenceThreshold } from "@/lib/design/confidence";
+import type { DocumentStatusValue } from "@/lib/document-status";
+import { formatMoney } from "@/lib/review/fields";
 import { formatBytes } from "@/lib/uploads";
 
 export const metadata: Metadata = {
@@ -16,6 +20,9 @@ export const metadata: Metadata = {
 };
 
 const DATE = new Intl.DateTimeFormat("en", { day: "numeric", month: "short", timeZone: "UTC" });
+
+/** Statuses with something to show on the review screen. */
+const REVIEWABLE: readonly DocumentStatusValue[] = ["extracted", "needs_human", "reviewed"];
 
 export default function DocumentsPage() {
   return (
@@ -25,8 +32,8 @@ export default function DocumentsPage() {
         <header className="flex flex-col gap-2">
           <h1 className="font-display text-display-2 text-neutral-900">Documents</h1>
           <p className="max-w-2xl text-body-lg text-neutral-600">
-            Every invoice uploaded to PaperTrail. Extraction isn&apos;t switched on yet, so new
-            uploads wait here as <span className="font-medium text-neutral-800">Uploaded</span>.
+            Upload an invoice, extract it, then review the fields the model wasn&apos;t sure about.
+            Your uploads are visible only to you; the samples are public.
           </p>
         </header>
 
@@ -41,7 +48,7 @@ export default function DocumentsPage() {
 
         <section aria-labelledby="list-heading" className="flex flex-col gap-4">
           <h2 id="list-heading" className="text-h2 text-neutral-900">
-            All documents
+            Documents
           </h2>
           <Suspense fallback={<GridSkeleton />}>
             <DocumentGrid />
@@ -82,8 +89,11 @@ async function UploadPanel() {
 
 async function DocumentGrid() {
   let documents;
+  let signedIn = false;
   try {
-    documents = await listDocuments();
+    const user = await getUser();
+    signedIn = user !== null;
+    documents = await listDocuments(user?.id ?? null, confidenceThreshold());
   } catch (error) {
     // Lets Next's own signals through (prerender ending, redirects); only real failures land here.
     unstable_rethrow(error);
@@ -109,7 +119,9 @@ async function DocumentGrid() {
         </span>
         <p className="text-body font-medium text-neutral-900">No documents yet</p>
         <p className="max-w-sm text-small text-neutral-600">
-          Uploaded invoices appear here, newest first.
+          {signedIn
+            ? "Invoices you upload appear here, newest first."
+            : "Sign in to upload an invoice. Your uploads appear here, visible only to you."}
         </p>
       </Card>
     );
@@ -124,14 +136,29 @@ async function DocumentGrid() {
         {documents.map((document) => (
           <li key={document.id}>
             <DocumentCard
+              href={REVIEWABLE.includes(document.status) ? `/documents/${document.id}` : undefined}
               fileName={document.fileName}
               kind={document.mimeType === "application/pdf" ? "pdf" : "image"}
-              vendor={null}
-              total={null}
+              vendor={document.vendor}
+              total={document.total === null ? null : formatMoney(document.total, document.currency)}
               pages={document.pageCount ?? undefined}
               meta={`${formatBytes(document.sizeBytes)} · ${DATE.format(new Date(document.createdAt))}`}
               status={document.status}
-              flaggedCount={0}
+              flaggedCount={document.toReview}
+              action={
+                document.isOwner && document.status === "uploaded" ? (
+                  <RouteButton
+                    endpoint={`/api/documents/${document.id}/extract`}
+                    size="sm"
+                    variant="secondary"
+                    busyLabel="Extracting…"
+                    busyHint="Reading the invoice. This takes 5–20 seconds."
+                  >
+                    <ScanText aria-hidden />
+                    Extract
+                  </RouteButton>
+                ) : undefined
+              }
             />
           </li>
         ))}

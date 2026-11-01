@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { FileImage, FileText, TriangleAlert } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -14,6 +15,7 @@ export function DocumentCard({
   meta,
   status,
   flaggedCount,
+  action,
 }: {
   /** Omit until the document has a review screen; the card then isn't a link. */
   href?: string;
@@ -26,6 +28,8 @@ export function DocumentCard({
   meta?: string;
   status: DocumentStatusValue;
   flaggedCount: number;
+  /** A control under the footer, e.g. the Extract button. Sits above the card's link overlay. */
+  action?: ReactNode;
 }) {
   const Icon = kind === "pdf" ? FileText : FileImage;
   // Before extraction there is no vendor to show yet; "Unknown" would claim the model failed.
@@ -84,6 +88,7 @@ export function DocumentCard({
           )}
         </span>
       </div>
+      {action && <div className="relative z-10">{action}</div>}
     </Card>
   );
 }

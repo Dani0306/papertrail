@@ -14,7 +14,7 @@ const DocumentId = z.uuid("That isn't a document id.");
 
 const FAILURES = {
   missing: { status: 404, error: "That document doesn't exist." },
-  forbidden: { status: 403, error: "Only the person who uploaded a document can extract it." },
+  forbidden: { status: 403, error: "Sample documents are already extracted and can't be run again." },
   busy: { status: 409, error: "This document is already extracted or being extracted." },
 } as const;
 
