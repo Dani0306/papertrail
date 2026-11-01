@@ -94,6 +94,14 @@ describe("JSON schema sent to OpenAI", () => {
     expect(text).toContain('"pattern"');
     expect(text).toContain('"minimum"');
   });
+
+  // Prompt 006: without this, absent fields came back as null @ 1 in most runs and null @ 0 in one.
+  it("tells the model what confidence means on a null value, on every field", async () => {
+    const confidences = objects(await jsonSchema()).map((object) => (object.properties as Node).confidence as Node | undefined);
+    const described = confidences.filter((node) => node !== undefined);
+    expect(described.length).toBeGreaterThan(10);
+    for (const node of described) expect(node.description).toMatch(/null value: how sure you are the field is absent/);
+  });
 });
 
 describe("flattenFields", () => {

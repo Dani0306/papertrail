@@ -152,6 +152,8 @@ describe("extractInvoice, function_call mode", () => {
     expect(request.tools?.[0]).toMatchObject({ type: "function", name: "record_invoice", strict: true });
     expect(request.toolChoice).toEqual({ type: "tool", toolName: "record_invoice" });
     expect(request.responseFormat?.type ?? "text").toBe("text"); // no json_schema in this mode
+    // The field descriptions, including what confidence means on null, travel in the tool schema too.
+    expect(JSON.stringify(request.tools?.[0])).toContain("how sure you are the field is absent");
   });
 
   it("is the default mode (chosen by the 1 Nov 2026 comparison, prompt 006)", async () => {
