@@ -46,7 +46,7 @@ function mockModel(replies: Array<ReturnType<typeof reply> | ReturnType<typeof t
 
 async function run(model: MockLanguageModelV4) {
   const logged: ModelCallRecord[] = [];
-  const result = await extractInvoice(file, { model, onCall: (call) => void logged.push(call) });
+  const result = await extractInvoice(file, { model, mode: "json_schema", onCall: (call) => void logged.push(call) });
   return { result, logged };
 }
 
@@ -152,6 +152,14 @@ describe("extractInvoice, function_call mode", () => {
     expect(request.tools?.[0]).toMatchObject({ type: "function", name: "record_invoice", strict: true });
     expect(request.toolChoice).toEqual({ type: "tool", toolName: "record_invoice" });
     expect(request.responseFormat?.type ?? "text").toBe("text"); // no json_schema in this mode
+  });
+
+  it("is the default mode (chosen by the 1 Nov 2026 comparison, prompt 006)", async () => {
+    const model = mockModel([toolReply(validInvoice)]);
+    const logged: ModelCallRecord[] = [];
+    await extractInvoice(file, { model, onCall: (call) => void logged.push(call) });
+    expect(logged[0].mode).toBe("function_call");
+    expect(model.doGenerateCalls[0].toolChoice).toEqual({ type: "tool", toolName: "record_invoice" });
   });
 
   it("repairs an invalid call by answering it with a tool result that lists the issues", async () => {
