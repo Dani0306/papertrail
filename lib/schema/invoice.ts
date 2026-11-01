@@ -9,7 +9,9 @@ const confidence = z
   .number()
   .min(0)
   .max(1)
-  .describe("How sure you are that value is right: 0 to 1. Use below 0.85 when any character is hard to read or the field is ambiguous.");
+  .describe(
+    "0 to 1. With a value: how sure you are it's right; below 0.85 when any character is hard to read or the field is ambiguous. With a null value: how sure you are the field is absent; 1 when you checked and it isn't printed, below 0.85 only when it might be there but you can't read it.",
+  );
 
 const sourceQuote = z
   .string()

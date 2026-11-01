@@ -7,6 +7,7 @@ Rules for every field:
 - value: read it only from the document. If the document doesn't show the field, value is null. Never infer, calculate or fill in a value that isn't printed.
 - sourceQuote: the exact text you read the value from, copied as printed, including symbols and odd characters. If value is null, sourceQuote is null.
 - confidence: 0 to 1. Use 0.9 or more only when the text is clear and the field is unambiguous. Go below 0.85 when characters are hard to read (for example O vs 0, l vs 1), when two candidates exist, or when you had to choose between similar labels.
+- confidence when value is null: how sure you are the field is absent, not how sure you are of a value. Checked the whole document and it isn't printed: 1. Something that might be the field is there but unreadable: below 0.85.
 
 Numbers: write amounts and quantities as plain numbers (1229.97), reading the document's own decimal and thousands separators. Keep the amounts in the printed currency.
 
