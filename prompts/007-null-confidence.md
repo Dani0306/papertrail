@@ -1,6 +1,6 @@
 # 007 — Confidence on absent fields
 
-**Status:** approved
+**Status:** done
 **Branch:** `fix/null-confidence`
 **Week:** 1 follow-up (found in prompt 006)
 
@@ -73,15 +73,15 @@ A field that isn't on the document comes back as `null` with confidence meaning 
 
 ## Acceptance criteria
 
-- [ ] Prompt 006's 3 missing commits are on this branch.
-- [ ] The schema description and the system prompt define confidence on `null`, and a test checks the description reaches the strict JSON schema.
-- [ ] `run-stats` is unit-tested: null-confidence count, stability across reps, percentile.
-- [ ] `compare:modes --mode function_call` runs only that mode, and doesn't overwrite `2026-11-01-modes.json`.
-- [ ] The measured run, against prompt 006's function-call numbers:
+- [x] Prompt 006's 3 missing commits are on this branch.
+- [x] The schema description and the system prompt define confidence on `null`, and a test checks the description reaches the strict JSON schema.
+- [x] `run-stats` is unit-tested: null-confidence count, stability across reps, percentile.
+- [x] `compare:modes --mode function_call` runs only that mode, and doesn't overwrite `2026-11-01-modes.json`.
+- [x] The measured run, against prompt 006's function-call numbers:
   - **Fixed:** 0 absent fields below 0.85 (was 4 of 15 nulls in 1 of 33 runs).
   - **No regression:** 100% first-try valid. Quarry & Ash `invoiceNumber` and `total` still below 0.85 in every run. All other trap values still correct.
   - Cost per document within ±15% of $0.00048.
-- [ ] tsc, lint, test and build pass. Results and the CLAUDE.md log line are written.
+- [x] tsc, lint, test and build pass. Results and the CLAUDE.md log line are written.
 
 ## Checks
 
@@ -99,4 +99,36 @@ A field that isn't on the document comes back as `null` with confidence meaning 
 
 ## Results
 
-To be filled in after the work.
+Run on 1 Nov 2026 (UTC): `npm run compare:modes -- --mode function_call --reps 5 --limit 0.05`. 11 files × 5 reps = 55 extractions on `gpt-6-luna`, **$0.02568**. Data: `evals/runs/2026-11-01-function_call.json`. The 1 Nov two-mode file was not overwritten.
+
+| function_call | Prompt 006 (33 runs) | After the fix (55 runs) |
+|---|---|---|
+| First-try valid | 100% | 100% |
+| Repaired / needs_human / failed | 0 / 0 / 0 | 0 / 0 / 0 |
+| `null` fields | 15 | 25 |
+| **`null` fields below 0.85** | **4** (all in one Kestrel run) | **0** |
+| Fields unstable across reps | 5 | 0 |
+| $/doc | $0.00048 | $0.00047 |
+| p50 / p95 | 4.8 s / 18.7 s | 4.9 s / 18.8 s |
+| Mean input tokens (cached) | 3,707 (3,013) | 4,266 (3,700) |
+| Mean output tokens | 759 | 747 |
+
+**Fixed.** All 25 absent fields came back as `null @ 1.0`: Kestrel's due date and 3 unit prices ×5, and North Meadow's due date ×5. In the review UI, all 25 show as `missing`, not `review`.
+
+**This is evidence, not proof.** Before the fix, the bug appeared in 1 run out of 33. A clean run of 55 makes it less likely the bug is still there, but it can't rule it out. The golden set will keep checking.
+
+**No regressions:**
+- Quarry & Ash: `invoiceNumber` at 0.72–0.78 and `total` at 0.68–0.78. Both are below 0.85 in all 5 reps, with the same values as before (`QA-2O61`, 612.14, USD).
+- Every other non-null field in all 55 runs scored 0.9 or more.
+- Every trap value was correct by eye against `samples/README.md` in every rep:
+  - Kestrel 30.85; Cobalt 1,229.97; Ferretería 3,128,510 COP.
+  - Orchard −354, tax 0, `10/09/2026`; Meridian 1,360.80 GBP.
+  - Tallow 507.13; North Meadow CAD 309.75; Harbor Pine 1,284.50.
+  - Brightwater: 26 lines and 1,348.58 every time.
+- Cost per document is 2% lower, well within ±15%.
+
+**Side effects:**
+- **Input tokens went up 15%.** The longer `confidence` description repeats once per evidence field in the schema: 9 invoice fields plus 4 per line item. Most of the increase is cached, so the cost didn't move.
+- **Stability across reps went from 5 unstable fields to 0.** Kestrel now always returns `#000482`, and Cobalt always includes the sub-line. Nothing in this change targeted that, and the sample is small, so I'm **not** claiming the fix caused it. Golden-set rules 1 and 4 still need deciding, because the `#` and the sub-line are formatting choices the scorer must handle either way.
+
+**Spend:** this prompt $0.02568. Project total $0.06704.
