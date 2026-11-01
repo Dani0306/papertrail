@@ -30,3 +30,7 @@ Ground truth is in `evals/golden/<file>.json`, copied from the sources, never fr
 2. **Vendor, legal or trading name:** accept either. Examples: Cobalt Ridge Print Co. or Co. S.L.; Orchard Labs Consulting with or without LLC; Tallow Lane with or without "Bakery Supply Co."; Meridian Office Partners with or without Ltd; Ferretería Andina with or without S.A.S.
 3. **Ambiguous characters** (Quarry & Ash): the **intended** values `QA-2061` and 612.14. The printed `QA-2O61` scores as wrong. When it is below the confidence threshold the scorer counts it as *caught* (a person would see it), not as a silent error.
 4. **Receipt number as the invoice number** (Kestrel): accept `000482` and `#000482`. The receipt prints no unit prices and no due date, so those expect `null`. Descriptions are accepted with or without the leading quantity (`2 Latte 12oz`).
+
+### Open: a currency shown only as `$`
+
+Found by the 1 Nov luna vs sol run (prompt 010). Kestrel, Brightwater and Quarry & Ash print only `$` with a US address. The golden files expect `USD`. `gpt-6-luna` answers `USD`; `gpt-6.1-sol` often answers `null`, which follows the system prompt's "never infer" more strictly. Decide whether a `$`-only currency accepts `null`, before the week 3 golden set.

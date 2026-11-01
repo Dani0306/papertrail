@@ -1,6 +1,6 @@
 # 010 — Review queue, ground truth for 10 docs, luna vs sol
 
-**Status:** approved
+**Status:** done
 **Branch:** `feat/queue-and-eval`
 **Week:** 2, subtasks 7–9 (1–7 Nov). This also pulls the normaliser and scorer forward from week 3.
 
@@ -133,9 +133,9 @@
 
 ## Acceptance criteria
 
-- [ ] `/review` lists `needs_human` first, then most-to-review, oldest first on ties. It shows a count of documents with nothing to review and an empty state, and has no horizontal scroll at 375 px. The nav link no longer 404s.
-- [ ] 11 golden files. A test confirms every file's arithmetic reconciles in integer cents and every field name exists in the Invoice schema.
-- [ ] Normaliser and scorer unit-tested, including:
+- [x] `/review` lists `needs_human` first, then most-to-review, oldest first on ties. It shows a count of documents with nothing to review and an empty state, and has no horizontal scroll at 375 px. The nav link no longer 404s.
+- [x] 11 golden files. A test confirms every file's arithmetic reconciles in integer cents and every field name exists in the Invoice schema.
+- [x] Normaliser and scorer unit-tested, including:
   - every date format in the samples;
   - `dateOrder`;
   - cents rounding (0.1 + 0.2);
@@ -143,8 +143,8 @@
   - extra and missing line items;
   - `needs_human` scoring as all missed;
   - the silent-vs-caught split.
-- [ ] `npm run eval` writes `evals/runs/<date>-eval.json` and prints the per-model table. The luna vs sol run is done within the agreed spend, and the Results section records the table, the decision and its reason.
-- [ ] tsc, lint, test and build pass. The CLAUDE.md log line is written.
+- [x] `npm run eval` writes `evals/runs/<date>-eval.json` and prints the per-model table. The luna vs sol run is done within the agreed spend, and the Results section records the table, the decision and its reason.
+- [x] tsc, lint, test and build pass. The CLAUDE.md log line is written.
 
 ## Checks
 
@@ -164,4 +164,57 @@
 
 ## Results
 
-To be filled in after the work.
+**Queue (subtask 7).**
+- `/review` lists the public Quarry & Ash sample ("2 to review") for a signed-out visitor, and the nav shows Review queue as current.
+- Checked in Playwright: no horizontal scroll at 375 px.
+- The `/review` prefetch 404 is gone. `/exports` still 404s until the export lands.
+- The card grid moved to `components/documents/document-grid.tsx`, shared by both pages.
+
+**Ground truth (subtask 8).**
+- 11 golden files (Cobalt as both PDF and PNG). `evals/golden.test.ts` passes:
+  - every amount and every main description is found in its source text, in en or es number format;
+  - every file reconciles in integer cents;
+  - the field names match the Invoice schema.
+- The four rules are recorded in `samples/README.md`.
+- **The scorer found its own bug before any paid run.** Line-item amounts were compared as text, because `lineItems.lineTotal` didn't match the bare `lineTotal` key. A unit test caught it; the scorer now normalises by the leaf key.
+
+**luna vs sol (subtask 9).** `npm run eval -- --models gpt-6-luna,gpt-6.1-sol --reps 3 --limit 0.70`: 66 extractions (11 files × 2 models × 3 reps), **$0.31895**. Data: `evals/runs/2026-11-01-eval.json`. A luna-only smoke run before it ($0.00659, `2026-11-01-eval-luna-smoke.json`) checked the scorer on real output first.
+
+| Model | Field accuracy (reps) | Silent errors / doc | Caught errors / doc | Hallucinated | First-try valid | needs_human | $/doc | p50 | p95 |
+|---|---|---|---|---|---|---|---|---|---|
+| `gpt-6-luna` | **99.7%** (99.7, 99.7, 99.7) | **0** | 0.09 | 0% | 100% | 0 | **$0.00042** | 5.2 s | 18.8 s |
+| `gpt-6.1-sol` | 98.6% (98.8, 98.5, 98.5) | 0.12 | 0.30 | 0% | 100% | 0 | $0.00924 | 5.2 s | 16.4 s |
+
+**Decision: `gpt-6-luna` stays primary.** On the rule fixed before the run, luna wins every step:
+1. Fewer silent errors: 0 vs 4 in 33 runs.
+2. Higher accuracy: 99.7% vs 98.6%.
+3. Lower cost: 22× cheaper.
+
+Budget check at the demo cap of 50 extractions a day: luna ≈ $0.63/month, sol ≈ **$13.86/month**. Sol as primary would break the $2–4 budget even if it were more accurate.
+
+**Where each model went wrong:**
+- **luna** (3 errors in 1,077 scored fields): only `QA-2O61` on Quarry & Ash, read as printed, scored wrong against the intended `QA-2061` (rule 3), and **flagged in all 3 runs** (0.75–0.8).
+- **sol** (15 errors), in two patterns:
+  - **`currency: null` where only `$` is printed** (Kestrel ×3, Brightwater ×3, Quarry ×2).
+    - Luna answers `USD` there at 0.98–1.0, inferred from the `$` and a US address.
+    - Sol declines, sometimes flagged (0.7–0.8) and sometimes **at confidence 1.0, which makes those 4 the silent errors**.
+    - Our system prompt says "never infer", so sol is arguably the stricter reader. The golden set expects `USD` because `samples/README.md` listed it as the printed currency.
+    - **This is a new golden-set rule question** (see below), not a clear sol mistake.
+  - **Quarry & Ash total `null`** at 0.2–0.3 ×3, where luna reads 612.14 at 0.76. Missed but caught: sol refuses to resolve `$6l2.14` at all.
+  - Plus the same `QA-2O61` as luna ×3, flagged.
+- **What doesn't change the decision:** even if a `$`-only currency accepted `null`, sol would score about 99.4%, still below luna, and it costs 22× more.
+
+**Sol as the escalation model.** Luna never failed validation in 66 runs here, so this run says nothing about whether sol rescues luna's failures, which is the escalation question. Sol stays configured as the escalation model on price tier, to be measured in week 3 on harder documents.
+
+**What this set can't show.** Luna is at 99.7%: these 10 synthetic invoices are close to its ceiling. The week 3 golden set (30 documents) needs genuinely harder cases to separate models: handwritten totals, multi-currency, line items split across pages mid-row, low-resolution scans.
+
+**Tests:** 196 pass, up from 132:
+- 16 normaliser tests;
+- 8 scorer tests;
+- 41 golden-file checks;
+- 4 report tests;
+- 3 queue tests.
+
+tsc, lint and the build pass.
+
+**Spend:** this prompt $0.32554 (eval $0.31895 + smoke $0.00659). Project total **$0.39323**.
