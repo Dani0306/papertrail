@@ -1,4 +1,4 @@
-// npm run eval [-- --models gpt-6-luna,gpt-6.1-sol --reps 3 --limit 0.70]
+// npm run eval [-- --models gpt-6-luna,gpt-6.1-sol --reps 3 --limit 0.70 --out <path>]
 //
 // Runs every golden file's sample through each model, scores every field
 // against evals/golden (normalised: dates → ISO, amounts → cents, text folded),
@@ -22,7 +22,7 @@ import { readInvoiceFile, swallowedFlagProblem } from "./lib/sample-file";
 const LOG_PATH = resolve("logs/model-calls.jsonl");
 
 async function main(): Promise<number> {
-  const swallowed = swallowedFlagProblem("eval", ["models", "reps", "limit"]);
+  const swallowed = swallowedFlagProblem("eval", ["models", "reps", "limit", "out"]);
   if (swallowed) return fail(swallowed);
   const models = (flag("--models") ?? primaryModel()).split(",").map((model) => model.trim()).filter(Boolean);
   const reps = Number(flag("--reps") ?? 1);
@@ -84,7 +84,8 @@ async function main(): Promise<number> {
 
   const date = new Date().toISOString().slice(0, 10);
   await mkdir(resolve("evals/runs"), { recursive: true });
-  const out = await freshPath(`evals/runs/${date}-eval`);
+  // CI passes a fixed --out so the gate can find the run; by hand, runs never overwrite each other.
+  const out = flag("--out") ? resolve(flag("--out")!) : await freshPath(`evals/runs/${date}-eval`);
   await writeFile(
     out,
     `${JSON.stringify({ date, models, reps, threshold, pricesReadOn: PRICING_READ_ON, stoppedAtLimit: stopped, totalCostUsd: round(spent, 6), byModel, runs }, null, 2)}\n`,
