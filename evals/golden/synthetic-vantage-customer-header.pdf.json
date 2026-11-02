@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-vantage-customer-header.pdf",
+  "source": "samples/src/synthetic-vantage-customer-header.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Vantage Print Works Ltd",
+        "Vantage Print Works"
+      ]
+    },
+    "invoiceNumber": "VPW-20931",
+    "issueDate": "2026-10-30",
+    "dueDate": "2026-11-29",
+    "currency": "GBP",
+    "lineItems": [
+      {
+        "description": "Pallet labels, thermal, roll of 1,000",
+        "qty": 12,
+        "unitPrice": 24.5,
+        "lineTotal": 294.0
+      },
+      {
+        "description": "Delivery notes, 3-part, pad of 50",
+        "qty": 30,
+        "unitPrice": 6.9,
+        "lineTotal": 207.0
+      },
+      {
+        "description": "Vehicle livery decals, set",
+        "qty": 2,
+        "unitPrice": 185.0,
+        "lineTotal": 370.0
+      }
+    ],
+    "subtotal": 871.0,
+    "tax": 174.2,
+    "total": 1045.2
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "file": "synthetic-tern-services-no-qty.pdf",
+  "source": "samples/src/synthetic-tern-services-no-qty.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": "Tern Analytics",
+    "invoiceNumber": "TA-0412",
+    "issueDate": "2026-11-02",
+    "dueDate": null,
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Data pipeline audit",
+        "qty": null,
+        "unitPrice": null,
+        "lineTotal": 3200.0
+      },
+      {
+        "description": "Dashboard redesign",
+        "qty": null,
+        "unitPrice": null,
+        "lineTotal": 2450.0
+      },
+      {
+        "description": "Monthly support, November",
+        "qty": null,
+        "unitPrice": null,
+        "lineTotal": 800.0
+      }
+    ],
+    "subtotal": 6450.0,
+    "tax": 0.0,
+    "total": 6450.0
+  }
+}

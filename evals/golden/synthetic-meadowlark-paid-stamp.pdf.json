@@ -1,0 +1,46 @@
+{
+  "file": "synthetic-meadowlark-paid-stamp.pdf",
+  "source": "samples/src/synthetic-meadowlark-paid-stamp.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": "Meadowlark Garden Center",
+    "invoiceNumber": "MGC-50931",
+    "issueDate": "2026-10-27",
+    "dueDate": "2026-11-10",
+    "currency": {
+      "accept": [
+        "USD",
+        null
+      ]
+    },
+    "lineItems": [
+      {
+        "description": "Perennial mix, 1 gal pots",
+        "qty": 24,
+        "unitPrice": 8.99,
+        "lineTotal": 215.76
+      },
+      {
+        "description": "Mulch, cedar, cu yd",
+        "qty": 6,
+        "unitPrice": 38.0,
+        "lineTotal": 228.0
+      },
+      {
+        "description": "Drip irrigation kit",
+        "qty": 2,
+        "unitPrice": 74.5,
+        "lineTotal": 149.0
+      },
+      {
+        "description": "Planting labor, hours",
+        "qty": 5,
+        "unitPrice": 45.0,
+        "lineTotal": 225.0
+      }
+    ],
+    "subtotal": 817.76,
+    "tax": 49.07,
+    "total": 866.83
+  }
+}
