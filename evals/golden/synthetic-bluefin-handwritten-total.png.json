@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-bluefin-handwritten-total.png",
+  "source": "samples/src/synthetic-bluefin-handwritten-total.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": "Bluefin Bait & Tackle",
+    "invoiceNumber": "BT-2207",
+    "issueDate": "2026-10-29",
+    "dueDate": null,
+    "currency": {
+      "accept": [
+        "USD",
+        null
+      ]
+    },
+    "lineItems": [
+      {
+        "description": "Frozen squid, 1 lb",
+        "qty": 6,
+        "unitPrice": 4.25,
+        "lineTotal": 25.5
+      },
+      {
+        "description": "Braided line 30 lb, 300 yd",
+        "qty": 2,
+        "unitPrice": 18.99,
+        "lineTotal": 37.98
+      },
+      {
+        "description": "Circle hooks 5/0, 25 pk",
+        "qty": 3,
+        "unitPrice": 6.4,
+        "lineTotal": 19.2
+      }
+    ],
+    "subtotal": 82.68,
+    "tax": 5.79,
+    "total": 88.47
+  }
+}

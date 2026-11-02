@@ -1,0 +1,36 @@
+{
+  "file": "synthetic-hollowell-shipping-discount.pdf",
+  "source": "samples/src/synthetic-hollowell-shipping-discount.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": "Hollowell Home Goods",
+    "invoiceNumber": "HHG-73305",
+    "issueDate": "2026-10-31",
+    "dueDate": "2026-11-30",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Linen duvet cover, queen",
+        "qty": 3,
+        "unitPrice": 89.0,
+        "lineTotal": 267.0
+      },
+      {
+        "description": "Cotton towel set, 6 pc",
+        "qty": 4,
+        "unitPrice": 42.5,
+        "lineTotal": 170.0
+      },
+      {
+        "description": "Ceramic lamp, 18 in",
+        "qty": 2,
+        "unitPrice": 64.75,
+        "lineTotal": 129.5
+      }
+    ],
+    "subtotal": 566.5,
+    "tax": 39.2,
+    "total": 599.2
+  },
+  "otherCharges": -6.5
+}

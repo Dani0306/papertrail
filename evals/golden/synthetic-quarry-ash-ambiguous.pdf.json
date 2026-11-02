@@ -7,7 +7,12 @@
     "invoiceNumber": "QA-2061",
     "issueDate": "2026-10-24",
     "dueDate": "2026-11-23",
-    "currency": "USD",
+    "currency": {
+      "accept": [
+        "USD",
+        null
+      ]
+    },
     "lineItems": [
       {
         "description": "Butt hinges, satin, 3 in",

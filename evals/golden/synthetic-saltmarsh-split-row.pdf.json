@@ -1,0 +1,112 @@
+{
+  "file": "synthetic-saltmarsh-split-row.pdf",
+  "source": "samples/src/synthetic-saltmarsh-split-row.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Saltmarsh Marine Services Ltd",
+        "Saltmarsh Marine Services"
+      ]
+    },
+    "invoiceNumber": "SMS-4410",
+    "issueDate": "2026-10-28",
+    "dueDate": "2026-11-27",
+    "currency": "GBP",
+    "lineItems": [
+      {
+        "description": "Mooring fee, 30 days",
+        "qty": 1,
+        "unitPrice": 420.0,
+        "lineTotal": 420.0
+      },
+      {
+        "description": "Shore power, kWh",
+        "qty": 310,
+        "unitPrice": 0.38,
+        "lineTotal": 117.8
+      },
+      {
+        "description": "Fresh water, 1,000 L",
+        "qty": 6,
+        "unitPrice": 4.5,
+        "lineTotal": 27.0
+      },
+      {
+        "description": "Pump-out service",
+        "qty": 2,
+        "unitPrice": 25.0,
+        "lineTotal": 50.0
+      },
+      {
+        "description": "Rigging check, standing",
+        "qty": 1,
+        "unitPrice": 185.0,
+        "lineTotal": 185.0
+      },
+      {
+        "description": "Winch service, primary",
+        "qty": 2,
+        "unitPrice": 68.0,
+        "lineTotal": 136.0
+      },
+      {
+        "description": "Sail repair, mainsail batten pocket",
+        "qty": 1,
+        "unitPrice": 92.0,
+        "lineTotal": 92.0
+      },
+      {
+        "description": "Teak deck clean and oil",
+        "qty": 1,
+        "unitPrice": 340.0,
+        "lineTotal": 340.0
+      },
+      {
+        "description": "Bilge pump replacement",
+        "qty": 1,
+        "unitPrice": 215.0,
+        "lineTotal": 215.0
+      },
+      {
+        "description": "Navigation light bulbs, LED",
+        "qty": 4,
+        "unitPrice": 16.5,
+        "lineTotal": 66.0
+      },
+      {
+        "description": "Fuel filter change",
+        "qty": 1,
+        "unitPrice": 74.0,
+        "lineTotal": 74.0
+      },
+      {
+        "description": "Impeller replacement",
+        "qty": 1,
+        "unitPrice": 88.0,
+        "lineTotal": 88.0
+      },
+      {
+        "description": "Annual hull inspection and antifouling, including haul-out, pressure wash and two coats of copper-free antifoul with anode replacement",
+        "qty": 1,
+        "unitPrice": 1250.0,
+        "lineTotal": 1250.0
+      },
+      {
+        "description": "Storage ashore, week",
+        "qty": 2,
+        "unitPrice": 95.0,
+        "lineTotal": 190.0
+      },
+      {
+        "description": "Launch and re-rig",
+        "qty": 1,
+        "unitPrice": 220.0,
+        "lineTotal": 220.0
+      }
+    ],
+    "subtotal": 3470.8,
+    "tax": 694.16,
+    "total": 4164.96
+  }
+}

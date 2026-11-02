@@ -1,0 +1,18 @@
+{
+  "model": "gpt-6-luna",
+  "run": "evals/runs/2026-11-02-eval.json",
+  "date": "2026-11-02",
+  "goldenFiles": 30,
+  "reps": 3,
+  "threshold": 0.85,
+  "accuracy": 0.9979,
+  "accuracyByRep": [
+    0.9979,
+    0.9979,
+    0.9979
+  ],
+  "silentErrorsPerDoc": 0.03,
+  "meanCostUsd": 0.000447,
+  "gate": "CI fails if headline accuracy drops more than 0.02 below this value (CLAUDE.md, Evaluation).",
+  "reason": "First baseline: luna on the 30-document golden set (10 original + 19 harder synthetic invoices), 3 reps, threshold 0.85 kept by the prompt-012 sweep."
+}
