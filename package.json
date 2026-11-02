@@ -12,7 +12,8 @@
     "extract": "node --env-file=.env.local --import tsx scripts/extract.ts",
     "compare:modes": "node --env-file=.env.local --import tsx scripts/compare-modes.ts",
     "eval": "node --env-file=.env.local --import tsx scripts/eval.ts",
-    "eval:report": "tsx scripts/eval-report.ts"
+    "eval:report": "tsx scripts/eval-report.ts",
+    "eval:threshold": "tsx scripts/eval-threshold.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "4.0.106",
