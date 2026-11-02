@@ -1,6 +1,6 @@
 # 014 — CI regression gate, the confidence A/B, manual entry
 
-**Status:** approved
+**Status:** done
 **Branch:** `feat/ci-ab-manual`. Stacked on `feat/golden-set-30` (PR #14, which now also carries #15), because all three append to CLAUDE.md and the prompts.
 **Week:** 3, items 11–13
 
@@ -125,24 +125,24 @@
 
 ## Acceptance criteria
 
-- [ ] `ci.yml` and `eval-gate.yml` are committed with SHA-pinned actions. Checks passes on this PR's push. The gate runs if the secret is set; otherwise it skips with a notice.
-- [ ] Gate tests:
+- [x] `ci.yml` and `eval-gate.yml` are committed with SHA-pinned actions. Checks passes on this PR's push. The gate runs if the secret is set; otherwise it skips with a notice.
+- [x] Gate tests:
   - pass at the baseline;
   - pass at −1.9 points;
   - fail at −2.1 points;
   - fail on a partial run;
   - warn on a different file count, or on more silent errors.
-- [ ] Locally, `eval:gate` on the 2 Nov baseline run passes, and on a doctored copy (−3 points) it fails.
-- [ ] A/B:
+- [x] Locally, `eval:gate` on the 2 Nov baseline run passes, and on a doctored copy (−3 points) it fails.
+- [x] A/B:
   - the factory schema test shows both variants are strict-compatible, and the no-confidence one has no `confidence` anywhere;
   - extraction tests for the variant;
   - the interleaved run done, with the rule applied and the answer recorded in CLAUDE.md (open question) and the README.
-- [ ] Manual entry:
+- [x] Manual entry:
   - migration applied and checked;
   - route tests (401/400/403/404/409/422/200);
   - a live check that creates a manual entry on a test `needs_human` document, with rows checked by SQL (`value` null, `corrected_value` set, status `reviewed`), then cleaned up;
   - the form checked in Playwright via `/design-system`.
-- [ ] tsc, lint, test and build pass. CLAUDE.md log written.
+- [x] tsc, lint, test and build pass. CLAUDE.md log written.
 
 ## Checks
 
@@ -163,4 +163,50 @@
 
 ## Results
 
-To be filled in after the work.
+**CI (item 11):**
+- Two workflows: `Checks` and `Eval gate`. Actions are pinned by SHA (checkout v7.0.1, setup-node v7.1.0, upload-artifact v7.0.2, each released at least 3 weeks ago), with read-only permissions.
+- **The first `Checks` run on GitHub failed, and it was a real bug.** On a fresh checkout, Next's generated route types (`PageProps`, `RouteContext`, `LayoutProps`) don't exist, so `tsc` gave 7 errors. Locally they always existed from earlier builds; `app/layout.tsx` already relied on them, so any clean checkout would have failed.
+  - Reproduced in a clean `git worktree`: 7 errors before `npx next typegen`, none after.
+  - Fixed by running `next typegen` before `tsc` in `ci.yml`.
+- **`Eval gate`:** the first run "passed" in 3 s by **skipping**, because the repo has no `OPENAI_API_KEY` yet. That's the intended behaviour. A real gated run needs the secret.
+- **`eval:gate` locally:** the 2 Nov baseline passes (exit 0); a copy doctored to 3 points lower fails (exit 1, "96.79% is 3.00 points below the baseline 99.79%").
+- The paid scripts use `--env-file-if-exists`. `npm run build` passes with `.env.local` moved away.
+
+**The confidence A/B (item 12):** `npm run eval -- --variants with,without --reps 3 --limit 0.15`. 180 extractions, interleaved, **$0.08241**. Data: `evals/runs/2026-11-02-eval-2.json`.
+
+| Arm | Field accuracy (reps) | Silent / doc | Caught / doc | $/doc | Mean in / out tokens | p50 |
+|---|---|---|---|---|---|---|
+| with confidence | **99.79%** (99.79, 99.79, 99.79) | **0.03** | 0.03 | $0.00050 | 3,788 / 799 | 4.7 s |
+| without confidence | 99.65% (99.57, 99.68, 99.68) | 0.11 | 0 | $0.00042 | 2,507 / 623 | 4.2 s |
+
+- **Answer, by the rule fixed before the run: asking for confidence does not cost accuracy.** The no-confidence arm isn't higher at all; it's 0.14 points lower, within its own 0.11-point spread.
+- **What leaving confidence out changes:**
+  - **Every error becomes silent:** 0.11 per document vs 0.03. Nothing can be flagged.
+  - **The model's behaviour changes.** On Quarry & Ash's `$6l2.14`, the with arm reads 612.14 and flags it at about 0.76. The without arm returns `total: null` in all 3 runs: unable to express doubt, it declines.
+- The errors were otherwise the same in both arms: Ridgeline's `FO-60218` ×3 and Quarry's `QA-2O61` ×3. The without arm also had one empty Pinecrest invoice number.
+- **The cost of asking:** +18% per document (+$0.00008). That's +1,281 input tokens (the confidence field descriptions in the schema) and +176 output tokens.
+- **Decision:** keep confidence. It's what turns errors into caught ones, at less than a hundredth of a cent per document.
+- The production schema and prompt were **byte-identical** before and after the refactor (checked with `cmp`), so the baseline still holds.
+
+**Manual entry (item 13):**
+- **Migration** `extractions_manual_mode` applied: the check is now `json_schema | function_call | manual`, and both existing extraction rows are kept.
+- **Live check:**
+  - another user's save → `missing`;
+  - **two simultaneous saves → one `saved`, one `busy`, and exactly 1 extraction left**;
+  - a third save → `busy`;
+  - SQL showed `value null`, `confidence 0`, `corrected_value` set (including `dueDate` corrected to `null`), mode `manual`, status `reviewed`.
+- **Left over:** the cleanup `delete` of the test document was **declined by the owner**, so `test-manual-entry.pdf` (synthetic Kestrel values, no Storage file) remains under the owner's account until they decide.
+- **Playwright on `/design-system`:**
+  - 1280 px: the form, error states, and Add line → 2 lines.
+  - 375 px: the form doesn't overflow.
+  - The page itself scrolls sideways because of the **type-scale table that was already there**. Noted for week 4, item 4.
+
+**Tests:** 336 pass, up from 317:
+- 5 gate tests;
+- 2 schema tests and 2 extraction tests for the no-confidence arm;
+- 4 manual-entry tests;
+- 6 manual-entry route tests.
+
+tsc (after typegen), lint and build pass.
+
+**Spend:** A/B $0.08241. Project total **$0.54342**.
