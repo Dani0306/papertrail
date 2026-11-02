@@ -1,6 +1,6 @@
 # 012 — Golden set to 30 documents, baseline, threshold tuning
 
-**Status:** approved
+**Status:** done
 **Branch:** `feat/golden-set-30`. Stacked on `feat/eval-report` (prompt 011, not merged yet), because the baseline regenerates the README table with `eval:report`.
 **Week:** 3, items 2–6 (8–14 Nov)
 
@@ -139,15 +139,15 @@ These go into `samples/README.md`.
 
 ## Acceptance criteria
 
-- [ ] 19 new rendered samples, each matching its row in the table: page counts, a text-layer-free page 2 on Harrow, rotation, the handwritten values. Checked by opening each one.
-- [ ] 30 golden files. The golden tests pass for every file, including multi-source, otherCharges and the French and yen print forms.
-- [ ] The baseline run is committed; `evals/baseline.json` is committed in its own commit with the reason.
-- [ ] Threshold sweep:
+- [x] 19 new rendered samples, each matching its row in the table: page counts, a text-layer-free page 2 on Harrow, rotation, the handwritten values. Checked by opening each one.
+- [x] 30 golden files. The golden tests pass for every file, including multi-source, otherCharges and the French and yen print forms.
+- [x] The baseline run is committed; `evals/baseline.json` is committed in its own commit with the reason.
+- [x] Threshold sweep:
   - unit-tested (re-scoring, the curve, the pre-fixed rule, ties);
   - the curve and the chosen value are in Results and the README;
   - the config is updated only if the rule says so.
-- [ ] README block regenerated (`eval:report --check` gives 0); samples/README rules updated.
-- [ ] tsc, lint, test and build pass. CLAUDE.md log line written.
+- [x] README block regenerated (`eval:report --check` gives 0); samples/README rules updated.
+- [x] tsc, lint, test and build pass. CLAUDE.md log line written.
 
 ## Checks
 
@@ -170,4 +170,80 @@ These go into `samples/README.md`.
 
 ## Results
 
-To be filled in after the work.
+**Documents (items 2–3).**
+- All 19 were rendered from sources generated together with their ground truth, from one spec. Amounts are integer cents and tax is rounded half-up. The generator stays out of the repo, because CLAUDE.md rules out a new language; only its outputs are committed.
+- Checked:
+  - Alder has 3 pages, each with a text layer.
+  - Saltmarsh has 2 pages.
+  - **Harrow's page 2 has no text-drawing operators**, only an image: verified by decompressing each page's content stream.
+  - Bluefin's handwriting, Ridgeline's 90° rotation and Cerro Azul's dark angled photo were checked by eye.
+- **Two render bugs were caught by looking, before any model call:**
+  - Single-page documents were written without their `<html><head><style>`, so they rendered unstyled, in Times, with no handwriting.
+  - Saltmarsh's footers were `<div>`s, which broke `.page:last-of-type` and added a blank third page.
+- `render-samples.sh` now takes optional names, so the 11 existing samples were not re-rendered.
+
+**Ground truth (item 4).**
+- 30 golden files. The `$` rule (owner decision) is applied to the 4 existing `$`-only files: Kestrel, Brightwater, Quarry and Tallow.
+- `golden.test.ts` now runs 91 checks: multiple sources, `otherCharges`, French and no-decimal amounts, and a description split across a page.
+- **Mutation-checked.** Changing Koyo's tax from 5,064 to 5,046 failed both the arithmetic and the printed-amount checks; restoring it passed.
+
+**Baseline (item 5).**
+- A smoke run first: 1 rep, **$0.01782**, `2026-11-02-eval-luna-smoke.json`.
+- Then `npm run eval -- --reps 3 --limit 0.15`: 90 extractions, **$0.04023**, `evals/runs/2026-11-02-eval.json`.
+- `evals/baseline.json` is committed on its own, with the reason.
+
+| | Value |
+|---|---|
+| Field accuracy | **99.79%** (99.79 in each rep) |
+| Silent errors / doc | 0.03 (Ridgeline's invoice number, 3 of 90 runs) |
+| Caught errors / doc | 0.03 (Quarry & Ash `QA-2O61`, flagged at 0.70–0.78) |
+| Hallucinated | 0% |
+| First-try valid | 100% (0 repaired, 0 needs_human) |
+| $/doc | $0.00045 |
+| p50 / p95 | 4.2 s / 16.2 s |
+
+**The finding that matters:**
+- On the rotated low-res scan, luna read `RO-60218` as `FO-60218` (once `FO-00218`) at **0.98–0.99**, in all 3 runs.
+- That's a silent error no threshold short of 1.0 would catch. Confidence can't flag a confident misread, so this needs a different safeguard, such as a second read or a format check. It is recorded for week 3/4, not fixed here.
+
+**Everything else** was right in all 90 runs:
+- dates in Spanish words, German and French;
+- yen without decimals;
+- credit-note negatives;
+- decimal quantities;
+- lines without a quantity (`null`), and relative due dates (`null`);
+- the image-only page 2;
+- the handwritten values;
+- summary charges kept out of the line items;
+- the vendor in small print under a large customer name.
+
+**Smoke-run-only finding.** Pinecrest's invoice number came back empty (`null` @ 0.98) once, against the expected `CN-2026-031`. It didn't recur in the 3-rep baseline. It's recorded as an open rule question (is a credit note's own number its invoice number?). The ground truth was **not** changed to match the model.
+
+**Threshold (item 6).** `npm run eval:threshold -- --run evals/runs/2026-11-02-eval.json`:
+
+| Threshold | Silent / doc | Caught / doc | To review / doc | Needless / doc |
+|---|---|---|---|---|
+| 0.70 | 0.067 | 0 | 0 | 0 |
+| 0.75 | 0.044 | 0.022 | 0.056 | 0.033 |
+| 0.80 | 0.033 | 0.033 | 0.067 | 0.033 |
+| **0.85** | 0.033 | 0.033 | 0.067 | 0.033 |
+| 0.90 | 0.033 | 0.033 | 0.089 | 0.056 |
+| 0.95 | 0.033 | 0.033 | 0.256 | 0.222 |
+
+- **0.85 stays.** It ties with 0.80 on silent errors and review load, and the pre-fixed rule keeps the current value on a tie. No config change.
+- **Caveat (also in the README):** with 30 documents, the threshold is tuned and reported on the same data.
+
+**README.** `eval:report` now fills **every** marked block from the run its own marker names, and adds the threshold sweep table to single-model runs, so no number in the README is typed by hand. There are now two blocks:
+- the 1 Nov luna vs sol comparison (10 documents), with a note that it was scored under that day's rules;
+- the 2 Nov baseline (30 documents).
+
+`--check` gives 0.
+
+**Tests:** 272 pass, up from 204:
+- 57 more golden checks (91 for the 30 files);
+- 6 threshold tests;
+- 5 multi-block and sweep-table tests.
+
+tsc, lint and the build pass.
+
+**Spend:** this prompt $0.05805 (smoke + baseline). Project total **$0.45128**.

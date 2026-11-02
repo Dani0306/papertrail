@@ -58,3 +58,7 @@ Ground truth is in `evals/golden/<file>.json`, copied from the sources, never fr
 10. **Vendor:** the business that issued the invoice, never the customer (Vantage).
 
 The new documents also have one-answer designs for the remaining traps. Two tax rates print their total tax (Lumbre). A handwritten value counts as written (Bluefin). An FX reference amount is a distractor (Ostrander).
+
+### Open: a credit note's own number
+
+Found by the 2 Nov smoke run. On Pinecrest (a credit note), luna returned `invoiceNumber: null` at 0.98 once, against the expected `CN-2026-031`, the credit note's own number. It also correctly ignored the `INV-2026-1187` it credits. It didn't recur in the 3-rep baseline. Decide whether a credit note's number counts as its invoice number, or whether `null` is also acceptable.
