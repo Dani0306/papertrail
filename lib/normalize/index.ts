@@ -41,6 +41,65 @@ export function normalizeDate(input: string | null, order: DateOrder): string | 
   return null;
 }
 
+const NUMERIC_DMY_OR_MDY = /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/;
+
+/**
+ * The order a document writes its numeric dates in, worked out from its own
+ * dates, or null when they can't settle it. A part above 12 decides
+ * (14/10/2026 is dmy, 10/30/2026 is mdy); a leading 4-digit year is ymd; month
+ * names and ISO dates don't need an order. Conflicting evidence gives null:
+ * an export must say "check" rather than pick one.
+ */
+export function inferDateOrder(dates: Array<string | null>): DateOrder | null {
+  const votes = new Set<DateOrder>();
+  let ambiguous = false;
+  for (const raw of dates) {
+    if (raw === null) continue;
+    const text = raw.trim();
+    if (/^\d{4}[-/.]\d{1,2}[-/.]\d{1,2}$/.test(text)) {
+      votes.add("ymd");
+      continue;
+    }
+    const match = NUMERIC_DMY_OR_MDY.exec(text);
+    if (!match) continue; // a month name or something unreadable: no evidence either way
+    const [a, b] = [Number(match[1]), Number(match[2])];
+    if (a > 12 && b <= 12) votes.add("dmy");
+    else if (b > 12 && a <= 12) votes.add("mdy");
+    else if (a !== b) ambiguous = true; // 10/09: either order; 05/05 reads the same both ways
+  }
+  // ymd only speaks for ISO-style dates; a document mixing it with day/month dates decides those separately.
+  votes.delete("ymd");
+  if (votes.size > 1) return null;
+  if (votes.size === 1) return [...votes][0];
+  return ambiguous ? null : "dmy"; // nothing numeric is ambiguous, so any order reads every date the same
+}
+
+/**
+ * Every date of a document as ISO, using the order its own dates settle. A
+ * numeric date that needs an order the document doesn't settle stays null and
+ * is reported, so the export can show the printed text and ask for a check.
+ */
+export function normalizeDocumentDates<K extends string>(dates: Record<K, string | null>): {
+  iso: Record<K, string | null>;
+  unsettled: K[];
+} {
+  const order = inferDateOrder(Object.values(dates) as Array<string | null>);
+  const iso = {} as Record<K, string | null>;
+  const unsettled: K[] = [];
+  for (const key of Object.keys(dates) as K[]) {
+    const text = dates[key];
+    if (text === null) {
+      iso[key] = null;
+      continue;
+    }
+    const needsOrder = NUMERIC_DMY_OR_MDY.test(text.trim());
+    const value = needsOrder ? (order ? normalizeDate(text, order) : null) : normalizeDate(text, "dmy");
+    iso[key] = value;
+    if (value === null) unsettled.push(key);
+  }
+  return { iso, unsettled };
+}
+
 function month(name: string): number {
   return MONTHS[name.slice(0, 3)] ?? MONTHS[name.slice(0, 4)] ?? 0;
 }
