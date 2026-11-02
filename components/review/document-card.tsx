@@ -40,8 +40,8 @@ export function DocumentCard({
     <Card
       className={
         href
-          ? "relative flex flex-col gap-4 transition-shadow focus-within:shadow-md hover:shadow-md"
-          : "flex flex-col gap-4"
+          ? "relative flex min-w-0 flex-col gap-4 transition-shadow focus-within:shadow-md hover:shadow-md"
+          : "flex min-w-0 flex-col gap-4"
       }
     >
       <div className="flex items-start gap-3">
@@ -73,7 +73,7 @@ export function DocumentCard({
       </div>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t pt-3">
         <DocumentStatus status={status} />
-        <span className="flex items-center gap-3 text-small text-neutral-500">
+        <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-small text-neutral-500">
           {meta && <span className="tabular-nums">{meta}</span>}
           {pages !== undefined && (
             <span>

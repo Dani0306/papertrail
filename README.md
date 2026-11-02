@@ -2,7 +2,7 @@
 
 Invoices and PDFs in, clean spreadsheet rows out, with every uncertain field flagged for a human instead of guessed.
 
-> **Status: in the lab.** Not deployed yet. All numbers below come from synthetic test documents.
+> **Status: in the lab, with a live demo:** **[papertrail-chi-one.vercel.app/demo](https://papertrail-chi-one.vercel.app/demo)**. No sign-in needed to browse. All numbers below come from synthetic test documents.
 
 ## What it does today
 
@@ -15,7 +15,7 @@ Invoices and PDFs in, clean spreadsheet rows out, with every uncertain field fla
 - When the repair also fails, one fresh call goes to the stronger model (`gpt-6.1-sol`). If that fails too, a person enters it by hand.
 - CSV and XLSX export, with corrections applied and a Check column listing what is still uncertain.
 
-**Not built yet:** deployment and a demo mode.
+**Demo mode:** eight synthetic sample invoices are preloaded, public and read-only, each extracted once through the real pipeline. Signing in with Google lets you upload your own; your uploads are visible only to you.
 
 **Stack:** Next.js (App Router), TypeScript, Tailwind · Vercel AI SDK with OpenAI (Responses API) · Zod · Supabase (Postgres, Storage, Auth) · Vitest.
 
