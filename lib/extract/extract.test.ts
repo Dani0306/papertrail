@@ -195,3 +195,85 @@ describe("validationIssues", () => {
     expect(validationIssues(new Error("x"))).toEqual(["The answer was not valid JSON for the invoice schema."]);
   });
 });
+
+describe("extractInvoice, escalation", () => {
+  const sol = (replies: Array<ReturnType<typeof toolReply>>) => new MockLanguageModelV4({ modelId: "gpt-6.1-sol", doGenerate: replies });
+
+  async function escalating(primary: MockLanguageModelV4, escalation: MockLanguageModelV4) {
+    const logged: ModelCallRecord[] = [];
+    const result = await extractInvoice(file, { model: primary, escalationModel: escalation, onCall: (call) => void logged.push(call) });
+    return { result, logged };
+  }
+
+  it("uses the stronger model's answer after the repair also fails, and logs all three calls", async () => {
+    const strong = sol([toolReply(validInvoice)]);
+    const { result, logged } = await escalating(mockModel([toolReply(invoiceWithoutEvidence), toolReply(invoiceWithoutEvidence)]), strong);
+
+    expect(result).toMatchObject({ status: "extracted", escalated: true });
+    expect(logged.map((call) => [call.model, call.attempt, call.outcome])).toEqual([
+      ["gpt-6-luna", 1, "validation_error"],
+      ["gpt-6-luna", 2, "validation_error"],
+      ["gpt-6.1-sol", 3, "escalated"],
+    ]);
+    // Sol's call is priced at sol's rate: 3,000 × $2/M + 1,500 × $10/M.
+    expect(logged[2].costUsd).toBe(0.021);
+  });
+
+  it("starts the stronger model fresh: the file and instruction, none of the primary's conversation", async () => {
+    const strong = sol([toolReply(validInvoice)]);
+    await escalating(mockModel([toolReply(invoiceWithoutEvidence), toolReply(invoiceWithoutEvidence)]), strong);
+    const prompt = strong.doGenerateCalls[0].prompt;
+    expect(prompt.map((message) => message.role)).toEqual(["system", "user"]);
+    expect(JSON.stringify(prompt[1])).toContain('"type":"file"');
+  });
+
+  it("ends at needs_human when the stronger model is invalid too, with no repair on it", async () => {
+    const strong = sol([toolReply(invoiceWithoutEvidence), toolReply(validInvoice)]);
+    const { result, logged } = await escalating(mockModel([toolReply(invoiceWithoutEvidence), toolReply(invoiceWithoutEvidence)]), strong);
+
+    expect(result.status).toBe("needs_human");
+    expect(result).not.toHaveProperty("invoice");
+    if (result.status === "needs_human") expect(result.reason).toContain("escalation to gpt-6.1-sol");
+    expect(strong.doGenerateCalls).toHaveLength(1);
+    expect(logged.at(-1)).toMatchObject({ model: "gpt-6.1-sol", attempt: 3, outcome: "validation_error" });
+  });
+
+  it("ends at needs_human, not failed, when the stronger model's API errors", async () => {
+    const down = new MockLanguageModelV4({
+      modelId: "gpt-6.1-sol",
+      doGenerate: async () => {
+        throw new Error("sol unavailable");
+      },
+    });
+    const { result, logged } = await escalating(mockModel([toolReply(invoiceWithoutEvidence), toolReply(invoiceWithoutEvidence)]), down);
+
+    expect(result.status).toBe("needs_human");
+    expect(logged.at(-1)).toMatchObject({ model: "gpt-6.1-sol", outcome: "api_error", costUsd: 0, error: "sol unavailable" });
+  });
+
+  it("never calls the stronger model on a first-try success, a repair, or the primary's API error", async () => {
+    const strong = sol([toolReply(validInvoice)]);
+    expect((await escalating(mockModel([toolReply(validInvoice)]), strong)).result).toMatchObject({ escalated: false });
+    expect((await escalating(mockModel([toolReply(invoiceWithoutEvidence), toolReply(validInvoice)]), strong)).result).toMatchObject({
+      escalated: false,
+    });
+    const down = new MockLanguageModelV4({
+      modelId: "gpt-6-luna",
+      doGenerate: async () => {
+        throw new Error("upstream unavailable");
+      },
+    });
+    expect((await escalating(down, strong)).result.status).toBe("failed");
+    expect(strong.doGenerateCalls).toHaveLength(0);
+  });
+
+  it("doesn't escalate from a mock primary unless asked, so npm test can't reach a real model", async () => {
+    const logged: ModelCallRecord[] = [];
+    const result = await extractInvoice(file, {
+      model: mockModel([toolReply(invoiceWithoutEvidence), toolReply(invoiceWithoutEvidence)]),
+      onCall: (call) => void logged.push(call),
+    });
+    expect(result.status).toBe("needs_human");
+    expect(logged).toHaveLength(2);
+  });
+});

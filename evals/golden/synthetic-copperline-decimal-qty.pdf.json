@@ -1,0 +1,46 @@
+{
+  "file": "synthetic-copperline-decimal-qty.pdf",
+  "source": "samples/src/synthetic-copperline-decimal-qty.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Copperline Workshop Pty Ltd",
+        "Copperline Workshop"
+      ]
+    },
+    "invoiceNumber": "CW-8817",
+    "issueDate": "2026-11-04",
+    "dueDate": "2026-11-18",
+    "currency": "AUD",
+    "lineItems": [
+      {
+        "description": "Welding labour, hours",
+        "qty": 2.5,
+        "unitPrice": 85.0,
+        "lineTotal": 212.5
+      },
+      {
+        "description": "Copper sheet, kg",
+        "qty": 12.75,
+        "unitPrice": 3.4,
+        "lineTotal": 43.35
+      },
+      {
+        "description": "Site visit, days",
+        "qty": 0.5,
+        "unitPrice": 640.0,
+        "lineTotal": 320.0
+      },
+      {
+        "description": "Brass fittings",
+        "qty": 24,
+        "unitPrice": 1.85,
+        "lineTotal": 44.4
+      }
+    ],
+    "subtotal": 620.25,
+    "tax": 62.03,
+    "total": 682.28
+  }
+}

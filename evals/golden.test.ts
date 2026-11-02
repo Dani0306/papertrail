@@ -12,9 +12,14 @@ const goldens: GoldenFile[] = readdirSync("evals/golden")
 const values = (expected: Expected) => (expected !== null && typeof expected === "object" ? expected.accept : [expected]);
 const cents = (value: Expected) => Math.round((values(value)[0] as number) * 100);
 
-/** The source's visible text: HTML without tags or styles, or the PDF content stream. */
+/** The source's visible text: HTML without tags or styles, or the PDF content stream. Several sources are joined. */
 function sourceText(golden: GoldenFile): string {
-  const raw = readFileSync(golden.source.replace(/ \(.*\)$/, ""), golden.source.endsWith(".pdf (content stream)") ? "latin1" : "utf8");
+  const sources = Array.isArray(golden.source) ? golden.source : [golden.source];
+  return sources.map(readSource).join(" ");
+}
+
+function readSource(source: string): string {
+  const raw = readFileSync(source.replace(/ \(.*\)$/, ""), source.endsWith(".pdf (content stream)") ? "latin1" : "utf8");
   return raw
     .replace(/<style[\s\S]*?<\/style>/g, "")
     .replace(/<[^>]+>/g, " ")
@@ -25,11 +30,23 @@ function sourceText(golden: GoldenFile): string {
     .replace(/\s+/g, " ");
 }
 
-/** The ways an amount can be printed: 1,284.50 · 1284.50 · 1.284,50 (Colombian) · 1284.5. */
+/**
+ * The ways an amount can be printed: 1,284.50 · 1284.50 · 1.284,50 (Colombian, German) ·
+ * 1 284,50 (French, Norwegian; any space) · 12,400 (yen, no decimals) · 1284.5.
+ */
 function printedForms(amount: number): string[] {
   const abs = Math.abs(amount);
   const en = abs.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  return [en, en.replaceAll(",", ""), en.replaceAll(",", "#").replace(".", ",").replaceAll("#", "."), String(abs)];
+  const swapped = (thousands: string) => en.replaceAll(",", "#").replace(".", ",").replaceAll("#", thousands);
+  const whole = Number.isInteger(abs) ? [abs.toLocaleString("en-US")] : [];
+  return [en, en.replaceAll(",", ""), swapped("."), swapped(" "), ...whole, String(abs)];
+}
+
+/** True if the description is printed whole, or in two pieces (a row broken across a page). */
+function printedDescription(text: string, description: string): boolean {
+  if (text.includes(description)) return true;
+  const words = description.split(" ");
+  return words.some((_, i) => i > 0 && text.includes(words.slice(0, i).join(" ")) && text.includes(words.slice(i).join(" ")));
 }
 
 describe("golden files", () => {
@@ -44,10 +61,10 @@ describe("golden files", () => {
     expect(["dmy", "mdy", "ymd"]).toContain(golden.dateOrder);
   });
 
-  it.each(goldens.map((golden) => [golden.file, golden] as const))("%s: lines sum to the subtotal and subtotal + tax = total, in cents", (_, golden) => {
+  it.each(goldens.map((golden) => [golden.file, golden] as const))("%s: lines sum to the subtotal and subtotal + other charges + tax = total, in cents", (_, golden) => {
     const { lineItems, subtotal, tax, total } = golden.invoice;
     expect(lineItems.reduce((sum, line) => sum + cents(line.lineTotal), 0)).toBe(cents(subtotal));
-    expect(cents(subtotal) + cents(tax)).toBe(cents(total));
+    expect(cents(subtotal) + Math.round((golden.otherCharges ?? 0) * 100) + cents(tax)).toBe(cents(total));
   });
 
   it.each(goldens.map((golden) => [golden.file, golden] as const))("%s: every amount and description is printed in the source", (_, golden) => {
@@ -62,7 +79,7 @@ describe("golden files", () => {
     }
     for (const line of lineItems) {
       const main = String(values(line.description)[0]);
-      expect(text.includes(main), `"${main}" not in the source`).toBe(true);
+      expect(printedDescription(text, main), `"${main}" not in the source`).toBe(true);
     }
   });
 });

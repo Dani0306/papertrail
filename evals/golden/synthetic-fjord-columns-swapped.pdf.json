@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-fjord-columns-swapped.pdf",
+  "source": "samples/src/synthetic-fjord-columns-swapped.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Fjordline Kontorutstyr AS",
+        "Fjordline Kontorutstyr"
+      ]
+    },
+    "invoiceNumber": "FK-2026-0617",
+    "issueDate": "2026-11-05",
+    "dueDate": "2026-11-19",
+    "currency": "NOK",
+    "lineItems": [
+      {
+        "description": "Standing desk, 160 x 80",
+        "qty": 3,
+        "unitPrice": 6490.0,
+        "lineTotal": 19470.0
+      },
+      {
+        "description": "Monitor arm, dual",
+        "qty": 3,
+        "unitPrice": 1790.0,
+        "lineTotal": 5370.0
+      },
+      {
+        "description": "Cable tray, steel",
+        "qty": 6,
+        "unitPrice": 349.0,
+        "lineTotal": 2094.0
+      }
+    ],
+    "subtotal": 26934.0,
+    "tax": 6733.5,
+    "total": 33667.5
+  }
+}

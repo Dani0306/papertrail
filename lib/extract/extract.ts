@@ -11,7 +11,7 @@ import {
   type ModelMessage,
 } from "ai";
 import { callCostUsd } from "@/lib/cost/pricing";
-import { primaryModel } from "@/lib/models";
+import { escalationModel, primaryModel } from "@/lib/models";
 import { Invoice } from "@/lib/schema/invoice";
 import { SYSTEM_PROMPT, USER_INSTRUCTION, repairInstruction } from "./prompt";
 import type { CallOutcome, ExtractionMode, ExtractionResult, InvoiceFile, ModelCallRecord } from "./types";
@@ -24,11 +24,17 @@ export type ExtractOptions = {
   model?: string | Exclude<LanguageModel, string>;
   /** How the schema is sent. Defaults to function_call (measured on 1 Nov 2026, prompt 006). */
   mode?: ExtractionMode;
+  /**
+   * Called once, fresh, when the primary model's repair also fails validation.
+   * Defaults to the escalation model; null turns escalation off. A mock primary
+   * (tests) never escalates unless this is set, so npm test can't reach a real model.
+   */
+  escalationModel?: string | Exclude<LanguageModel, string> | null;
   /** Receives one record per model call as soon as the call ends. */
   onCall?: (record: ModelCallRecord) => void | Promise<void>;
 };
 
-const MAX_ATTEMPTS = 2; // the first try plus one repair; escalation slots in after this (week 3)
+const MAX_ATTEMPTS = 2; // the first try plus one repair, then at most one escalation (AGENTS.md §7)
 
 export const RECORD_INVOICE_TOOL = "record_invoice";
 
@@ -45,16 +51,18 @@ type Attempt =
 type AttemptFn = (model: Exclude<LanguageModel, string>, messages: ModelMessage[]) => Promise<Attempt>;
 
 /**
- * Reads an invoice from a PDF or image. Returns a validated invoice, or
- * needs_human once the repair retry also fails. Never returns partial data.
+ * Reads an invoice from a PDF or image. The ladder: validate → one repair with
+ * the issues fed back → one fresh call on the escalation model → needs_human.
+ * Never returns partial data.
  */
 export async function extractInvoice(file: InvoiceFile, options: ExtractOptions = {}): Promise<ExtractionResult> {
   const model = typeof options.model === "object" ? options.model : openai(options.model ?? primaryModel());
+  const fallback = resolveEscalation(options);
   const mode = options.mode ?? "function_call";
   const attemptOnce = mode === "function_call" ? viaFunctionCall : viaJsonSchema;
   const calls: ModelCallRecord[] = [];
 
-  const messages: ModelMessage[] = [
+  const firstMessages = (): ModelMessage[] => [
     {
       role: "user",
       content: [
@@ -63,18 +71,26 @@ export async function extractInvoice(file: InvoiceFile, options: ExtractOptions 
       ],
     },
   ];
+  const messages = firstMessages();
 
-  async function record(attempt: number, outcome: CallOutcome, usage: LanguageModelUsage | undefined, started: number, error?: string) {
+  async function record(
+    attempt: number,
+    outcome: CallOutcome,
+    usage: LanguageModelUsage | undefined,
+    started: number,
+    error?: string,
+    by: Exclude<LanguageModel, string> = model,
+  ) {
     const tokens = billedTokens(usage);
     const call: ModelCallRecord = {
       at: new Date().toISOString(),
       fileName: file.fileName,
-      model: model.modelId,
+      model: by.modelId,
       mode,
       attempt,
       outcome,
       ...tokens,
-      costUsd: callCostUsd(model.modelId, tokens),
+      costUsd: callCostUsd(by.modelId, tokens),
       latencyMs: Math.round(performance.now() - started),
       ...(error && { error }),
     };
@@ -94,12 +110,14 @@ export async function extractInvoice(file: InvoiceFile, options: ExtractOptions 
 
     if (result.ok) {
       await record(attempt, attempt === 1 ? "ok" : "repaired", result.usage, started);
-      return { status: "extracted", invoice: result.invoice, calls };
+      return { status: "extracted", invoice: result.invoice, escalated: false, calls };
     }
 
     await record(attempt, "validation_error", result.usage, started, result.issues.join("; "));
     if (attempt === MAX_ATTEMPTS) {
-      return { status: "needs_human", reason: `Still invalid after a repair attempt: ${result.issues.join("; ")}`, calls };
+      const repairIssues = result.issues.join("; ");
+      if (!fallback) return { status: "needs_human", reason: `Still invalid after a repair attempt: ${repairIssues}`, calls };
+      return escalate(repairIssues);
     }
     // Same conversation, plus what the model answered and exactly what was wrong with it.
     messages.push(...result.followUp);
@@ -107,6 +125,41 @@ export async function extractInvoice(file: InvoiceFile, options: ExtractOptions 
 
   // Unreachable: every attempt returns or continues to the next one.
   throw new Error("extractInvoice ran out of attempts without a result");
+
+  /**
+   * One fresh call on the stronger model: same prompt, file and mode, without the
+   * primary's conversation, and no repair. Any failure ends at needs_human; going
+   * back to "uploaded" would pay for the primary twice more on a rerun.
+   */
+  async function escalate(repairIssues: string): Promise<ExtractionResult> {
+    const by = fallback!;
+    const started = performance.now();
+    let result: Attempt;
+    try {
+      result = await attemptOnce(by, firstMessages());
+    } catch (error) {
+      await record(MAX_ATTEMPTS + 1, "api_error", undefined, started, errorMessage(error), by);
+      return { status: "needs_human", reason: `Still invalid after a repair; escalation to ${by.modelId} failed: ${errorMessage(error)}`, calls };
+    }
+    if (result.ok) {
+      await record(MAX_ATTEMPTS + 1, "escalated", result.usage, started, undefined, by);
+      return { status: "extracted", invoice: result.invoice, escalated: true, calls };
+    }
+    await record(MAX_ATTEMPTS + 1, "validation_error", result.usage, started, result.issues.join("; "), by);
+    return {
+      status: "needs_human",
+      reason: `Still invalid after a repair (${repairIssues}) and an escalation to ${by.modelId} (${result.issues.join("; ")})`,
+      calls,
+    };
+  }
+}
+
+function resolveEscalation(options: ExtractOptions): Exclude<LanguageModel, string> | null {
+  if (options.escalationModel === null) return null;
+  if (typeof options.escalationModel === "object") return options.escalationModel;
+  if (typeof options.escalationModel === "string") return openai(options.escalationModel);
+  // Not set: a real primary escalates to the configured model; a mock primary doesn't escalate at all.
+  return typeof options.model === "object" ? null : openai(escalationModel());
 }
 
 /** The schema as the reply's format (`text.format` json_schema, strict). */

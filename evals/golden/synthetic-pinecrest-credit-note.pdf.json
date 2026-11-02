@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-pinecrest-credit-note.pdf",
+  "source": "samples/src/synthetic-pinecrest-credit-note.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": "Pinecrest Outdoor Supply",
+    "invoiceNumber": "CN-2026-031",
+    "issueDate": "2026-11-03",
+    "dueDate": null,
+    "currency": {
+      "accept": [
+        "USD",
+        null
+      ]
+    },
+    "lineItems": [
+      {
+        "description": "Returned: trekking poles, pair",
+        "qty": 2,
+        "unitPrice": -64.5,
+        "lineTotal": -129.0
+      },
+      {
+        "description": "Returned: headlamp 400 lm",
+        "qty": 1,
+        "unitPrice": -38.0,
+        "lineTotal": -38.0
+      },
+      {
+        "description": "Price adjustment: tent footprint",
+        "qty": 1,
+        "unitPrice": -22.75,
+        "lineTotal": -22.75
+      }
+    ],
+    "subtotal": -189.75,
+    "tax": 0.0,
+    "total": -189.75
+  }
+}

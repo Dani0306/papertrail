@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { type EvalRunFile, type ModelSummary, END, MissingMarkersError, readRunPath, renderReport, replaceBlock } from "./readme-report";
+import {
+  type EvalRunFile,
+  type ModelSummary,
+  END,
+  MissingMarkersError,
+  MissingRunError,
+  blockRunPaths,
+  readRunPath,
+  renderReport,
+  replaceAllBlocks,
+  replaceBlock,
+} from "./readme-report";
+import type { FieldScore } from "./score";
 
 function summary(overrides: Partial<ModelSummary>): ModelSummary {
   return {
@@ -12,6 +24,7 @@ function summary(overrides: Partial<ModelSummary>): ModelSummary {
     hallucinatedRate: 0,
     firstTryValidRate: 1,
     repaired: 0,
+    escalated: 0,
     needsHuman: 0,
     failed: 0,
     meanCostUsd: 0.000421,
@@ -45,6 +58,7 @@ const run: EvalRunFile = {
       silentErrorsPerDoc: 0.12,
       caughtErrorsPerDoc: 0.3,
       meanCostUsd: 0.009242,
+      escalated: undefined,
       p95LatencyMs: 16400,
       byKey: [
         { key: "currency", accuracy: 0.7576, correct: 25, total: 33, silent: 4 },
@@ -52,8 +66,26 @@ const run: EvalRunFile = {
       ],
     }),
   },
-  runs: [{ file: "a.pdf" }, { file: "b.pdf" }, { file: "a.pdf" }],
+  runs: [entry("a.pdf", []), entry("b.pdf", []), entry("a.pdf", [])],
 };
+
+function entry(file: string, fields: FieldScore[], model = "gpt-6-luna"): EvalRunFile["runs"][number] {
+  return {
+    file,
+    model,
+    score: { file, status: "extracted", fields, correct: 0, total: fields.length, silentErrors: 0, caughtErrors: 0, hallucinated: 0 },
+  };
+}
+
+const scored = (verdict: FieldScore["verdict"], confidence: number): FieldScore => ({
+  name: "invoiceNumber",
+  key: "invoiceNumber",
+  verdict,
+  expected: [],
+  got: "x",
+  confidence,
+  flagged: false,
+});
 
 const PATH = "evals/runs/2026-11-01-eval.json";
 
@@ -74,9 +106,9 @@ describe("renderReport", () => {
 
   it("writes one formatted row per model, straight from the summary", () => {
     expect(block).toContain(
-      "| `gpt-6-luna` | 99.7% | 99.7 · 99.7 · 99.7 | 0 | 0.09 | 0.0% | 100% | 0 of 33 | $0.00042 | 5.2 s | 18.8 s |",
+      "| `gpt-6-luna` | 99.7% | 99.7 · 99.7 · 99.7 | 0 | 0.09 | 0.0% | 100% | 0 of 33 | 0 of 33 | $0.00042 | 5.2 s | 18.8 s |",
     );
-    expect(block).toContain("| `gpt-6.1-sol` | 98.6% | 98.8 · 98.5 · 98.5 | 0.12 | 0.3 | 0.0% | 100% | 0 of 33 | $0.00924 | 5.2 s | 16.4 s |");
+    expect(block).toContain("| `gpt-6.1-sol` | 98.6% | 98.8 · 98.5 · 98.5 | 0.12 | 0.3 | 0.0% | 100% | — | 0 of 33 | $0.00924 | 5.2 s | 16.4 s |");
   });
 
   it("lists each field's accuracy per model, worst first by whichever model did worst", () => {
@@ -111,5 +143,50 @@ describe("replaceBlock", () => {
   it("refuses a README without both markers", () => {
     expect(() => replaceBlock("# No markers", "x")).toThrow(MissingMarkersError);
     expect(() => replaceBlock("<!-- eval:report:start -->\nno end", "x")).toThrow(MissingMarkersError);
+  });
+});
+
+describe("threshold table", () => {
+  const single: EvalRunFile = {
+    ...run,
+    models: ["gpt-6-luna"],
+    byModel: { "gpt-6-luna": run.byModel["gpt-6-luna"] },
+    // One error caught from 0.80 up, one confidently wrong at 0.99, one right field at 0.83.
+    runs: [entry("a.pdf", [scored("wrong", 0.78), scored("correct", 0.83)]), entry("b.pdf", [scored("wrong", 0.99)])],
+  };
+
+  it("is added for a single-model run, re-scored from the stored confidences, with the chosen row marked", () => {
+    const block = renderReport(single, PATH, 0.85);
+    expect(block).toContain("**Confidence threshold sweep**");
+    expect(block).toContain("| 0.70 | 1 | 0 | 0 | 0 |");
+    expect(block).toContain("| **0.80** (chosen) | 0.5 | 0.5 | 0.5 | 0 |");
+    expect(block).toContain("| 0.85 | 0.5 | 0.5 | 1 | 0.5 |");
+  });
+
+  it("is left out of a comparison between models", () => {
+    expect(renderReport(run, PATH)).not.toContain("threshold sweep");
+  });
+});
+
+describe("several blocks", () => {
+  const OTHER = "evals/runs/2026-11-02-eval.json";
+  const readme = `Top\n<!-- eval:report:start run=${PATH} -->\nold A\n${END}\nMiddle\n<!-- eval:report:start run=${OTHER} -->\nold B\n${END}\nBottom\n`;
+
+  it("lists each block's run in order", () => {
+    expect(blockRunPaths(readme)).toEqual([PATH, OTHER]);
+  });
+
+  it("re-renders every block from its own run and keeps the text between them", () => {
+    const next = replaceAllBlocks(readme, (path) => `<!-- eval:report:start run=${path} -->\nnew ${path}\n${END}`);
+    expect(next).toBe(
+      `Top\n<!-- eval:report:start run=${PATH} -->\nnew ${PATH}\n${END}\nMiddle\n<!-- eval:report:start run=${OTHER} -->\nnew ${OTHER}\n${END}\nBottom\n`,
+    );
+  });
+
+  it("fills a block that names no run from the fallback, and refuses without one", () => {
+    const empty = `<!-- eval:report:start -->\n${END}`;
+    expect(replaceAllBlocks(empty, (path) => `<!-- eval:report:start run=${path} -->\n${END}`, OTHER)).toContain(OTHER);
+    expect(() => replaceAllBlocks(empty, () => "")).toThrow(MissingRunError);
+    expect(() => replaceAllBlocks("no markers", () => "")).toThrow(MissingMarkersError);
   });
 });

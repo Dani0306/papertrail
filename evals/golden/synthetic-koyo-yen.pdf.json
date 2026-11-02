@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-koyo-yen.pdf",
+  "source": "samples/src/synthetic-koyo-yen.html",
+  "dateOrder": "ymd",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Koyo Stationery K.K.",
+        "Koyo Stationery"
+      ]
+    },
+    "invoiceNumber": "KS-26-0907",
+    "issueDate": "2026-10-30",
+    "dueDate": "2026-11-30",
+    "currency": "JPY",
+    "lineItems": [
+      {
+        "description": "Washi notebook, A5",
+        "qty": 20,
+        "unitPrice": 880.0,
+        "lineTotal": 17600.0
+      },
+      {
+        "description": "Fountain pen ink, 50 ml",
+        "qty": 12,
+        "unitPrice": 1320.0,
+        "lineTotal": 15840.0
+      },
+      {
+        "description": "Brush pen set, 6 colours",
+        "qty": 8,
+        "unitPrice": 2150.0,
+        "lineTotal": 17200.0
+      }
+    ],
+    "subtotal": 50640.0,
+    "tax": 5064.0,
+    "total": 55704.0
+  }
+}

@@ -39,12 +39,21 @@ export type DocumentSummary = {
 const ViewerId = z.uuid();
 
 /**
+ * PostgREST filter for what a viewer may see: public samples plus their own
+ * uploads (owner decision, 1 Nov). The id is interpolated into the filter, so
+ * only a real uuid gets that far. Shared by every query that lists documents.
+ */
+export function visibleTo(viewerId: string | null): string {
+  return viewerId && ViewerId.safeParse(viewerId).success ? `uploaded_by.is.null,uploaded_by.eq.${viewerId}` : "uploaded_by.is.null";
+}
+
+/**
  * Newest first: public samples plus the viewer's own uploads (owner decision,
  * 1 Nov). The filter is in the query, so other people's uploads never leave the database.
  */
 export async function listDocuments(viewerId: string | null, threshold: number, limit = 60): Promise<DocumentSummary[]> {
   const client = await db();
-  let query = client
+  const query = client
     .from("documents")
     .select(
       "id, original_filename, mime_type, size_bytes, page_count, status, created_at, uploaded_by, " +
@@ -53,11 +62,8 @@ export async function listDocuments(viewerId: string | null, threshold: number, 
     .order("created_at", { ascending: false })
     .order("created_at", { referencedTable: "extractions", ascending: false })
     .limit(1, { referencedTable: "extractions" })
-    .limit(limit);
-  // The id is interpolated into a PostgREST filter, so only a real uuid gets that far.
-  query = viewerId && ViewerId.safeParse(viewerId).success
-    ? query.or(`uploaded_by.is.null,uploaded_by.eq.${viewerId}`)
-    : query.is("uploaded_by", null);
+    .limit(limit)
+    .or(visibleTo(viewerId));
 
   const { data, error } = await query.overrideTypes<ListRow[], { merge: false }>();
   if (error) throw dbError("Could not load documents", error);

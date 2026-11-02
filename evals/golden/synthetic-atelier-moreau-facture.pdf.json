@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-atelier-moreau-facture.pdf",
+  "source": "samples/src/synthetic-atelier-moreau-facture.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Atelier Moreau SARL",
+        "Atelier Moreau"
+      ]
+    },
+    "invoiceNumber": "AM-2026-212",
+    "issueDate": "2026-11-04",
+    "dueDate": "2026-12-04",
+    "currency": "EUR",
+    "lineItems": [
+      {
+        "description": "Restauration fauteuil Louis XV",
+        "qty": 1,
+        "unitPrice": 1450.0,
+        "lineTotal": 1450.0
+      },
+      {
+        "description": "Tissu lin naturel, mètre",
+        "qty": 8,
+        "unitPrice": 42.0,
+        "lineTotal": 336.0
+      },
+      {
+        "description": "Livraison et installation",
+        "qty": 1,
+        "unitPrice": 120.0,
+        "lineTotal": 120.0
+      }
+    ],
+    "subtotal": 1906.0,
+    "tax": 381.2,
+    "total": 2287.2
+  }
+}

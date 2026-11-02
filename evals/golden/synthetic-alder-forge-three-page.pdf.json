@@ -1,0 +1,279 @@
+{
+  "file": "synthetic-alder-forge-three-page.pdf",
+  "source": "samples/src/synthetic-alder-forge-three-page.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Alder Forge Hardware Co.",
+        "Alder Forge Hardware"
+      ]
+    },
+    "invoiceNumber": "AF-77120",
+    "issueDate": "2026-11-02",
+    "dueDate": "2026-12-02",
+    "currency": {
+      "accept": [
+        "USD",
+        null
+      ]
+    },
+    "lineItems": [
+      {
+        "description": "Hex bolt M8 x 40, box of 50",
+        "qty": 1,
+        "unitPrice": 14.5,
+        "lineTotal": 14.5
+      },
+      {
+        "description": "Wood screws #8 x 1-1/2, box of 100",
+        "qty": 2,
+        "unitPrice": 8.9,
+        "lineTotal": 17.8
+      },
+      {
+        "description": "Cabinet hinge, soft close, pair",
+        "qty": 3,
+        "unitPrice": 12.75,
+        "lineTotal": 38.25
+      },
+      {
+        "description": "Drawer slide 18 in, pair",
+        "qty": 4,
+        "unitPrice": 21.4,
+        "lineTotal": 85.6
+      },
+      {
+        "description": "Wall anchor kit, 60 pcs",
+        "qty": 5,
+        "unitPrice": 11.95,
+        "lineTotal": 59.75
+      },
+      {
+        "description": "Sandpaper 120 grit, 25 sheets",
+        "qty": 6,
+        "unitPrice": 13.49,
+        "lineTotal": 80.94
+      },
+      {
+        "description": "Wood glue, 16 oz",
+        "qty": 7,
+        "unitPrice": 6.99,
+        "lineTotal": 48.93
+      },
+      {
+        "description": "Hex bolt M8 x 40, box of 50 (bin B)",
+        "qty": 8,
+        "unitPrice": 14.5,
+        "lineTotal": 116.0
+      },
+      {
+        "description": "Wood screws #8 x 1-1/2, box of 100 (bin B)",
+        "qty": 9,
+        "unitPrice": 8.9,
+        "lineTotal": 80.1
+      },
+      {
+        "description": "Cabinet hinge, soft close, pair (bin B)",
+        "qty": 1,
+        "unitPrice": 12.75,
+        "lineTotal": 12.75
+      },
+      {
+        "description": "Drawer slide 18 in, pair (bin B)",
+        "qty": 2,
+        "unitPrice": 21.4,
+        "lineTotal": 42.8
+      },
+      {
+        "description": "Wall anchor kit, 60 pcs (bin B)",
+        "qty": 3,
+        "unitPrice": 11.95,
+        "lineTotal": 35.85
+      },
+      {
+        "description": "Sandpaper 120 grit, 25 sheets (bin B)",
+        "qty": 4,
+        "unitPrice": 13.49,
+        "lineTotal": 53.96
+      },
+      {
+        "description": "Wood glue, 16 oz (bin B)",
+        "qty": 5,
+        "unitPrice": 6.99,
+        "lineTotal": 34.95
+      },
+      {
+        "description": "Hex bolt M8 x 40, box of 50 (bin C)",
+        "qty": 6,
+        "unitPrice": 14.5,
+        "lineTotal": 87.0
+      },
+      {
+        "description": "Wood screws #8 x 1-1/2, box of 100 (bin C)",
+        "qty": 7,
+        "unitPrice": 8.9,
+        "lineTotal": 62.3
+      },
+      {
+        "description": "Cabinet hinge, soft close, pair (bin C)",
+        "qty": 8,
+        "unitPrice": 12.75,
+        "lineTotal": 102.0
+      },
+      {
+        "description": "Drawer slide 18 in, pair (bin C)",
+        "qty": 9,
+        "unitPrice": 21.4,
+        "lineTotal": 192.6
+      },
+      {
+        "description": "Wall anchor kit, 60 pcs (bin C)",
+        "qty": 1,
+        "unitPrice": 11.95,
+        "lineTotal": 11.95
+      },
+      {
+        "description": "Sandpaper 120 grit, 25 sheets (bin C)",
+        "qty": 2,
+        "unitPrice": 13.49,
+        "lineTotal": 26.98
+      },
+      {
+        "description": "Wood glue, 16 oz (bin C)",
+        "qty": 3,
+        "unitPrice": 6.99,
+        "lineTotal": 20.97
+      },
+      {
+        "description": "Hex bolt M8 x 40, box of 50 (bin D)",
+        "qty": 4,
+        "unitPrice": 14.5,
+        "lineTotal": 58.0
+      },
+      {
+        "description": "Wood screws #8 x 1-1/2, box of 100 (bin D)",
+        "qty": 5,
+        "unitPrice": 8.9,
+        "lineTotal": 44.5
+      },
+      {
+        "description": "Cabinet hinge, soft close, pair (bin D)",
+        "qty": 6,
+        "unitPrice": 12.75,
+        "lineTotal": 76.5
+      },
+      {
+        "description": "Drawer slide 18 in, pair (bin D)",
+        "qty": 7,
+        "unitPrice": 21.4,
+        "lineTotal": 149.8
+      },
+      {
+        "description": "Wall anchor kit, 60 pcs (bin D)",
+        "qty": 8,
+        "unitPrice": 11.95,
+        "lineTotal": 95.6
+      },
+      {
+        "description": "Sandpaper 120 grit, 25 sheets (bin D)",
+        "qty": 9,
+        "unitPrice": 13.49,
+        "lineTotal": 121.41
+      },
+      {
+        "description": "Wood glue, 16 oz (bin D)",
+        "qty": 1,
+        "unitPrice": 6.99,
+        "lineTotal": 6.99
+      },
+      {
+        "description": "Hex bolt M8 x 40, box of 50 (bin E)",
+        "qty": 2,
+        "unitPrice": 14.5,
+        "lineTotal": 29.0
+      },
+      {
+        "description": "Wood screws #8 x 1-1/2, box of 100 (bin E)",
+        "qty": 3,
+        "unitPrice": 8.9,
+        "lineTotal": 26.7
+      },
+      {
+        "description": "Cabinet hinge, soft close, pair (bin E)",
+        "qty": 4,
+        "unitPrice": 12.75,
+        "lineTotal": 51.0
+      },
+      {
+        "description": "Drawer slide 18 in, pair (bin E)",
+        "qty": 5,
+        "unitPrice": 21.4,
+        "lineTotal": 107.0
+      },
+      {
+        "description": "Wall anchor kit, 60 pcs (bin E)",
+        "qty": 6,
+        "unitPrice": 11.95,
+        "lineTotal": 71.7
+      },
+      {
+        "description": "Sandpaper 120 grit, 25 sheets (bin E)",
+        "qty": 7,
+        "unitPrice": 13.49,
+        "lineTotal": 94.43
+      },
+      {
+        "description": "Wood glue, 16 oz (bin E)",
+        "qty": 8,
+        "unitPrice": 6.99,
+        "lineTotal": 55.92
+      },
+      {
+        "description": "Hex bolt M8 x 40, box of 50 (bin F)",
+        "qty": 9,
+        "unitPrice": 14.5,
+        "lineTotal": 130.5
+      },
+      {
+        "description": "Wood screws #8 x 1-1/2, box of 100 (bin F)",
+        "qty": 1,
+        "unitPrice": 8.9,
+        "lineTotal": 8.9
+      },
+      {
+        "description": "Cabinet hinge, soft close, pair (bin F)",
+        "qty": 2,
+        "unitPrice": 12.75,
+        "lineTotal": 25.5
+      },
+      {
+        "description": "Drawer slide 18 in, pair (bin F)",
+        "qty": 3,
+        "unitPrice": 21.4,
+        "lineTotal": 64.2
+      },
+      {
+        "description": "Wall anchor kit, 60 pcs (bin F)",
+        "qty": 4,
+        "unitPrice": 11.95,
+        "lineTotal": 47.8
+      },
+      {
+        "description": "Sandpaper 120 grit, 25 sheets (bin F)",
+        "qty": 5,
+        "unitPrice": 13.49,
+        "lineTotal": 67.45
+      },
+      {
+        "description": "Wood glue, 16 oz (bin F)",
+        "qty": 6,
+        "unitPrice": 6.99,
+        "lineTotal": 41.94
+      }
+    ],
+    "subtotal": 2600.82,
+    "tax": 143.05,
+    "total": 2743.87
+  }
+}

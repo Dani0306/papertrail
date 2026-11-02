@@ -12,7 +12,12 @@
     "invoiceNumber": "TLS-48812",
     "issueDate": "2026-10-22",
     "dueDate": "2026-11-21",
-    "currency": "USD",
+    "currency": {
+      "accept": [
+        "USD",
+        null
+      ]
+    },
     "lineItems": [
       {
         "description": "Bread flour, 25 kg sack",

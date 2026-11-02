@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-ridgeline-rotated-scan.png",
+  "source": "samples/src/synthetic-ridgeline-rotated-scan.html",
+  "dateOrder": "ymd",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Ridgeline Outfitters Inc.",
+        "Ridgeline Outfitters"
+      ]
+    },
+    "invoiceNumber": "RO-60218",
+    "issueDate": "2026-10-26",
+    "dueDate": "2026-11-25",
+    "currency": "CAD",
+    "lineItems": [
+      {
+        "description": "Insulated parka, men's L",
+        "qty": 2,
+        "unitPrice": 289.0,
+        "lineTotal": 578.0
+      },
+      {
+        "description": "Merino base layer set",
+        "qty": 4,
+        "unitPrice": 74.5,
+        "lineTotal": 298.0
+      },
+      {
+        "description": "Trekking poles, carbon",
+        "qty": 2,
+        "unitPrice": 129.99,
+        "lineTotal": 259.98
+      }
+    ],
+    "subtotal": 1135.98,
+    "tax": 56.8,
+    "total": 1192.78
+  }
+}

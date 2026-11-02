@@ -12,7 +12,12 @@
     },
     "issueDate": "2026-10-30",
     "dueDate": null,
-    "currency": "USD",
+    "currency": {
+      "accept": [
+        "USD",
+        null
+      ]
+    },
     "lineItems": [
       {
         "description": {

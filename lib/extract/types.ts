@@ -13,7 +13,7 @@ export type InvoiceFile = {
  */
 export type ExtractionMode = "json_schema" | "function_call";
 
-/** AGENTS.md §8 model_calls.outcome. `escalated` arrives with the week 3 fallback. */
+/** AGENTS.md §8 model_calls.outcome. `escalated`: the escalation model's call validated. */
 export type CallOutcome = "ok" | "validation_error" | "api_error" | "repaired" | "escalated";
 
 /**
@@ -38,6 +38,7 @@ export type ModelCallRecord = {
 };
 
 export type ExtractionResult =
-  | { status: "extracted"; invoice: Invoice; calls: ModelCallRecord[] }
+  /** escalated: the primary failed validation twice and the escalation model's answer was used. */
+  | { status: "extracted"; invoice: Invoice; escalated: boolean; calls: ModelCallRecord[] }
   | { status: "needs_human"; reason: string; calls: ModelCallRecord[] }
   | { status: "failed"; reason: string; calls: ModelCallRecord[] };

@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-ostrander-fx-reference.pdf",
+  "source": "samples/src/synthetic-ostrander-fx-reference.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Ostrander Freight Brokers LLC",
+        "Ostrander Freight Brokers"
+      ]
+    },
+    "invoiceNumber": "OFB-2026-388",
+    "issueDate": "2026-11-01",
+    "dueDate": "2026-12-01",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Truckload, Chicago IL to Columbus OH",
+        "qty": 1,
+        "unitPrice": 2100.0,
+        "lineTotal": 2100.0
+      },
+      {
+        "description": "Truckload, Columbus OH to Atlanta GA",
+        "qty": 1,
+        "unitPrice": 1850.0,
+        "lineTotal": 1850.0
+      },
+      {
+        "description": "Detention, hours",
+        "qty": 3,
+        "unitPrice": 100.0,
+        "lineTotal": 300.0
+      }
+    ],
+    "subtotal": 4250.0,
+    "tax": 0.0,
+    "total": 4250.0
+  }
+}

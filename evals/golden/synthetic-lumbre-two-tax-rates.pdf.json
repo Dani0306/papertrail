@@ -1,0 +1,46 @@
+{
+  "file": "synthetic-lumbre-two-tax-rates.pdf",
+  "source": "samples/src/synthetic-lumbre-two-tax-rates.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Lumbre Suministros Hosteleros S.L.",
+        "Lumbre Suministros Hosteleros"
+      ]
+    },
+    "invoiceNumber": "LS-2026/0458",
+    "issueDate": "2026-11-03",
+    "dueDate": "2026-12-03",
+    "currency": "EUR",
+    "lineItems": [
+      {
+        "description": "Aceite de oliva virgen extra, garrafa 5 L",
+        "qty": 6,
+        "unitPrice": 32.5,
+        "lineTotal": 195.0
+      },
+      {
+        "description": "Harina de trigo, saco 25 kg",
+        "qty": 4,
+        "unitPrice": 18.9,
+        "lineTotal": 75.6
+      },
+      {
+        "description": "Plancha de acero, 60 cm",
+        "qty": 1,
+        "unitPrice": 289.0,
+        "lineTotal": 289.0
+      },
+      {
+        "description": "Juego de cuchillos, 6 piezas",
+        "qty": 2,
+        "unitPrice": 47.25,
+        "lineTotal": 94.5
+      }
+    ],
+    "subtotal": 654.1,
+    "tax": 107.6,
+    "total": 761.7
+  }
+}

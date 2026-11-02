@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-cerro-azul-mxn-photo.jpg",
+  "source": "samples/src/synthetic-cerro-azul-mxn-photo.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Ferretería Cerro Azul",
+        "Ferretería Cerro Azul, S.A. de C.V."
+      ]
+    },
+    "invoiceNumber": "CA-5402",
+    "issueDate": "2026-10-29",
+    "dueDate": "2026-11-28",
+    "currency": "MXN",
+    "lineItems": [
+      {
+        "description": "Taladro percutor 1/2 in",
+        "qty": 2,
+        "unitPrice": 1899.0,
+        "lineTotal": 3798.0
+      },
+      {
+        "description": "Juego de brocas, 21 piezas",
+        "qty": 3,
+        "unitPrice": 349.5,
+        "lineTotal": 1048.5
+      },
+      {
+        "description": "Extensión eléctrica 10 m",
+        "qty": 5,
+        "unitPrice": 229.0,
+        "lineTotal": 1145.0
+      }
+    ],
+    "subtotal": 5991.5,
+    "tax": 958.64,
+    "total": 6950.14
+  }
+}

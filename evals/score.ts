@@ -10,7 +10,10 @@ export type Expected = string | number | null | { accept: Array<string | number 
 
 export type GoldenFile = {
   file: string;
-  source: string;
+  /** Where every expected value was copied from: one file, or several for a document built from parts. */
+  source: string | string[];
+  /** Summary charges that aren't line items (shipping, a discount), so the golden arithmetic reconciles. */
+  otherCharges?: number;
   dateOrder: DateOrder;
   invoice: {
     vendor: Expected;

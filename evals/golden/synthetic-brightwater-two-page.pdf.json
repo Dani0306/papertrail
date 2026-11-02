@@ -7,7 +7,12 @@
     "invoiceNumber": "BW-90314",
     "issueDate": "2026-10-27",
     "dueDate": "2026-11-26",
-    "currency": "USD",
+    "currency": {
+      "accept": [
+        "USD",
+        null
+      ]
+    },
     "lineItems": [
       {
         "description": "Nitrile gloves, M, box of 100",

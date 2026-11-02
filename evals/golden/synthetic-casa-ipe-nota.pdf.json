@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-casa-ipe-nota.pdf",
+  "source": "samples/src/synthetic-casa-ipe-nota.html",
+  "dateOrder": "dmy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Casa Ipê Móveis Ltda",
+        "Casa Ipê Móveis"
+      ]
+    },
+    "invoiceNumber": "CI-3391",
+    "issueDate": "2026-10-27",
+    "dueDate": "2026-11-26",
+    "currency": "BRL",
+    "lineItems": [
+      {
+        "description": "Mesa de jantar em ipê, 6 lugares",
+        "qty": 1,
+        "unitPrice": 4890.0,
+        "lineTotal": 4890.0
+      },
+      {
+        "description": "Cadeira de ipê com assento de palha",
+        "qty": 6,
+        "unitPrice": 690.0,
+        "lineTotal": 4140.0
+      },
+      {
+        "description": "Frete e montagem",
+        "qty": 1,
+        "unitPrice": 350.0,
+        "lineTotal": 350.0
+      }
+    ],
+    "subtotal": 9380.0,
+    "tax": 1125.6,
+    "total": 10505.6
+  }
+}
