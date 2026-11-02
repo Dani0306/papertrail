@@ -1,0 +1,40 @@
+{
+  "file": "synthetic-tallow-lane-photo.jpg",
+  "source": "samples/src/synthetic-tallow-lane-photo.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": {
+      "accept": [
+        "Tallow Lane",
+        "Tallow Lane Bakery Supply Co."
+      ]
+    },
+    "invoiceNumber": "TLS-48812",
+    "issueDate": "2026-10-22",
+    "dueDate": "2026-11-21",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Bread flour, 25 kg sack",
+        "qty": 6,
+        "unitPrice": 31.4,
+        "lineTotal": 188.4
+      },
+      {
+        "description": "Unsalted butter, case of 36",
+        "qty": 3,
+        "unitPrice": 72.15,
+        "lineTotal": 216.45
+      },
+      {
+        "description": "Parchment paper rolls",
+        "qty": 10,
+        "unitPrice": 6.8,
+        "lineTotal": 68.0
+      }
+    ],
+    "subtotal": 472.85,
+    "tax": 34.28,
+    "total": 507.13
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "file": "synthetic-quarry-ash-ambiguous.pdf",
+  "source": "samples/src/synthetic-quarry-ash-ambiguous.html",
+  "dateOrder": "ymd",
+  "invoice": {
+    "vendor": "QUARRY & ASH HARDWARE",
+    "invoiceNumber": "QA-2061",
+    "issueDate": "2026-10-24",
+    "dueDate": "2026-11-23",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Butt hinges, satin, 3 in",
+        "qty": 40,
+        "unitPrice": 3.25,
+        "lineTotal": 130.0
+      },
+      {
+        "description": "Wood screws, box of 200",
+        "qty": 12,
+        "unitPrice": 8.9,
+        "lineTotal": 106.8
+      },
+      {
+        "description": "Deck stain, 5 L",
+        "qty": 6,
+        "unitPrice": 42.5,
+        "lineTotal": 255.0
+      },
+      {
+        "description": "Pry bar, 24 in",
+        "qty": 4,
+        "unitPrice": 18.75,
+        "lineTotal": 75.0
+      }
+    ],
+    "subtotal": 566.8,
+    "tax": 45.34,
+    "total": 612.14
+  }
+}

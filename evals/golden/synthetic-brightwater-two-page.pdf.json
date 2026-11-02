@@ -1,0 +1,173 @@
+{
+  "file": "synthetic-brightwater-two-page.pdf",
+  "source": "samples/src/synthetic-brightwater-two-page.html",
+  "dateOrder": "mdy",
+  "invoice": {
+    "vendor": "Brightwater Lab Supplies",
+    "invoiceNumber": "BW-90314",
+    "issueDate": "2026-10-27",
+    "dueDate": "2026-11-26",
+    "currency": "USD",
+    "lineItems": [
+      {
+        "description": "Nitrile gloves, M, box of 100",
+        "qty": 1,
+        "unitPrice": 11.2,
+        "lineTotal": 11.2
+      },
+      {
+        "description": "Pipette tips, 200 µL, rack",
+        "qty": 2,
+        "unitPrice": 7.45,
+        "lineTotal": 14.9
+      },
+      {
+        "description": "Microcentrifuge tubes, 1.5 mL, 500",
+        "qty": 3,
+        "unitPrice": 18.9,
+        "lineTotal": 56.7
+      },
+      {
+        "description": "Petri dishes, 90 mm, sleeve of 20",
+        "qty": 4,
+        "unitPrice": 9.6,
+        "lineTotal": 38.4
+      },
+      {
+        "description": "Lab marker, fine, black",
+        "qty": 5,
+        "unitPrice": 2.15,
+        "lineTotal": 10.75
+      },
+      {
+        "description": "Parafilm M, 4 in roll",
+        "qty": 1,
+        "unitPrice": 36.4,
+        "lineTotal": 36.4
+      },
+      {
+        "description": "Serological pipettes, 10 mL, 50",
+        "qty": 2,
+        "unitPrice": 21.75,
+        "lineTotal": 43.5
+      },
+      {
+        "description": "Conical tubes, 50 mL, 25",
+        "qty": 3,
+        "unitPrice": 14.3,
+        "lineTotal": 42.9
+      },
+      {
+        "description": "Weighing boats, medium, 500",
+        "qty": 4,
+        "unitPrice": 16.8,
+        "lineTotal": 67.2
+      },
+      {
+        "description": "Kimwipes, box of 280",
+        "qty": 5,
+        "unitPrice": 5.95,
+        "lineTotal": 29.75
+      },
+      {
+        "description": "Cryo labels, roll of 1000",
+        "qty": 1,
+        "unitPrice": 27.1,
+        "lineTotal": 27.1
+      },
+      {
+        "description": "Bench liner, 20 in × 50 ft",
+        "qty": 2,
+        "unitPrice": 44.25,
+        "lineTotal": 88.5
+      },
+      {
+        "description": "Glass beaker, 250 mL",
+        "qty": 3,
+        "unitPrice": 6.4,
+        "lineTotal": 19.2
+      },
+      {
+        "description": "Nitrile gloves, M, box of 100 (lot B)",
+        "qty": 4,
+        "unitPrice": 11.2,
+        "lineTotal": 44.8
+      },
+      {
+        "description": "Pipette tips, 200 µL, rack (lot B)",
+        "qty": 5,
+        "unitPrice": 7.45,
+        "lineTotal": 37.25
+      },
+      {
+        "description": "Microcentrifuge tubes, 1.5 mL, 500 (lot B)",
+        "qty": 1,
+        "unitPrice": 18.9,
+        "lineTotal": 18.9
+      },
+      {
+        "description": "Petri dishes, 90 mm, sleeve of 20 (lot B)",
+        "qty": 2,
+        "unitPrice": 9.6,
+        "lineTotal": 19.2
+      },
+      {
+        "description": "Lab marker, fine, black (lot B)",
+        "qty": 3,
+        "unitPrice": 2.15,
+        "lineTotal": 6.45
+      },
+      {
+        "description": "Parafilm M, 4 in roll (lot B)",
+        "qty": 4,
+        "unitPrice": 36.4,
+        "lineTotal": 145.6
+      },
+      {
+        "description": "Serological pipettes, 10 mL, 50 (lot B)",
+        "qty": 5,
+        "unitPrice": 21.75,
+        "lineTotal": 108.75
+      },
+      {
+        "description": "Conical tubes, 50 mL, 25 (lot B)",
+        "qty": 1,
+        "unitPrice": 14.3,
+        "lineTotal": 14.3
+      },
+      {
+        "description": "Weighing boats, medium, 500 (lot B)",
+        "qty": 2,
+        "unitPrice": 16.8,
+        "lineTotal": 33.6
+      },
+      {
+        "description": "Kimwipes, box of 280 (lot B)",
+        "qty": 3,
+        "unitPrice": 5.95,
+        "lineTotal": 17.85
+      },
+      {
+        "description": "Cryo labels, roll of 1000 (lot B)",
+        "qty": 4,
+        "unitPrice": 27.1,
+        "lineTotal": 108.4
+      },
+      {
+        "description": "Bench liner, 20 in × 50 ft (lot B)",
+        "qty": 5,
+        "unitPrice": 44.25,
+        "lineTotal": 221.25
+      },
+      {
+        "description": "Glass beaker, 250 mL (lot B)",
+        "qty": 1,
+        "unitPrice": 6.4,
+        "lineTotal": 6.4
+      }
+    ],
+    "subtotal": 1269.25,
+    "tax": 79.33,
+    "total": 1348.58
+  }
+}

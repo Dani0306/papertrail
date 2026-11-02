@@ -1,0 +1,35 @@
+{
+  "file": "synthetic-north-meadow-no-due-date.pdf",
+  "source": "samples/src/synthetic-north-meadow-no-due-date.html",
+  "dateOrder": "ymd",
+  "invoice": {
+    "vendor": "North Meadow Florals",
+    "invoiceNumber": "NMF-3307",
+    "issueDate": "2026-10-19",
+    "dueDate": null,
+    "currency": "CAD",
+    "lineItems": [
+      {
+        "description": "Peonies, coral, bunch of 5",
+        "qty": 15,
+        "unitPrice": 12.0,
+        "lineTotal": 180.0
+      },
+      {
+        "description": "Ranunculus, mixed, stem",
+        "qty": 20,
+        "unitPrice": 4.5,
+        "lineTotal": 90.0
+      },
+      {
+        "description": "Same-day delivery",
+        "qty": 1,
+        "unitPrice": 25.0,
+        "lineTotal": 25.0
+      }
+    ],
+    "subtotal": 295.0,
+    "tax": 14.75,
+    "total": 309.75
+  }
+}
