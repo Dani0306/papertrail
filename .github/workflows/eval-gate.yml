@@ -1,0 +1,67 @@
+# The regression gate (CLAUDE.md → Evaluation): runs the 30-document eval once on
+# the primary model and fails when headline accuracy drops more than 2 points
+# below evals/baseline.json. Costs money (~$0.02 a run), so it runs only when
+# extraction, scoring or the samples change (owner decision, 2 Nov), or by hand.
+name: Eval gate
+
+on:
+  pull_request:
+    paths:
+      - "lib/extract/**"
+      - "lib/schema/**"
+      - "lib/models.ts"
+      - "lib/normalize/**"
+      - "evals/**"
+      - "samples/**"
+      - "scripts/eval*.ts"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A quick series of pushes pays for one run, not all of them.
+concurrency:
+  group: eval-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  eval-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check for the API key
+        id: key
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        # Secrets aren't passed to PRs from forks, and the repo may not have one yet: skip, don't fail.
+        run: |
+          if [ -n "$OPENAI_API_KEY" ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::OPENAI_API_KEY is not available to this run, so the eval gate was skipped."
+            echo "Eval gate skipped: OPENAI_API_KEY is not available to this run." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - if: steps.key.outputs.present == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - if: steps.key.outputs.present == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - if: steps.key.outputs.present == 'true'
+        run: npm ci
+      - name: Run the eval (1 rep, stops above $0.05)
+        if: steps.key.outputs.present == 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: npm run eval -- --reps 1 --limit 0.05 --out evals/runs/ci-eval.json
+      - name: Compare with the baseline
+        if: steps.key.outputs.present == 'true'
+        run: npm run eval:gate -- --run evals/runs/ci-eval.json
+      - name: Keep the run file
+        if: always() && steps.key.outputs.present == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: eval-run
+          path: evals/runs/ci-eval.json
+          if-no-files-found: ignore
+          retention-days: 30

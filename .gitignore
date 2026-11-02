@@ -43,3 +43,6 @@ next-env.d.ts
 
 # extraction CLI call log (metadata only)
 /logs
+
+# The CI eval gate writes here (npm run eval -- --out); never committed.
+/evals/runs/ci-eval.json

@@ -1,4 +1,5 @@
-// npm run eval [-- --models gpt-6-luna,gpt-6.1-sol --reps 3 --limit 0.70]
+// npm run eval [-- --models gpt-6-luna,gpt-6.1-sol --variants with,without --reps 3 --limit 0.70 --out <path>]
+// --variants without asks without per-field confidence (the prompt 014 A/B); the default is with.
 //
 // Runs every golden file's sample through each model, scores every field
 // against evals/golden (normalised: dates → ISO, amounts → cents, text folded),
@@ -22,7 +23,7 @@ import { readInvoiceFile, swallowedFlagProblem } from "./lib/sample-file";
 const LOG_PATH = resolve("logs/model-calls.jsonl");
 
 async function main(): Promise<number> {
-  const swallowed = swallowedFlagProblem("eval", ["models", "reps", "limit"]);
+  const swallowed = swallowedFlagProblem("eval", ["models", "variants", "reps", "limit", "out"]);
   if (swallowed) return fail(swallowed);
   const models = (flag("--models") ?? primaryModel()).split(",").map((model) => model.trim()).filter(Boolean);
   const reps = Number(flag("--reps") ?? 1);
@@ -30,11 +31,17 @@ async function main(): Promise<number> {
   const unpriced = models.filter((model) => !PRICES[model]);
   if (unpriced.length) return fail(`No price for ${unpriced.join(", ")} in lib/cost/pricing.ts. Copy it from the pricing page first.`);
   if (!(reps >= 1) || !(limitUsd > 0)) return fail("--reps must be 1 or more and --limit above 0.");
+  const variants = (flag("--variants") ?? "with").split(",").map((variant) => variant.trim());
+  if (variants.some((variant) => variant !== "with" && variant !== "without")) return fail("--variants takes with, without, or both.");
+  // An arm is a model and whether confidence is asked; its label is the key the report groups by.
+  const arms = models.flatMap((model) =>
+    variants.map((variant) => ({ model, askConfidence: variant === "with", label: variant === "with" ? model : `${model} · no confidence` })),
+  );
   if (!process.env.OPENAI_API_KEY) return fail("OPENAI_API_KEY is not set. Add it to .env.local.");
 
   const goldens = await loadGoldens();
   const threshold = confidenceThreshold();
-  log(`${goldens.length} documents × ${models.length} models × ${reps} reps, threshold ${threshold}, stop above $${limitUsd}`);
+  log(`${goldens.length} documents × ${arms.length} arms (${arms.map((arm) => arm.label).join(", ")}) × ${reps} reps, threshold ${threshold}, stop above $${limitUsd}`);
 
   const runs: Array<EvalRun> = [];
   let spent = 0;
@@ -44,15 +51,19 @@ async function main(): Promise<number> {
     for (const [index, golden] of goldens.entries()) {
       const read = await readInvoiceFile(join("samples", golden.file));
       if ("problem" in read) return fail(read.problem);
-      // Alternate which model goes first so cache warm-up and quiet minutes even out.
-      const order = (rep + index) % 2 === 0 ? models : [...models].reverse();
-      for (const model of order) {
-        const result = await extractInvoice(read.file, { model, onCall: (call) => appendJsonl(LOG_PATH, call) });
+      // Alternate which arm goes first so cache warm-up and quiet minutes even out.
+      const order = (rep + index) % 2 === 0 ? arms : [...arms].reverse();
+      for (const arm of order) {
+        const result = await extractInvoice(read.file, {
+          model: arm.model,
+          askConfidence: arm.askConfidence,
+          onCall: (call) => appendJsonl(LOG_PATH, call),
+        });
         const sum = (key: "costUsd" | "latencyMs" | "inputTokens" | "cachedInputTokens" | "outputTokens" | "reasoningTokens") =>
           result.calls.reduce((total, call) => total + call[key], 0);
         const score = scoreDocument(golden, result, threshold);
         runs.push({
-          model,
+          model: arm.label,
           rep,
           file: golden.file,
           attempts: result.calls.length,
@@ -68,7 +79,7 @@ async function main(): Promise<number> {
         });
         spent += sum("costUsd");
         log(
-          `rep ${rep} · ${model.padEnd(12)} · ${golden.file.padEnd(42)} ${score.status.padEnd(11)} ${String(score.correct).padStart(3)}/${String(score.total).padEnd(3)} silent ${score.silentErrors} · $${sum("costUsd").toFixed(5)} · ${(sum("latencyMs") / 1000).toFixed(1)} s · total $${spent.toFixed(4)}`,
+          `rep ${rep} · ${arm.label.padEnd(26)} · ${golden.file.padEnd(42)} ${score.status.padEnd(11)} ${String(score.correct).padStart(3)}/${String(score.total).padEnd(3)} silent ${score.silentErrors} · $${sum("costUsd").toFixed(5)} · ${(sum("latencyMs") / 1000).toFixed(1)} s · total $${spent.toFixed(4)}`,
         );
         if (spent > limitUsd) {
           log(`Stopped: spent $${spent.toFixed(4)}, above the $${limitUsd} limit.`);
@@ -79,15 +90,17 @@ async function main(): Promise<number> {
     }
   }
 
-  const byModel = Object.fromEntries(models.map((model) => [model, summarizeModel(runs.filter((run) => run.model === model))]));
+  const labels = arms.map((arm) => arm.label);
+  const byModel = Object.fromEntries(labels.map((label) => [label, summarizeModel(runs.filter((run) => run.model === label))]));
   printReport(byModel);
 
   const date = new Date().toISOString().slice(0, 10);
   await mkdir(resolve("evals/runs"), { recursive: true });
-  const out = await freshPath(`evals/runs/${date}-eval`);
+  // CI passes a fixed --out so the gate can find the run; by hand, runs never overwrite each other.
+  const out = flag("--out") ? resolve(flag("--out")!) : await freshPath(`evals/runs/${date}-eval`);
   await writeFile(
     out,
-    `${JSON.stringify({ date, models, reps, threshold, pricesReadOn: PRICING_READ_ON, stoppedAtLimit: stopped, totalCostUsd: round(spent, 6), byModel, runs }, null, 2)}\n`,
+    `${JSON.stringify({ date, models: labels, reps, threshold, pricesReadOn: PRICING_READ_ON, stoppedAtLimit: stopped, totalCostUsd: round(spent, 6), byModel, runs }, null, 2)}\n`,
   );
   log(`\nTotal cost $${spent.toFixed(5)} · report: ${out.replace(`${process.cwd()}/`, "")}`);
   return 0;
@@ -100,10 +113,10 @@ async function loadGoldens(): Promise<GoldenFile[]> {
 
 function printReport(byModel: Record<string, ReturnType<typeof summarizeModel>>) {
   const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
-  log("\nmodel         docs  accuracy (by rep)          silent/doc  caught/doc  halluc  1st-try  repaired  escal.  human  $/doc     p50 s  p95 s");
+  log("\nmodel                         docs  accuracy (by rep)          silent/doc  caught/doc  halluc  1st-try  repaired  escal.  human  $/doc     p50 s  p95 s");
   for (const [model, s] of Object.entries(byModel)) {
     log(
-      `${model.padEnd(12)} ${String(s.documents).padStart(5)}  ${pct(s.accuracy).padStart(6)} (${s.accuracyByRep.map(pct).join(", ")})`.padEnd(54) +
+      `${model.padEnd(28)} ${String(s.documents).padStart(5)}  ${pct(s.accuracy).padStart(6)} (${s.accuracyByRep.map(pct).join(", ")})`.padEnd(54) +
         `${String(s.silentErrorsPerDoc).padStart(10)}  ${String(s.caughtErrorsPerDoc).padStart(10)}  ${pct(s.hallucinatedRate).padStart(6)}  ${pct(s.firstTryValidRate).padStart(7)}  ${String(s.repaired).padStart(8)}  ${String(s.escalated).padStart(6)}  ${String(s.needsHuman).padStart(5)}  ${s.meanCostUsd.toFixed(5)}  ${(s.p50LatencyMs / 1000).toFixed(1).padStart(5)}  ${(s.p95LatencyMs / 1000).toFixed(1).padStart(5)}`,
     );
   }

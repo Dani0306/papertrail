@@ -34,6 +34,7 @@ import { UploadBox } from "@/components/documents/upload-box";
 import { DocumentCard } from "@/components/review/document-card";
 import { DocumentStatus } from "@/components/review/document-status";
 import { FieldEditor } from "@/components/review/field-editor";
+import { ManualEntry } from "@/components/review/manual-entry";
 import { FieldList, FieldRow } from "@/components/review/field-row";
 import { RouteButton } from "@/components/ui/route-button";
 import { StatCard } from "@/components/review/stat-card";
@@ -470,6 +471,13 @@ export default function DesignSystemPage() {
               editable
             />
           </FieldList>
+        </Section>
+
+        <Section number="12b" title="Manual entry" className="lg:col-span-12">
+          <p id="manual-entry" className="mb-4 text-small text-neutral-500">
+            For a document the model couldn&apos;t read (needs human entry), uploader only. Values meet the same field rules as a correction.
+          </p>
+          <ManualEntry documentId="preview" preview={{ errors: { currency: "Use the 3-letter currency code, e.g. USD.", total: "Use digits with a dot for decimals: 1284.50" } }} />
         </Section>
 
         <Section number="13" title="Cards" className="lg:col-span-12">

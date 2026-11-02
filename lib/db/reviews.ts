@@ -135,7 +135,7 @@ export async function markReviewed(documentId: string, userId: string): Promise<
   return data.length === 1 ? { ok: true } : { ok: false, reason: "busy" };
 }
 
-async function ownedDocument(
+export async function ownedDocument(
   documentId: string,
   userId: string,
 ): Promise<{ ok: true; status: DocumentStatusValue } | { ok: false; reason: "missing" | "forbidden" }> {

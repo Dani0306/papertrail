@@ -11,6 +11,7 @@ import { DocumentPreview } from "@/components/review/document-preview";
 import { DocumentStatus } from "@/components/review/document-status";
 import { FieldEditor } from "@/components/review/field-editor";
 import { FieldList } from "@/components/review/field-row";
+import { ManualEntry } from "@/components/review/manual-entry";
 import { StatCard } from "@/components/review/stat-card";
 import { getUser } from "@/lib/auth";
 import { type DocumentReview, getDocumentReview } from "@/lib/db/reviews";
@@ -125,7 +126,10 @@ async function Review({ id }: { id: string }) {
           {review.extraction ? (
             <Fields review={review} fields={fields} currency={typeof currency === "string" ? currency : null} threshold={threshold} editable={editable} />
           ) : (
-            <NoExtraction review={review} />
+            <>
+              <NoExtraction review={review} />
+              {isOwner && review.status === "needs_human" && <ManualEntry documentId={review.id} />}
+            </>
           )}
         </section>
         <section aria-label="Document" className="min-w-0 lg:sticky lg:top-6">
@@ -210,8 +214,8 @@ function NoExtraction({ review }: { review: DocumentReview }) {
         <div className="flex min-w-0 flex-col gap-1">
           <p className="text-body font-medium text-neutral-900">This document needs a person to enter it</p>
           <p className="text-small text-neutral-600">
-            The model&apos;s answer still broke the invoice rules after a repair attempt, so nothing was saved. Manual entry comes
-            with the human-entry step; the document is on the left.
+            The model&apos;s answers still broke the invoice rules after a repair and a second model, so nothing was saved.
+            {review.access === "owner" ? " Enter it by hand below; the document is beside it." : " The document is beside this note."}
           </p>
           {review.calls.lastError && (
             <p className="mt-1 line-clamp-3 font-mono text-small break-words text-neutral-500" title={review.calls.lastError}>
