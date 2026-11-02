@@ -277,3 +277,31 @@ describe("extractInvoice, escalation", () => {
     expect(logged).toHaveLength(2);
   });
 });
+
+describe("extractInvoice, without confidence (eval-only A/B arm)", () => {
+  const strip = (invoice: typeof validInvoice) => {
+    const drop = ({ value, sourceQuote }: { value: unknown; sourceQuote: string | null }) => ({ value, sourceQuote });
+    const { lineItems, ...scalars } = invoice;
+    return { ...Object.fromEntries(Object.entries(scalars).map(([name, field]) => [name, drop(field)])), lineItems };
+  };
+
+  it("asks without confidence in the tool schema and the prompt, and returns every field at confidence 1", async () => {
+    const model = mockModel([toolReply(strip(validInvoice))]);
+    const result = await extractInvoice(file, { model, askConfidence: false });
+
+    expect(result.status).toBe("extracted");
+    if (result.status === "extracted") {
+      expect(result.invoice.total).toEqual({ value: 1229.97, sourceQuote: "€1,229.97", confidence: 1 });
+    }
+    const request = model.doGenerateCalls[0];
+    expect(JSON.stringify(request.tools?.[0])).not.toContain('"confidence"');
+    expect(JSON.stringify(request.prompt[0])).not.toContain("confidence");
+  });
+
+  it("still asks for confidence by default", async () => {
+    const model = mockModel([toolReply(validInvoice)]);
+    await extractInvoice(file, { model });
+    expect(JSON.stringify(model.doGenerateCalls[0].tools?.[0])).toContain('"confidence"');
+    expect(JSON.stringify(model.doGenerateCalls[0].prompt[0])).toContain("confidence");
+  });
+});

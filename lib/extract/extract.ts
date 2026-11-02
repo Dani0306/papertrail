@@ -12,8 +12,8 @@ import {
 } from "ai";
 import { callCostUsd } from "@/lib/cost/pricing";
 import { escalationModel, primaryModel } from "@/lib/models";
-import { Invoice } from "@/lib/schema/invoice";
-import { SYSTEM_PROMPT, USER_INSTRUCTION, repairInstruction } from "./prompt";
+import { Invoice, InvoiceWithoutConfidence } from "@/lib/schema/invoice";
+import { USER_INSTRUCTION, repairInstruction, systemPrompt } from "./prompt";
 import type { CallOutcome, ExtractionMode, ExtractionResult, InvoiceFile, ModelCallRecord } from "./types";
 
 // Pure server code: no Next.js, no Supabase. The CLI, the API route and the
@@ -32,6 +32,30 @@ export type ExtractOptions = {
   escalationModel?: string | Exclude<LanguageModel, string> | null;
   /** Receives one record per model call as soon as the call ends. */
   onCall?: (record: ModelCallRecord) => void | Promise<void>;
+  /**
+   * Eval-only (prompt 014 A/B): false sends the schema and prompt without
+   * confidence, and returns every field at confidence 1, meaning "nothing flagged".
+   */
+  askConfidence?: boolean;
+};
+
+/** What the model is asked for, and how its answer becomes an Invoice. */
+type Spec = { system: string; schema: typeof Invoice | typeof InvoiceWithoutConfidence; toInvoice: (output: unknown) => Invoice };
+
+const WITH_CONFIDENCE: Spec = { system: systemPrompt({ confidence: true }), schema: Invoice, toInvoice: (output) => output as Invoice };
+
+const WITHOUT_CONFIDENCE: Spec = {
+  system: systemPrompt({ confidence: false }),
+  schema: InvoiceWithoutConfidence,
+  toInvoice: (output) => {
+    const answer = output as InvoiceWithoutConfidence;
+    const full = <T extends { value: unknown; sourceQuote: string | null }>(field: T) => ({ ...field, confidence: 1 });
+    const { lineItems, ...scalars } = answer;
+    return {
+      ...Object.fromEntries(Object.entries(scalars).map(([name, field]) => [name, full(field)])),
+      lineItems: lineItems.map((item) => Object.fromEntries(Object.entries(item).map(([name, field]) => [name, full(field)]))),
+    } as Invoice;
+  },
 };
 
 const MAX_ATTEMPTS = 2; // the first try plus one repair, then at most one escalation (AGENTS.md §7)
@@ -48,7 +72,7 @@ type Attempt =
   | { ok: true; invoice: Invoice; usage: LanguageModelUsage }
   | { ok: false; issues: string[]; usage: LanguageModelUsage | undefined; followUp: ModelMessage[] };
 
-type AttemptFn = (model: Exclude<LanguageModel, string>, messages: ModelMessage[]) => Promise<Attempt>;
+type AttemptFn = (model: Exclude<LanguageModel, string>, messages: ModelMessage[], spec: Spec) => Promise<Attempt>;
 
 /**
  * Reads an invoice from a PDF or image. The ladder: validate → one repair with
@@ -60,6 +84,7 @@ export async function extractInvoice(file: InvoiceFile, options: ExtractOptions 
   const fallback = resolveEscalation(options);
   const mode = options.mode ?? "function_call";
   const attemptOnce = mode === "function_call" ? viaFunctionCall : viaJsonSchema;
+  const spec = options.askConfidence === false ? WITHOUT_CONFIDENCE : WITH_CONFIDENCE;
   const calls: ModelCallRecord[] = [];
 
   const firstMessages = (): ModelMessage[] => [
@@ -102,7 +127,7 @@ export async function extractInvoice(file: InvoiceFile, options: ExtractOptions 
     const started = performance.now();
     let result: Attempt;
     try {
-      result = await attemptOnce(model, messages);
+      result = await attemptOnce(model, messages, spec);
     } catch (error) {
       await record(attempt, "api_error", undefined, started, errorMessage(error));
       return { status: "failed", reason: errorMessage(error), calls };
@@ -136,7 +161,7 @@ export async function extractInvoice(file: InvoiceFile, options: ExtractOptions 
     const started = performance.now();
     let result: Attempt;
     try {
-      result = await attemptOnce(by, firstMessages());
+      result = await attemptOnce(by, firstMessages(), spec);
     } catch (error) {
       await record(MAX_ATTEMPTS + 1, "api_error", undefined, started, errorMessage(error), by);
       return { status: "needs_human", reason: `Still invalid after a repair; escalation to ${by.modelId} failed: ${errorMessage(error)}`, calls };
@@ -163,17 +188,17 @@ function resolveEscalation(options: ExtractOptions): Exclude<LanguageModel, stri
 }
 
 /** The schema as the reply's format (`text.format` json_schema, strict). */
-const viaJsonSchema: AttemptFn = async (model, messages) => {
+const viaJsonSchema: AttemptFn = async (model, messages, spec) => {
   try {
     const result = await generateText({
       model,
-      system: SYSTEM_PROMPT,
+      system: spec.system,
       messages,
-      output: Output.object({ schema: Invoice, name: "invoice" }),
+      output: Output.object({ schema: spec.schema, name: "invoice" }),
       providerOptions: PROVIDER_OPTIONS,
       maxRetries: 2, // the SDK's own retry for transient API errors only
     });
-    return { ok: true, invoice: result.output, usage: result.usage };
+    return { ok: true, invoice: spec.toInvoice(result.output), usage: result.usage };
   } catch (error) {
     if (!NoObjectGeneratedError.isInstance(error) && !NoOutputGeneratedError.isInstance(error)) throw error;
     const issues = validationIssues(error);
@@ -196,7 +221,7 @@ const viaJsonSchema: AttemptFn = async (model, messages) => {
  * marked `invalid`, so all three cases (no call, invalid call, valid call) are
  * checked here.
  */
-const viaFunctionCall: AttemptFn = async (model, messages) => {
+const viaFunctionCall: AttemptFn = async (model, messages, spec) => {
   const noCall = (usage: LanguageModelUsage | undefined, text?: string): Attempt => {
     const issues = [`No ${RECORD_INVOICE_TOOL} call was made. Call it with the invoice.`];
     return {
@@ -214,12 +239,12 @@ const viaFunctionCall: AttemptFn = async (model, messages) => {
   try {
     result = await generateText({
       model,
-      system: SYSTEM_PROMPT,
+      system: spec.system,
       messages,
       tools: {
         [RECORD_INVOICE_TOOL]: tool({
           description: "Record the invoice extracted from the attached document.",
-          inputSchema: Invoice,
+          inputSchema: spec.schema,
           strict: true, // the Responses provider sends tools as non-strict unless asked
         }),
       },
@@ -264,7 +289,7 @@ const viaFunctionCall: AttemptFn = async (model, messages) => {
     };
   }
 
-  return { ok: true, invoice: call.input as Invoice, usage: result.usage };
+  return { ok: true, invoice: spec.toInvoice(call.input), usage: result.usage };
 };
 
 function billedTokens(usage: LanguageModelUsage | undefined) {
