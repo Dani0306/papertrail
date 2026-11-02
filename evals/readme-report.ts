@@ -1,4 +1,5 @@
-import type { summarizeModel } from "./report";
+import type { EvalRun, summarizeModel } from "./report";
+import { THRESHOLD_GRID, chooseThreshold, sweep } from "./threshold";
 
 // Renders the README's results block from a committed eval run file. Pure: the
 // script reads and writes files, this decides what the block says. Every number
@@ -16,7 +17,7 @@ export type EvalRunFile = {
   /** Written by npm run eval from 1 Nov 2026 on; older files don't have it. */
   pricesReadOn?: string;
   byModel: Record<string, ModelSummary>;
-  runs: Array<{ file: string }>;
+  runs: Array<Pick<EvalRun, "file" | "model" | "score">>;
 };
 
 export const START = /<!-- eval:report:start(?: run=(\S+))? -->/;
@@ -29,7 +30,8 @@ export class MissingMarkersError extends Error {
   }
 }
 
-export function renderReport(run: EvalRunFile, runPath: string): string {
+/** The current threshold the sweep keeps on a tie; passed in so the renderer stays pure. */
+export function renderReport(run: EvalRunFile, runPath: string, currentThreshold = run.threshold): string {
   const documents = new Set(run.runs.map((entry) => entry.file)).size;
   const facts = [
     `**Run ${run.date}**`,
@@ -86,13 +88,69 @@ export function renderReport(run: EvalRunFile, runPath: string): string {
     row(["Field", ...run.models.map((model) => `\`${model}\``)]),
     row(["---", ...run.models.map(() => "---:")]),
     ...fieldRows,
+    ...(run.models.length === 1 ? thresholdTable(run, currentThreshold) : []),
     END,
   ].join("\n");
+}
+
+/** For a single-model run: silent errors vs review load at each threshold, from the stored confidences. */
+function thresholdTable(run: EvalRunFile, currentThreshold: number): string[] {
+  const curve = sweep(run.runs as EvalRun[], THRESHOLD_GRID);
+  const chosen = chooseThreshold(curve, currentThreshold);
+  return [
+    "",
+    "**Confidence threshold sweep**: the same run re-scored at each threshold (`npm run eval:threshold`)",
+    "",
+    row(["Threshold", "Silent errors / doc", "Caught errors / doc", "Fields to review / doc", "Of those, already right"]),
+    row(["---:", "---:", "---:", "---:", "---:"]),
+    ...curve.map((point) =>
+      row([
+        point === chosen ? `**${point.threshold.toFixed(2)}** (chosen)` : point.threshold.toFixed(2),
+        String(point.silentErrorsPerDoc),
+        String(point.caughtErrorsPerDoc),
+        String(point.reviewLoadPerDoc),
+        String(point.needlessReviewsPerDoc),
+      ]),
+    ),
+  ];
 }
 
 /** The run path the README's start marker names, or null when it names none. */
 export function readRunPath(readme: string): string | null {
   return START.exec(readme)?.[1] ?? null;
+}
+
+/** The run path of every marked block, in order (null for a block that names none). */
+export function blockRunPaths(readme: string): Array<string | null> {
+  return [...readme.matchAll(new RegExp(START.source, "g"))].map((match) => match[1] ?? null);
+}
+
+/**
+ * Every marked block re-rendered from the run its own marker names; a block that
+ * names none takes `fallbackRun`. Text outside the markers is untouched.
+ */
+export function replaceAllBlocks(readme: string, render: (runPath: string) => string, fallbackRun?: string): string {
+  const paths = blockRunPaths(readme);
+  if (paths.length === 0) throw new MissingMarkersError();
+  let out = "";
+  let rest = readme;
+  for (const path of paths) {
+    const runPath = path ?? fallbackRun;
+    if (!runPath) throw new MissingRunError();
+    const start = START.exec(rest)!;
+    const end = rest.indexOf(END, start.index);
+    if (end < 0) throw new MissingMarkersError();
+    out += rest.slice(0, start.index) + render(runPath);
+    rest = rest.slice(end + END.length);
+  }
+  return out + rest;
+}
+
+export class MissingRunError extends Error {
+  constructor() {
+    super("A results block names no run. Pass one: npm run eval:report -- --run evals/runs/<file>.json");
+    this.name = "MissingRunError";
+  }
 }
 
 /** The README with its marked block swapped for `block`. Text outside the markers is untouched. */

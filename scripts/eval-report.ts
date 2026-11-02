@@ -1,12 +1,13 @@
 // npm run eval:report [-- --run evals/runs/<file>.json] [--check]
 //
-// Rewrites the README's results block from an eval run file. Without --run it
-// re-renders from the run the README already names, so it's idempotent. With
-// --check it changes nothing and exits 1 if the README doesn't match its run.
+// Rewrites every results block in the README from the run file its marker
+// names, so it's idempotent. --run fills a block whose marker names no run yet.
+// With --check it changes nothing and exits 1 if any block doesn't match its run.
 // No model calls, no network.
 
 import { readFile, writeFile } from "node:fs/promises";
-import { type EvalRunFile, MissingMarkersError, readRunPath, renderReport, replaceBlock } from "../evals/readme-report";
+import { DEFAULT_CONFIDENCE_THRESHOLD } from "@/lib/design/confidence";
+import { type EvalRunFile, MissingMarkersError, MissingRunError, blockRunPaths, renderReport, replaceAllBlocks } from "../evals/readme-report";
 import { swallowedFlagProblem } from "./lib/sample-file";
 
 const README = "README.md";
@@ -17,15 +18,18 @@ async function main(): Promise<number> {
   const check = process.argv.includes("--check");
   const readme = await readFile(README, "utf8");
 
-  const runPath = flag("--run") ?? readRunPath(readme);
-  if (!runPath) return fail("The README's results block names no run yet. Pass one: npm run eval:report -- --run evals/runs/<file>.json", 2);
-  const run = JSON.parse(await readFile(runPath, "utf8")) as EvalRunFile;
+  const fallbackRun = flag("--run");
+  const runs = new Map<string, EvalRunFile>();
+  for (const path of [...blockRunPaths(readme), fallbackRun]) {
+    if (path && !runs.has(path)) runs.set(path, JSON.parse(await readFile(path, "utf8")) as EvalRunFile);
+  }
+  const runPath = [...runs.keys()].join(", ");
 
   let next: string;
   try {
-    next = replaceBlock(readme, renderReport(run, runPath));
+    next = replaceAllBlocks(readme, (path) => renderReport(runs.get(path)!, path, DEFAULT_CONFIDENCE_THRESHOLD), fallbackRun);
   } catch (error) {
-    if (error instanceof MissingMarkersError) return fail(error.message, 2);
+    if (error instanceof MissingMarkersError || error instanceof MissingRunError) return fail(error.message, 2);
     throw error;
   }
 
