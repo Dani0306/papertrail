@@ -84,7 +84,9 @@ async function Review({ id }: { id: string }) {
             </h1>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
               <DocumentStatus status={review.status} />
-              {review.access === "public" && <span className="text-small text-neutral-500">Sample document · read only</span>}
+              {review.access === "public" && (
+                <span className="text-small text-neutral-500">Sample document · read only. Sign in to upload your own invoice.</span>
+              )}
             </div>
           </div>
           <div className="flex flex-wrap items-start gap-3 sm:justify-end">

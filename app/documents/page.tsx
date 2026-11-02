@@ -30,7 +30,7 @@ export default function DocumentsPage() {
           </p>
         </header>
 
-        <section aria-labelledby="upload-heading" className="flex flex-col gap-3">
+        <section id="upload" aria-labelledby="upload-heading" className="flex scroll-mt-6 flex-col gap-3">
           <h2 id="upload-heading" className="text-h2 text-neutral-900">
             Upload an invoice
           </h2>

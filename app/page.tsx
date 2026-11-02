@@ -47,7 +47,7 @@ const STEPS: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: FileSpreadsheet,
     title: "Export rows",
-    body: "Download clean CSV or XLSX, one row per invoice, ready for the spreadsheet.",
+    body: "Download CSV or XLSX: a row per invoice and per line item, with anything uncertain listed for a check.",
   },
 ];
 
@@ -94,7 +94,7 @@ export default function Home() {
           <div className="relative mx-auto grid w-full max-w-6xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_34rem] lg:items-center lg:py-24">
             <div className="flex flex-col gap-6">
               <div>
-                <Badge tone="primary">In the lab · week 1</Badge>
+                <Badge tone="primary">In the lab · live demo</Badge>
               </div>
               <h1 className="font-display text-display-2 text-neutral-900 sm:text-display-1">
                 Invoices in, <span className="text-primary-600">clean rows</span> out.
@@ -104,10 +104,16 @@ export default function Home() {
                 uncertain field for a human instead of guessing.
               </p>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-                <Link href="/design-system" className={buttonClasses()}>
-                  See the design system
-                  <ArrowRight aria-hidden />
+                {/* The app's main action. Signed out, the upload box asks for a Google sign-in. */}
+                <Link href="/documents#upload" className={buttonClasses()}>
+                  <Upload aria-hidden />
+                  Upload an invoice
                 </Link>
+                {/* A route handler, not a page: a plain link, so it isn't prefetched. */}
+                <a href="/demo" className={buttonClasses({ variant: "secondary" })}>
+                  Try the demo
+                  <ArrowRight aria-hidden />
+                </a>
                 <a href="#how-it-works" className={buttonClasses({ variant: "text" })}>
                   How it works
                 </a>
@@ -158,19 +164,29 @@ export default function Home() {
 
         <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <div className="flex flex-col gap-6 rounded-xl bg-primary-700 px-6 py-10 text-white sm:flex-row sm:items-center sm:justify-between sm:px-10">
-            <div className="flex flex-col gap-2">
-              <h2 className="font-display text-display-2">Still in the lab.</h2>
+            <div className="flex flex-col gap-3">
+              <h2 className="font-display text-display-2">Measured, not claimed.</h2>
+              {/* Numbers from evals/baseline.json (30 synthetic invoices × 3 runs, 2 Nov 2026); never typed from memory. */}
               <p className="max-w-xl text-body-lg text-primary-100">
-                The extraction CLI comes first. Upload, review and export land in week 2.
+                99.8% of fields right on 30 synthetic invoices, for about $0.0005 each. The one misread a person
+                wouldn&apos;t see is written up next to the results, not hidden.
+              </p>
+              <p className="text-small text-primary-100">
+                <a
+                  href="https://github.com/Dani0306/papertrail#results"
+                  className="rounded-xs underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  Read the eval results
+                </a>
               </p>
             </div>
-            <Link
-              href="/design-system"
+            <a
+              href="/demo"
               className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-md bg-white px-4 text-body font-medium whitespace-nowrap text-primary-700 transition-colors hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white [&_svg]:size-4"
             >
-              Browse the components
+              Try the demo
               <ArrowRight aria-hidden />
-            </Link>
+            </a>
           </div>
         </section>
       </main>
@@ -179,6 +195,11 @@ export default function Home() {
 }
 
 /** A static review card with synthetic values: what an extracted invoice looks like. */
+/**
+ * A real extraction, not a mock: the public Quarry & Ash sample that /demo opens,
+ * with the values and confidences gpt-6-luna returned (2 Nov 2026). If the sample
+ * is re-extracted, update these from its review screen.
+ */
 function ExtractionPreview() {
   return (
     <figure className="flex flex-col gap-3 rounded-xl border bg-white p-3 shadow-xl">
@@ -186,36 +207,20 @@ function ExtractionPreview() {
         <span className="flex min-w-0 items-center gap-2">
           <FileText aria-hidden className="size-4 shrink-0 text-primary-500" />
           <span className="truncate font-mono text-small text-neutral-600">
-            harbor-pine-inv-2041.pdf
+            synthetic-quarry-ash-ambiguous.pdf
           </span>
         </span>
         <DocumentStatus status="extracted" />
       </div>
       <FieldList>
-        <FieldRow
-          label="Vendor"
-          value="Harbor & Pine Stationers"
-          confidence={0.98}
-          sourceQuote="HARBOR & PINE STATIONERS"
-        />
-        <FieldRow
-          label="Invoice number"
-          value="INV-2041"
-          confidence={0.96}
-          sourceQuote="Invoice # INV-2041"
-        />
-        <FieldRow label="Due date" value={null} confidence={0.91} sourceQuote={null} />
-        <FieldRow
-          label="Total"
-          value="$1,284.50"
-          confidence={0.62}
-          sourceQuote="TOTAL DUE  1,284.5O"
-          numeric
-        />
+        <FieldRow label="Vendor" value="QUARRY & ASH HARDWARE" confidence={0.99} sourceQuote="QUARRY & ASH HARDWARE" />
+        <FieldRow label="Invoice number" value="QA-2O61" confidence={0.78} sourceQuote="QA-2O61" />
+        <FieldRow label="Due date" value="2026-11-23" confidence={0.99} sourceQuote="2026-11-23" />
+        <FieldRow label="Total" value="$612.14" confidence={0.76} sourceQuote="$6l2.14" numeric />
       </FieldList>
       <figcaption className="flex items-center gap-1.5 px-2 pb-1 text-small font-medium text-review-700">
-        <TriangleAlert aria-hidden className="size-3.5" />
-        1 field to review: the total was printed with a letter O.
+        <TriangleAlert aria-hidden className="size-3.5 shrink-0" />
+        2 fields to review: a letter O and a lower-case l, printed where digits belong.
       </figcaption>
     </figure>
   );

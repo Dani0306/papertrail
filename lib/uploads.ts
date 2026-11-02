@@ -16,6 +16,20 @@ export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 export const DEFAULT_DAILY_UPLOAD_CAP = 20;
 
+/**
+ * Uploads registered per UTC day across everyone. The per-user cap alone doesn't
+ * bound a public demo (anyone can open Google accounts), and the files land in
+ * the shared lab project's free-tier storage. Matches the extraction cap: more
+ * uploads than that couldn't be extracted anyway.
+ */
+export const DEFAULT_GLOBAL_DAILY_UPLOAD_CAP = 50;
+
+/** A positive integer from the environment, or the fallback. */
+export function capFromEnv(value: string | undefined, fallback: number): number {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 /** The `accept` attribute for the file input. */
 export const UPLOAD_ACCEPT = [...ALLOWED_UPLOAD_TYPES, ".pdf", ".png", ".jpg", ".jpeg", ".webp"].join(",");
 

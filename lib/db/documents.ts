@@ -5,6 +5,8 @@ import { DOCUMENT_STATUSES, type DocumentStatusValue } from "@/lib/document-stat
 import {
   ALLOWED_UPLOAD_TYPES,
   DEFAULT_DAILY_UPLOAD_CAP,
+  DEFAULT_GLOBAL_DAILY_UPLOAD_CAP,
+  capFromEnv,
   MAX_UPLOAD_BYTES,
   type RegisterRequest,
   type UploadRequest,
@@ -71,8 +73,25 @@ export async function listDocuments(viewerId: string | null, threshold: number, 
 }
 
 export function dailyUploadCap(): number {
-  const value = Number.parseInt(process.env.PAPERTRAIL_DAILY_UPLOAD_CAP ?? "", 10);
-  return Number.isFinite(value) && value > 0 ? value : DEFAULT_DAILY_UPLOAD_CAP;
+  return capFromEnv(process.env.PAPERTRAIL_DAILY_UPLOAD_CAP, DEFAULT_DAILY_UPLOAD_CAP);
+}
+
+export function globalDailyUploadCap(): number {
+  return capFromEnv(process.env.PAPERTRAIL_GLOBAL_DAILY_UPLOAD_CAP, DEFAULT_GLOBAL_DAILY_UPLOAD_CAP);
+}
+
+/** Documents registered by anyone since 00:00 UTC (public samples excluded). */
+export async function countRegisteredToday(): Promise<number> {
+  const client = await db();
+  const startOfDay = new Date();
+  startOfDay.setUTCHours(0, 0, 0, 0);
+  const { count, error } = await client
+    .from("documents")
+    .select("id", { count: "exact", head: true })
+    .not("uploaded_by", "is", null)
+    .gte("created_at", startOfDay.toISOString());
+  if (error) throw dbError("Could not count today's uploads", error);
+  return count ?? 0;
 }
 
 /**
@@ -95,11 +114,13 @@ export async function countUploadsToday(userId: string): Promise<number> {
 
 export type UploadUrlResult =
   | { ok: true; path: string; signedUrl: string }
-  | { ok: false; reason: "cap"; cap: number };
+  | { ok: false; reason: "cap"; scope: "user" | "everyone"; cap: number };
 
 export async function createUploadUrl(userId: string, file: UploadRequest): Promise<UploadUrlResult> {
   const cap = dailyUploadCap();
-  if ((await countUploadsToday(userId)) >= cap) return { ok: false, reason: "cap", cap };
+  if ((await countUploadsToday(userId)) >= cap) return { ok: false, reason: "cap", scope: "user", cap };
+  const globalCap = globalDailyUploadCap();
+  if ((await countRegisteredToday()) >= globalCap) return { ok: false, reason: "cap", scope: "everyone", cap: globalCap };
 
   const client = await db();
   const path = storagePathFor(userId, randomUUID(), file.fileName);

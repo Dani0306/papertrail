@@ -225,6 +225,7 @@ export default function DesignSystemPage() {
 
         <Section number="03" title="Type scale" className="lg:col-span-8">
           <div className="-mx-5 overflow-x-auto px-5">
+            <div className="overflow-x-auto">
             <table className="w-full min-w-xl text-left">
               <thead className="text-small text-neutral-500">
                 <tr>
@@ -247,6 +248,7 @@ export default function DesignSystemPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </Section>
 
@@ -301,6 +303,7 @@ export default function DesignSystemPage() {
 
         <Section number="07" title="Buttons" className="lg:col-span-8">
           <div className="-mx-5 overflow-x-auto px-5">
+            <div className="overflow-x-auto">
             <div className="grid min-w-xl grid-cols-[5rem_repeat(4,auto)] items-center gap-x-4 gap-y-3">
               <span />
               {["Primary", "Secondary", "Tertiary", "Text"].map((name) => (
@@ -352,6 +355,7 @@ export default function DesignSystemPage() {
                 </Button>
               </div>
               <span />
+            </div>
             </div>
           </div>
           <ul className="mt-5 list-disc pl-5 text-small text-neutral-500">

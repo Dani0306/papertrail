@@ -1,5 +1,5 @@
 import "server-only";
-import type { ExtractionStore } from "@/lib/pipeline/extract-document";
+import type { ClaimResult, ExtractionStore } from "@/lib/pipeline/extract-document";
 import type { Json } from "./types";
 import { accessFailure, documentAccess } from "@/lib/review/access";
 import { ALLOWED_UPLOAD_TYPES, type UploadType } from "@/lib/uploads";
@@ -42,20 +42,7 @@ export async function extractionStore(): Promise<ExtractionStore> {
         .or(`status.eq.uploaded,and(status.eq.extracting,extraction_started_at.lt."${staleBefore.toISOString()}")`)
         .select("id, storage_path, original_filename, mime_type");
       if (claimError) throw dbError("Could not claim the document", claimError);
-      const document = claimed[0];
-      if (!document) return { ok: false, reason: "busy" };
-      if (!(ALLOWED_UPLOAD_TYPES as readonly string[]).includes(document.mime_type)) {
-        throw new Error(`Document ${documentId} has an unsupported type: ${document.mime_type}`);
-      }
-      return {
-        ok: true,
-        document: {
-          id: document.id,
-          storagePath: document.storage_path,
-          fileName: document.original_filename,
-          mimeType: document.mime_type as UploadType,
-        },
-      };
+      return claimedDocument(claimed[0]);
     },
 
     async download(storagePath) {
@@ -92,5 +79,37 @@ export async function extractionStore(): Promise<ExtractionStore> {
       const { error } = await client.from("documents").update({ status }).eq("id", documentId);
       if (error) throw dbError("Could not update the document status", error);
     },
+  };
+}
+
+/**
+ * Seeding only (scripts/seed-samples.ts): claims a public sample (uploaded_by
+ * null) so the demo's preloaded documents go through the real pipeline. A
+ * sample left at needs_human may be retried. No route uses this, so a visitor
+ * can never run a sample.
+ */
+export async function claimSample(documentId: string, staleBefore: Date): Promise<ClaimResult> {
+  const client = await db();
+  const { data: claimed, error } = await client
+    .from("documents")
+    .update({ status: "extracting", extraction_started_at: new Date().toISOString() })
+    .eq("id", documentId)
+    .is("uploaded_by", null)
+    .or(`status.eq.uploaded,status.eq.needs_human,and(status.eq.extracting,extraction_started_at.lt."${staleBefore.toISOString()}")`)
+    .select("id, storage_path, original_filename, mime_type");
+  if (error) throw dbError("Could not claim the sample", error);
+  return claimedDocument(claimed[0]);
+}
+
+function claimedDocument(
+  row: { id: string; storage_path: string; original_filename: string; mime_type: string } | undefined,
+): ClaimResult {
+  if (!row) return { ok: false, reason: "busy" };
+  if (!(ALLOWED_UPLOAD_TYPES as readonly string[]).includes(row.mime_type)) {
+    throw new Error(`Document ${row.id} has an unsupported type: ${row.mime_type}`);
+  }
+  return {
+    ok: true,
+    document: { id: row.id, storagePath: row.storage_path, fileName: row.original_filename, mimeType: row.mime_type as UploadType },
   };
 }

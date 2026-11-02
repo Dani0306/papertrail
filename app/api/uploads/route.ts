@@ -14,10 +14,11 @@ export async function POST(request: Request) {
 
     const result = await createUploadUrl(user.id, parsed.data);
     if (!result.ok) {
-      return NextResponse.json(
-        { error: `You've used all ${result.cap} uploads for today. The limit resets at 00:00 UTC.` },
-        { status: 429 },
-      );
+      const error =
+        result.scope === "user"
+          ? `You've used all ${result.cap} uploads for today. The limit resets at 00:00 UTC.`
+          : "The demo has reached today's upload limit for everyone. It resets at 00:00 UTC.";
+      return NextResponse.json({ error }, { status: 429 });
     }
     return NextResponse.json({ path: result.path, signedUrl: result.signedUrl });
   } catch (error) {

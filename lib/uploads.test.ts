@@ -7,8 +7,7 @@ import {
   isOwnedPath,
   safeFileName,
   storagePathFor,
-  uploadProblem,
-} from "./uploads";
+  uploadProblem, capFromEnv } from "./uploads";
 
 const USER = "6f1c2b9e-0000-4000-8000-000000000001";
 const OTHER = "6f1c2b9e-0000-4000-8000-000000000002";
@@ -105,5 +104,12 @@ describe("formatBytes", () => {
     expect(formatBytes(2048)).toBe("2 KB");
     expect(formatBytes(1.5 * 1024 * 1024)).toBe("1.5 MB");
     expect(formatBytes(MAX_UPLOAD_BYTES)).toBe("10 MB");
+  });
+});
+
+describe("capFromEnv", () => {
+  it("reads a positive integer and falls back otherwise", () => {
+    expect(capFromEnv("75", 50)).toBe(75);
+    for (const value of [undefined, "", "abc", "0", "-3"]) expect(capFromEnv(value, 50)).toBe(50);
   });
 });

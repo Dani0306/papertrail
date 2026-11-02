@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <!-- A page with a folded corner and three lines, the last one amber: a document with a flagged field.
+       Drawn on whole pixels so it stays crisp at 16 px. Colours are the design tokens primary-500,
+       primary-200, white and review-500. -->
+  <path d="M4 1h6l4 4v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" fill="#2f62c2"/>
+  <path d="M10 1v3a1 1 0 0 0 1 1h3z" fill="#b9ccf2"/>
+  <rect x="5" y="7" width="7" height="1" fill="#ffffff"/>
+  <rect x="5" y="9" width="5" height="1" fill="#ffffff"/>
+  <rect x="5" y="11" width="7" height="2" fill="#f59e0b"/>
+</svg>
