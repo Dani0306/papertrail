@@ -18,14 +18,19 @@ const sourceQuote = z
   .nullable()
   .describe("The exact text on the document the value was read from, copied character for character. null when value is null.");
 
-/** `{ value, confidence, sourceQuote }`: every extracted value carries its evidence. */
-export function evidenceField<T extends z.ZodType>(value: T, description: string) {
-  return z
-    .object({
-      value: value.nullable().describe("null when the document doesn't show this field. Never guess."),
-      confidence,
-      sourceQuote,
-    })
+type Evidence<T extends z.ZodType, C extends boolean> = z.ZodObject<
+  C extends true
+    ? { value: z.ZodNullable<T>; confidence: typeof confidence; sourceQuote: typeof sourceQuote }
+    : { value: z.ZodNullable<T>; sourceQuote: typeof sourceQuote }
+>;
+
+/**
+ * `{ value, confidence, sourceQuote }`: every extracted value carries its evidence.
+ * `withConfidence: false` drops only `confidence`, for the prompt 014 A/B; the app always asks.
+ */
+export function evidenceField<T extends z.ZodType, C extends boolean = true>(value: T, description: string, withConfidence: C = true as C) {
+  const shared = { value: value.nullable().describe("null when the document doesn't show this field. Never guess."), sourceQuote };
+  return (withConfidence ? z.object({ value: shared.value, confidence, sourceQuote }) : z.object(shared))
     .describe(description)
     .superRefine((field, ctx) => {
       // Inside this generic helper TypeScript can't see `value` on the inferred type.
@@ -43,33 +48,45 @@ export function evidenceField<T extends z.ZodType>(value: T, description: string
       if (value === null && sourceQuote !== null) {
         ctx.addIssue({ code: "custom", path: ["sourceQuote"], message: "sourceQuote must be null when value is null." });
       }
-    });
+    }) as unknown as Evidence<T, C>;
 }
 
-const text = (description: string) => evidenceField(z.string(), description);
-const amount = (description: string) => evidenceField(z.number(), description);
+/** The invoice schema, built once from one list of fields; only whether confidence is asked varies. */
+function invoiceSchema<C extends boolean>(withConfidence: C) {
+  const text = (description: string) => evidenceField(z.string(), description, withConfidence);
+  const amount = (description: string) => evidenceField(z.number(), description, withConfidence);
 
-export const LineItem = z.object({
-  description: text("What was sold, as printed on the line."),
-  qty: amount("Quantity on the line, as a number."),
-  unitPrice: amount("Price per unit as a number, without currency symbol or thousands separators."),
-  lineTotal: amount("Line amount as a number, without currency symbol or thousands separators."),
-});
+  const LineItem = z.object({
+    description: text("What was sold, as printed on the line."),
+    qty: amount("Quantity on the line, as a number."),
+    unitPrice: amount("Price per unit as a number, without currency symbol or thousands separators."),
+    lineTotal: amount("Line amount as a number, without currency symbol or thousands separators."),
+  });
 
-export const Invoice = z.object({
-  vendor: text("The business that issued the invoice."),
-  invoiceNumber: text("The invoice's own number. Not a purchase order, customer or tax ID."),
-  issueDate: text("The invoice date exactly as printed. Not a stamp, delivery or received date."),
-  dueDate: text("The payment due date exactly as printed."),
-  currency: evidenceField(
-    z.string().regex(/^[A-Z]{3}$/),
-    "ISO 4217 code of the printed currency, e.g. EUR for €. Do not convert amounts.",
-  ),
-  lineItems: z.array(LineItem).describe("Every billed line, in document order. Empty if none are listed."),
-  subtotal: amount("Amount before tax, as a number."),
-  tax: amount("Total tax amount, as a number."),
-  total: amount("The final amount due, as a number."),
-});
+  const Invoice = z.object({
+    vendor: text("The business that issued the invoice."),
+    invoiceNumber: text("The invoice's own number. Not a purchase order, customer or tax ID."),
+    issueDate: text("The invoice date exactly as printed. Not a stamp, delivery or received date."),
+    dueDate: text("The payment due date exactly as printed."),
+    currency: evidenceField(
+      z.string().regex(/^[A-Z]{3}$/),
+      "ISO 4217 code of the printed currency, e.g. EUR for €. Do not convert amounts.",
+      withConfidence,
+    ),
+    lineItems: z.array(LineItem).describe("Every billed line, in document order. Empty if none are listed."),
+    subtotal: amount("Amount before tax, as a number."),
+    tax: amount("Total tax amount, as a number."),
+    total: amount("The final amount due, as a number."),
+  });
+
+  return { LineItem, Invoice };
+}
+
+export const { LineItem, Invoice } = invoiceSchema(true);
+
+/** Eval-only (prompt 014): the same invoice without `confidence`, to measure what asking for it costs. */
+export const InvoiceWithoutConfidence = invoiceSchema(false).Invoice;
+export type InvoiceWithoutConfidence = z.infer<typeof InvoiceWithoutConfidence>;
 
 export type Invoice = z.infer<typeof Invoice>;
 export type LineItem = z.infer<typeof LineItem>;

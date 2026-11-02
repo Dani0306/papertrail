@@ -1,6 +1,6 @@
 import { Output } from "ai";
 import { describe, expect, it } from "vitest";
-import { Invoice, flattenFields } from "./invoice";
+import { Invoice, InvoiceWithoutConfidence, flattenFields } from "./invoice";
 
 const quoted = <T>(value: T, sourceQuote: string, confidence = 0.95) => ({ value, confidence, sourceQuote });
 const absent = (confidence = 0.9) => ({ value: null, confidence, sourceQuote: null });
@@ -101,6 +101,34 @@ describe("JSON schema sent to OpenAI", () => {
     const described = confidences.filter((node) => node !== undefined);
     expect(described.length).toBeGreaterThan(10);
     for (const node of described) expect(node.description).toMatch(/null value: how sure you are the field is absent/);
+  });
+});
+
+describe("InvoiceWithoutConfidence (the prompt 014 A/B arm)", () => {
+  it("has every field Invoice has, with value and sourceQuote but no confidence anywhere", async () => {
+    const format = await Output.object({ schema: InvoiceWithoutConfidence, name: "invoice" }).responseFormat;
+    const text = JSON.stringify(format?.type === "json" ? format.schema : null);
+    expect(text).not.toContain('"confidence"');
+    expect(text).toContain('"sourceQuote"');
+    expect(Object.keys(InvoiceWithoutConfidence.shape)).toEqual(Object.keys(Invoice.shape));
+  });
+
+  it("keeps the evidence rule: a value without a quote fails", () => {
+    const field = (value: unknown, sourceQuote: string | null) => ({ value, sourceQuote });
+    const answer = {
+      vendor: field("A", "A"),
+      invoiceNumber: field("1", null),
+      issueDate: field(null, null),
+      dueDate: field(null, null),
+      currency: field("USD", "$"),
+      lineItems: [],
+      subtotal: field(1, "1"),
+      tax: field(0, "0"),
+      total: field(1, "1"),
+    };
+    const result = InvoiceWithoutConfidence.safeParse(answer);
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error?.issues)).toContain("invoiceNumber");
   });
 });
 
