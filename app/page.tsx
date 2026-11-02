@@ -104,14 +104,16 @@ export default function Home() {
                 uncertain field for a human instead of guessing.
               </p>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                {/* The app's main action. Signed out, the upload box asks for a Google sign-in. */}
+                <Link href="/documents#upload" className={buttonClasses()}>
+                  <Upload aria-hidden />
+                  Upload an invoice
+                </Link>
                 {/* A route handler, not a page: a plain link, so it isn't prefetched. */}
-                <a href="/demo" className={buttonClasses()}>
+                <a href="/demo" className={buttonClasses({ variant: "secondary" })}>
                   Try the demo
                   <ArrowRight aria-hidden />
                 </a>
-                <Link href="/documents" className={buttonClasses({ variant: "secondary" })}>
-                  Browse documents
-                </Link>
                 <a href="#how-it-works" className={buttonClasses({ variant: "text" })}>
                   How it works
                 </a>
@@ -176,13 +178,6 @@ export default function Home() {
                 >
                   Read the eval results
                 </a>
-                {" · "}
-                <Link
-                  href="/design-system"
-                  className="rounded-xs underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  Design system
-                </Link>
               </p>
             </div>
             <a
