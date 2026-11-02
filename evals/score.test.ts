@@ -43,7 +43,7 @@ function invoice(overrides: Partial<Invoice> = {}): Invoice {
   };
 }
 
-const extracted = (inv: Invoice): ExtractionResult => ({ status: "extracted", invoice: inv, calls: [] });
+const extracted = (inv: Invoice): ExtractionResult => ({ status: "extracted", invoice: inv, escalated: false, calls: [] });
 
 describe("scoreDocument", () => {
   it("scores formatting differences as correct: case, spacing, date format, float noise, accepted alternatives", () => {

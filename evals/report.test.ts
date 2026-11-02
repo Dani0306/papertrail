@@ -67,6 +67,11 @@ describe("summarizeModel", () => {
     expect(summary.byDocument[1].errors).toEqual(["total wrong (flagged) ×1", "dueDate hallucinated ×1"]);
   });
 
+  it("counts escalated runs apart from repaired ones", () => {
+    const rescued = run(3, "c.pdf", [field("vendor", "correct")], { attempts: 3, firstTryValid: false, escalated: true });
+    expect(summarizeModel([...runs, rescued])).toMatchObject({ escalated: 1, repaired: 0 });
+  });
+
   it("averages cost and takes nearest-rank latency", () => {
     expect(summary.meanCostUsd).toBe(0.000833);
     expect(summary.p50LatencyMs).toBe(5000);

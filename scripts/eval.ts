@@ -63,6 +63,7 @@ async function main(): Promise<number> {
           cachedInputTokens: sum("cachedInputTokens"),
           outputTokens: sum("outputTokens"),
           reasoningTokens: sum("reasoningTokens"),
+          escalated: result.status === "extracted" && result.escalated,
           score,
         });
         spent += sum("costUsd");
@@ -99,11 +100,11 @@ async function loadGoldens(): Promise<GoldenFile[]> {
 
 function printReport(byModel: Record<string, ReturnType<typeof summarizeModel>>) {
   const pct = (value: number) => `${(value * 100).toFixed(1)}%`;
-  log("\nmodel         docs  accuracy (by rep)          silent/doc  caught/doc  halluc  1st-try  repaired  human  $/doc     p50 s  p95 s");
+  log("\nmodel         docs  accuracy (by rep)          silent/doc  caught/doc  halluc  1st-try  repaired  escal.  human  $/doc     p50 s  p95 s");
   for (const [model, s] of Object.entries(byModel)) {
     log(
       `${model.padEnd(12)} ${String(s.documents).padStart(5)}  ${pct(s.accuracy).padStart(6)} (${s.accuracyByRep.map(pct).join(", ")})`.padEnd(54) +
-        `${String(s.silentErrorsPerDoc).padStart(10)}  ${String(s.caughtErrorsPerDoc).padStart(10)}  ${pct(s.hallucinatedRate).padStart(6)}  ${pct(s.firstTryValidRate).padStart(7)}  ${String(s.repaired).padStart(8)}  ${String(s.needsHuman).padStart(5)}  ${s.meanCostUsd.toFixed(5)}  ${(s.p50LatencyMs / 1000).toFixed(1).padStart(5)}  ${(s.p95LatencyMs / 1000).toFixed(1).padStart(5)}`,
+        `${String(s.silentErrorsPerDoc).padStart(10)}  ${String(s.caughtErrorsPerDoc).padStart(10)}  ${pct(s.hallucinatedRate).padStart(6)}  ${pct(s.firstTryValidRate).padStart(7)}  ${String(s.repaired).padStart(8)}  ${String(s.escalated).padStart(6)}  ${String(s.needsHuman).padStart(5)}  ${s.meanCostUsd.toFixed(5)}  ${(s.p50LatencyMs / 1000).toFixed(1).padStart(5)}  ${(s.p95LatencyMs / 1000).toFixed(1).padStart(5)}`,
     );
   }
   for (const [model, s] of Object.entries(byModel)) {
