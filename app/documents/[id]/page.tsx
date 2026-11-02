@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound, unstable_rethrow } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
-import { BadgeCheck, CircleAlert, CircleDollarSign, ListChecks, ScanText, Timer, TriangleAlert, UserPen } from "lucide-react";
+import { BadgeCheck, CircleAlert, CircleDollarSign, Download, ListChecks, ScanText, Timer, TriangleAlert, UserPen } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { buttonClasses } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Nav } from "@/components/ui/nav";
 import { RouteButton } from "@/components/ui/route-button";
@@ -14,6 +15,7 @@ import { StatCard } from "@/components/review/stat-card";
 import { getUser } from "@/lib/auth";
 import { type DocumentReview, getDocumentReview } from "@/lib/db/reviews";
 import { confidenceThreshold } from "@/lib/design/confidence";
+import { AWAITING_REVIEW, HAS_FIELDS } from "@/lib/document-status";
 import { type ReviewField, effectiveValue, groupFields, reviewCounts } from "@/lib/review/fields";
 import { z } from "zod";
 
@@ -68,7 +70,7 @@ async function Review({ id }: { id: string }) {
   const fields = review.extraction?.fields ?? [];
   const vendor = valueOf(fields, "vendor");
   const currency = valueOf(fields, "currency");
-  const editable = isOwner && (review.status === "extracted" || review.status === "reviewed");
+  const editable = isOwner && HAS_FIELDS.includes(review.status);
 
   return (
     <>
@@ -84,18 +86,32 @@ async function Review({ id }: { id: string }) {
               {review.access === "public" && <span className="text-small text-neutral-500">Sample document · read only</span>}
             </div>
           </div>
-          {isOwner && review.status === "uploaded" && (
-            <RouteButton endpoint={`/api/documents/${review.id}/extract`} busyLabel="Extracting…" busyHint="Reading the invoice. This takes 5–20 seconds.">
-              <ScanText aria-hidden />
-              Extract
-            </RouteButton>
-          )}
-          {isOwner && review.status === "extracted" && (
-            <RouteButton endpoint={`/api/documents/${review.id}/review`} variant="secondary" busyLabel="Saving…">
-              <BadgeCheck aria-hidden />
-              Mark reviewed
-            </RouteButton>
-          )}
+          <div className="flex flex-wrap items-start gap-3 sm:justify-end">
+            {isOwner && review.status === "uploaded" && (
+              <RouteButton endpoint={`/api/documents/${review.id}/extract`} busyLabel="Extracting…" busyHint="Reading the invoice. This takes 5–20 seconds.">
+                <ScanText aria-hidden />
+                Extract
+              </RouteButton>
+            )}
+            {isOwner && AWAITING_REVIEW.includes(review.status) && (
+              <RouteButton endpoint={`/api/documents/${review.id}/review`} variant="secondary" busyLabel="Saving…">
+                <BadgeCheck aria-hidden />
+                Mark reviewed
+              </RouteButton>
+            )}
+            {HAS_FIELDS.includes(review.status) && (
+              <span className="flex gap-2">
+                <a href={`/api/exports?format=xlsx&document=${review.id}`} download className={buttonClasses({ variant: "tertiary" })}>
+                  <Download aria-hidden />
+                  XLSX
+                </a>
+                <a href={`/api/exports?format=csv&document=${review.id}`} download className={buttonClasses({ variant: "tertiary" })}>
+                  <Download aria-hidden />
+                  CSV
+                </a>
+              </span>
+            )}
+          </div>
         </header>
       </div>
 
