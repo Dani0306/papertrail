@@ -1,5 +1,5 @@
 import "server-only";
-import type { DocumentStatusValue } from "@/lib/document-status";
+import { AWAITING_REVIEW, HAS_FIELDS, type DocumentStatusValue } from "@/lib/document-status";
 import { type DocumentAccess, accessFailure, documentAccess } from "@/lib/review/access";
 import { type FieldValue, type ReviewField, reviewFieldFromRow } from "@/lib/review/fields";
 import { db, documentsBucket } from "./client";
@@ -8,8 +8,6 @@ import type { Json } from "./types";
 
 const PREVIEW_URL_SECONDS = 10 * 60;
 
-/** Statuses whose extracted fields a person may correct. */
-const CORRECTABLE: readonly DocumentStatusValue[] = ["extracted", "reviewed"];
 
 export type DocumentReview = {
   id: string;
@@ -92,7 +90,7 @@ export async function correctField(
   const client = await db();
   const owned = await ownedDocument(documentId, userId);
   if (!owned.ok) return owned;
-  if (!CORRECTABLE.includes(owned.status)) return { ok: false, reason: "busy" };
+  if (!HAS_FIELDS.includes(owned.status)) return { ok: false, reason: "busy" };
 
   const { data: extraction, error } = await client
     .from("extractions")
@@ -118,12 +116,12 @@ export async function correctField(
   return updated.length === 1 ? { ok: true } : { ok: false, reason: "unknown_field" };
 }
 
-/** extracted → reviewed, uploader only. Idempotent for a document already reviewed. */
+/** extracted or escalated → reviewed, uploader only. Idempotent for a document already reviewed. */
 export async function markReviewed(documentId: string, userId: string): Promise<WriteResult> {
   const owned = await ownedDocument(documentId, userId);
   if (!owned.ok) return owned;
   if (owned.status === "reviewed") return { ok: true };
-  if (owned.status !== "extracted") return { ok: false, reason: "busy" };
+  if (!AWAITING_REVIEW.includes(owned.status)) return { ok: false, reason: "busy" };
 
   const client = await db();
   const { data, error } = await client
@@ -131,7 +129,7 @@ export async function markReviewed(documentId: string, userId: string): Promise<
     .update({ status: "reviewed" })
     .eq("id", documentId)
     .eq("uploaded_by", userId)
-    .eq("status", "extracted")
+    .in("status", [...AWAITING_REVIEW])
     .select("id");
   if (error) throw dbError("Could not mark the document reviewed", error);
   return data.length === 1 ? { ok: true } : { ok: false, reason: "busy" };

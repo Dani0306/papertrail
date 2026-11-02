@@ -24,6 +24,7 @@ function summary(overrides: Partial<ModelSummary>): ModelSummary {
     hallucinatedRate: 0,
     firstTryValidRate: 1,
     repaired: 0,
+    escalated: 0,
     needsHuman: 0,
     failed: 0,
     meanCostUsd: 0.000421,
@@ -57,6 +58,7 @@ const run: EvalRunFile = {
       silentErrorsPerDoc: 0.12,
       caughtErrorsPerDoc: 0.3,
       meanCostUsd: 0.009242,
+      escalated: undefined,
       p95LatencyMs: 16400,
       byKey: [
         { key: "currency", accuracy: 0.7576, correct: 25, total: 33, silent: 4 },
@@ -104,9 +106,9 @@ describe("renderReport", () => {
 
   it("writes one formatted row per model, straight from the summary", () => {
     expect(block).toContain(
-      "| `gpt-6-luna` | 99.7% | 99.7 · 99.7 · 99.7 | 0 | 0.09 | 0.0% | 100% | 0 of 33 | $0.00042 | 5.2 s | 18.8 s |",
+      "| `gpt-6-luna` | 99.7% | 99.7 · 99.7 · 99.7 | 0 | 0.09 | 0.0% | 100% | 0 of 33 | 0 of 33 | $0.00042 | 5.2 s | 18.8 s |",
     );
-    expect(block).toContain("| `gpt-6.1-sol` | 98.6% | 98.8 · 98.5 · 98.5 | 0.12 | 0.3 | 0.0% | 100% | 0 of 33 | $0.00924 | 5.2 s | 16.4 s |");
+    expect(block).toContain("| `gpt-6.1-sol` | 98.6% | 98.8 · 98.5 · 98.5 | 0.12 | 0.3 | 0.0% | 100% | — | 0 of 33 | $0.00924 | 5.2 s | 16.4 s |");
   });
 
   it("lists each field's accuracy per model, worst first by whichever model did worst", () => {

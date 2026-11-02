@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { needsAttention, queueOrder } from "./queue";
 
-const doc = (id: string, status: "uploaded" | "extracting" | "extracted" | "needs_human" | "reviewed", toReview: number, createdAt: string) => ({
+const doc = (id: string, status: "uploaded" | "extracting" | "extracted" | "escalated" | "needs_human" | "reviewed", toReview: number, createdAt: string) => ({
   id,
   status,
   toReview,
@@ -35,5 +35,16 @@ describe("queueOrder", () => {
 
   it("treats a reviewed document as done even with flags left", () => {
     expect(needsAttention(doc("r", "reviewed", 5, "2026-11-01T10:00:00Z"))).toBe(false);
+  });
+});
+
+describe("escalated documents", () => {
+  it("always queue, after needs_human and before flagged fields, even with nothing flagged", () => {
+    const { queue } = queueOrder([
+      doc("flagged", "extracted", 4, "2026-11-01T10:00:00Z"),
+      doc("rescued", "escalated", 0, "2026-11-01T10:00:00Z"),
+      doc("human", "needs_human", 0, "2026-11-01T10:00:00Z"),
+    ]);
+    expect(queue.map((d) => d.id)).toEqual(["human", "rescued", "flagged"]);
   });
 });

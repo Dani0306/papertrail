@@ -15,6 +15,8 @@ export type EvalRun = {
   cachedInputTokens: number;
   outputTokens: number;
   reasoningTokens: number;
+  /** The escalation model's answer was used. Missing in runs from before escalation existed. */
+  escalated?: boolean;
   score: DocumentScore;
 };
 
@@ -37,7 +39,8 @@ export function summarizeModel(runs: EvalRun[]) {
     caughtErrorsPerDoc: round(mean((run) => run.score.caughtErrors), 2),
     hallucinatedRate: round(fields.length ? fields.filter((field) => field.verdict === "hallucinated").length / fields.length : 0, 4),
     firstTryValidRate: round(runs.filter((run) => run.firstTryValid).length / n, 3),
-    repaired: runs.filter((run) => run.score.status === "extracted" && run.attempts > 1).length,
+    repaired: runs.filter((run) => run.score.status === "extracted" && run.attempts > 1 && !run.escalated).length,
+    escalated: runs.filter((run) => run.escalated).length,
     needsHuman: runs.filter((run) => run.score.status === "needs_human").length,
     failed: runs.filter((run) => run.score.status === "failed").length,
     meanCostUsd: round(mean((run) => run.costUsd), 6),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeDate, normalizeText, toCents } from "./index";
+import { inferDateOrder, normalizeDate, normalizeDocumentDates, normalizeText, toCents } from "./index";
 
 describe("normalizeDate", () => {
   it.each([
@@ -56,5 +56,51 @@ describe("normalizeText", () => {
   it("treats empty text as absent", () => {
     expect(normalizeText("   ")).toBeNull();
     expect(normalizeText(null)).toBeNull();
+  });
+});
+
+describe("inferDateOrder", () => {
+  it.each([
+    // Every pair of dates in the samples, as printed.
+    [["14/10/2026", "13/11/2026"], "dmy"], // Harbor Pine
+    [["10/30/2026", null], "mdy"], // Kestrel
+    [["10/09/2026", "11/08/2026"], null], // Orchard Labs: both orders read, so it can't be settled
+    [["11/02/2026", "12/02/2026"], null], // Alder Forge: same
+    [["02.11.2026", "16.11.2026"], "dmy"], // Grünwald
+    [["4/11/2026", "18/11/2026"], "dmy"], // Copperline
+    [["2026-10-24", "2026-11-23"], "dmy"], // Quarry & Ash: ISO, no numeric evidence needed either way
+    [["Oct 22, 2026", "Nov 21, 2026"], "dmy"], // Tallow Lane: month names read the same in any order
+  ] as const)("%j → %s", (dates, expected) => {
+    expect(inferDateOrder([...dates])).toBe(expected);
+  });
+
+  it("gives up on conflicting evidence rather than picking a side", () => {
+    expect(inferDateOrder(["14/10/2026", "10/30/2026"])).toBeNull();
+  });
+
+  it("treats a date that reads the same both ways as no evidence", () => {
+    expect(inferDateOrder(["05/05/2026", "20/05/2026"])).toBe("dmy");
+    expect(inferDateOrder(["05/05/2026"])).toBe("dmy");
+  });
+});
+
+describe("normalizeDocumentDates", () => {
+  it("turns every date to ISO when the document settles the order", () => {
+    expect(normalizeDocumentDates({ issueDate: "02/11/2026", dueDate: "16/11/2026" })).toEqual({
+      iso: { issueDate: "2026-11-02", dueDate: "2026-11-16" },
+      unsettled: [],
+    });
+  });
+
+  it("reports ambiguous numeric dates instead of guessing, and still reads unambiguous ones", () => {
+    expect(normalizeDocumentDates({ issueDate: "10/09/2026", dueDate: "11/08/2026" })).toEqual({
+      iso: { issueDate: null, dueDate: null },
+      unsettled: ["issueDate", "dueDate"],
+    });
+    expect(normalizeDocumentDates({ issueDate: "Nov 3, 2026", dueDate: null })).toEqual({ iso: { issueDate: "2026-11-03", dueDate: null }, unsettled: [] });
+  });
+
+  it("reports a date it can't read at all", () => {
+    expect(normalizeDocumentDates({ issueDate: "sometime soon", dueDate: null }).unsettled).toEqual(["issueDate"]);
   });
 });

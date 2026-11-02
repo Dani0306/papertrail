@@ -57,7 +57,7 @@ export type ExtractionStore = {
   logCall(row: ModelCallRow): Promise<void>;
   /** Writes the extraction and its fields; removes the extraction again if the fields fail. Returns its id. */
   saveExtraction(documentId: string, run: { model: string; mode: string; invoice: Invoice }, fields: FieldRow[]): Promise<string>;
-  setStatus(documentId: string, status: "extracted" | "needs_human" | "uploaded"): Promise<void>;
+  setStatus(documentId: string, status: "extracted" | "escalated" | "needs_human" | "uploaded"): Promise<void>;
 };
 
 export type ExtractDocumentDeps = {
@@ -70,7 +70,7 @@ export type ExtractDocumentDeps = {
 };
 
 export type ExtractDocumentResult =
-  | { ok: true; status: "extracted"; extractionId: string; fields: number; flaggedFields: number; costUsd: number }
+  | { ok: true; status: "extracted" | "escalated"; extractionId: string; fields: number; flaggedFields: number; costUsd: number }
   | { ok: true; status: "needs_human"; reason: string; costUsd: number }
   | { ok: false; reason: "cap"; cap: number }
   | { ok: false; reason: "missing" | "forbidden" | "busy" }
@@ -109,9 +109,11 @@ export async function extractDocument(
     const last = result.calls.at(-1)!;
     const fields = fieldRows(result.invoice);
     const extractionId = await store.saveExtraction(document.id, { model: last.model, mode: last.mode, invoice: result.invoice }, fields);
-    await store.setStatus(document.id, "extracted");
+    // A rescue by the escalation model keeps its own status, so the queue and the cost trail show it.
+    const status = result.escalated ? "escalated" : "extracted";
+    await store.setStatus(document.id, status);
     const flaggedFields = fields.filter((field) => confidenceLevel(field.value, field.confidence, threshold) === "review").length;
-    return { ok: true, status: "extracted", extractionId, fields: fields.length, flaggedFields, costUsd };
+    return { ok: true, status, extractionId, fields: fields.length, flaggedFields, costUsd };
   } catch (error) {
     // Our side failed (download, save). Never leave the document stuck in extracting.
     await store.setStatus(document.id, "uploaded").catch((resetError: unknown) => console.error("Could not reset the document status", resetError));

@@ -41,7 +41,8 @@ async function main(): Promise<number> {
     result.status === "extracted"
       ? flattenFields(result.invoice).filter((field) => confidenceLevel(field.value, field.confidence, threshold) === "review").length
       : 0;
-  process.stderr.write(`\n${summary(result.status, result.calls, flagged)}\n`);
+  const status = result.status === "extracted" && result.escalated ? "extracted (escalated)" : result.status;
+  process.stderr.write(`\n${summary(status, result.calls, flagged)}\n`);
   if (result.status !== "extracted") process.stderr.write(`${result.reason}\n`);
 
   return result.status === "extracted" ? 0 : result.status === "needs_human" ? 2 : 1;
@@ -71,7 +72,7 @@ function summary(status: string, calls: ModelCallRecord[], flagged: number): str
     `${number(sum("inputTokens"))} in (${number(sum("cachedInputTokens"))} cached) / ${number(sum("outputTokens"))} out (${number(sum("reasoningTokens"))} reasoning)`,
     `$${sum("costUsd").toFixed(5)}`,
     `${(sum("latencyMs") / 1000).toFixed(1)} s`,
-    ...(status === "extracted" ? [`${flagged} ${flagged === 1 ? "field" : "fields"} to review`] : []),
+    ...(status.startsWith("extracted") ? [`${flagged} ${flagged === 1 ? "field" : "fields"} to review`] : []),
     `log: ${LOG_PATH.replace(`${process.cwd()}/`, "")}`,
   ].join(" · ");
 }
