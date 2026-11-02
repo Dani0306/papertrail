@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "extract": "node --env-file=.env.local --import tsx scripts/extract.ts",
     "compare:modes": "node --env-file=.env.local --import tsx scripts/compare-modes.ts",
-    "eval": "node --env-file=.env.local --import tsx scripts/eval.ts"
+    "eval": "node --env-file=.env.local --import tsx scripts/eval.ts",
+    "eval:report": "tsx scripts/eval-report.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "4.0.106",

@@ -8,7 +8,7 @@
 
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
-import { PRICES } from "@/lib/cost/pricing";
+import { PRICES, PRICING_READ_ON } from "@/lib/cost/pricing";
 import { confidenceThreshold } from "@/lib/design/confidence";
 import { extractInvoice } from "@/lib/extract/extract";
 import { appendJsonl } from "@/lib/extract/jsonl";
@@ -86,7 +86,7 @@ async function main(): Promise<number> {
   const out = await freshPath(`evals/runs/${date}-eval`);
   await writeFile(
     out,
-    `${JSON.stringify({ date, models, reps, threshold, stoppedAtLimit: stopped, totalCostUsd: round(spent, 6), byModel, runs }, null, 2)}\n`,
+    `${JSON.stringify({ date, models, reps, threshold, pricesReadOn: PRICING_READ_ON, stoppedAtLimit: stopped, totalCostUsd: round(spent, 6), byModel, runs }, null, 2)}\n`,
   );
   log(`\nTotal cost $${spent.toFixed(5)} · report: ${out.replace(`${process.cwd()}/`, "")}`);
   return 0;
