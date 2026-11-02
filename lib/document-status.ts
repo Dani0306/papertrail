@@ -14,3 +14,9 @@ export type DocumentStatusValue = (typeof DOCUMENT_STATUSES)[number];
 
 // Extraction starts only from `uploaded` (or a stale `extracting`): see the claim in
 // lib/db/extractions.ts. `needs_human` waits for a person, not a rerun.
+
+/** Statuses that have extracted fields: they get a review screen, take corrections and export. */
+export const HAS_FIELDS: readonly DocumentStatusValue[] = ["extracted", "escalated", "reviewed"];
+
+/** Statuses a person can confirm with "Mark reviewed". */
+export const AWAITING_REVIEW: readonly DocumentStatusValue[] = ["extracted", "escalated"];

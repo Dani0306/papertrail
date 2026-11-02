@@ -2,14 +2,14 @@ import { ScanText } from "lucide-react";
 import { RouteButton } from "@/components/ui/route-button";
 import { DocumentCard } from "@/components/review/document-card";
 import type { DocumentSummary } from "@/lib/db/documents";
-import type { DocumentStatusValue } from "@/lib/document-status";
+import { HAS_FIELDS } from "@/lib/document-status";
 import { formatMoney } from "@/lib/review/fields";
 import { formatBytes } from "@/lib/uploads";
 
 const DATE = new Intl.DateTimeFormat("en", { day: "numeric", month: "short", timeZone: "UTC" });
 
-/** Statuses with something to show on the review screen. */
-const REVIEWABLE: readonly DocumentStatusValue[] = ["extracted", "needs_human", "reviewed"];
+/** needs_human has no fields, but its review screen shows why and the document itself. */
+const REVIEWABLE = [...HAS_FIELDS, "needs_human"];
 
 /** Cards for /documents and /review: link once reviewable, Extract on the uploader's own uploads. */
 export function DocumentGrid({ documents }: { documents: DocumentSummary[] }) {

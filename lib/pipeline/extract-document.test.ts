@@ -135,6 +135,27 @@ describe("extractDocument", () => {
     expect(fake.calls[0]).toMatchObject({ document_id: "doc-1", attempt: 1, outcome: "ok", input_tokens: 3000, output_tokens: 700, cost_usd: 0.00065 });
   });
 
+  it("marks a document the stronger model rescued as escalated, with sol as the extraction's model", async () => {
+    const broken = { ...invoice, total: { value: 1284.5, confidence: 0.9, sourceQuote: null } };
+    const fake = fakeStore();
+    const sol = new MockLanguageModelV4({ modelId: "gpt-6.1-sol", doGenerate: [toolReply(invoice)] });
+    const result = await extractDocument(
+      { documentId: "doc-1", userId: OWNER },
+      {
+        store: fake.store,
+        cap: 50,
+        threshold: 0.85,
+        extract: (file, options) => extractInvoice(file, { ...options, model: model([toolReply(broken), toolReply(broken)]), escalationModel: sol }),
+        now: () => NOW,
+      },
+    );
+
+    expect(result).toMatchObject({ ok: true, status: "escalated" });
+    expect(fake.statuses).toEqual(["extracting", "escalated"]);
+    expect(fake.extractions[0].model).toBe("gpt-6.1-sol");
+    expect(fake.calls.map((call) => call.outcome)).toEqual(["validation_error", "validation_error", "escalated"]);
+  });
+
   it("marks needs_human after the repair also fails, saving no extraction but logging both calls", async () => {
     const broken = { ...invoice, total: { value: 1284.5, confidence: 0.9, sourceQuote: null } };
     const fake = fakeStore();
